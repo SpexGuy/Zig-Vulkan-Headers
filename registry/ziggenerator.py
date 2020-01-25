@@ -20,6 +20,34 @@ from generator import (GeneratorOptions, OutputGenerator, noneStr,
                        regSortFeatures, write)
 
 
+typeReplacements = {
+    'void': 'c_void',
+    'char': 'u8',
+    'int': 'c_int',
+    'float': 'f32',
+    'double': 'f64',
+    'size_t': 'usize',
+    'uint64_t': 'u64',
+    'uint32_t': 'u32',
+    'uint16_t': 'u16',
+    'uint8_t': 'u8',
+    'int64_t': 'i64',
+    'int32_t': 'i32',
+    'int16_t': 'i16',
+    'int8_t': 'i8',
+}
+
+def valueTypeToZigType(typeName):
+    if typeName.startswith('Vk'):
+        return typeName[2:]
+    if typeName.startswith('PFN_vk'):
+        return 'PFN_' + typeName[6:]
+    if typeName in typeReplacements:
+        return typeReplacements[typeName]
+    print('Warning: Cant convert type name: ' + typeName)
+    return typeName
+
+
 class ZigGeneratorOptions(GeneratorOptions):
     """ZigGeneratorOptions - subclass of GeneratorOptions.
 
@@ -136,7 +164,7 @@ class ZigOutputGenerator(OutputGenerator):
             # OpenXR: this section was not under 'else:' previously, just fell through
             if alias:
                 # If the type is an alias, just emit a typedef declaration
-                body = 'pub const ' + name[2:] + ' = ' + alias[2:] + ';\n'
+                body = 'pub const ' + valueTypeToZigType(name) + ' = ' + valueTypeToZigType(alias) + ';\n'
             else:
                 # Replace <apientry /> tags with an APIENTRY-style string
                 # (from self.genOpts). Copy other text through unchanged.
@@ -187,19 +215,20 @@ class ZigOutputGenerator(OutputGenerator):
         typeElem = typeinfo.elem
 
         if alias:
-            body = 'pub const ' + typeName[2:] + ' = ' + alias[2:] + ';\n'
+            body = 'pub const ' + valueTypeToZigType(typeName) + ' = ' + valueTypeToZigType(alias) + ';\n'
         else:
-            body = 'pub const ' + typeName[2:] + ' = extern ' + typeElem.get('category') + ' {\n'
+            body = 'pub const ' + valueTypeToZigType(typeName) + ' = extern ' + typeElem.get('category') + ' {\n'
 
-            for member in typeElem.findall('.//member'):
-                body += self.makeZigParamDecl(member)
+            allMembers = list(typeElem.findall('.//member'))
+            for member in allMembers:
+                body += self.makeZigParamDecl(allMembers, member, True)
                 body += ',\n'
 
             body += '};\n'
 
         self.appendSection('struct', body)
 
-    def makeZigParamDecl(self, param):
+    def makeZigParamDecl(self, allParams, param, includeDefault=False):
         """Return a string which is an indented, formatted
         declaration for a `<param>` or `<member>` block (e.g. function parameter
         or structure/union member).
@@ -217,15 +246,19 @@ class ZigOutputGenerator(OutputGenerator):
                 # OpenXR-specific macro insertion - but not in apiinc for the spec
                 tail = self.genOpts.conventions.make_voidpointer_alias(tail)
         
+        parts = [x for x in parts if x != 'struct']
+
         # parts is of the form
-        # (const)? <valueType> ((const)? \*)* <name> (\[ <bufferLen> \])*
-        
+        # (const)? <valueType> ((const)? \*)* <name> (\[ <bufferLen> \])*      
         buffers = []
-        while parts[-1] == ']':
-            parts.pop()
-            length = parts.pop()
-            parts.pop()
-            buffers.append('[' + length[3:] + ']')
+        while parts[-1].endswith(']'):
+            if parts[-1].startswith('['):
+                buffers.append(parts.pop())
+            else:
+                parts.pop()
+                length = parts.pop()
+                parts.pop()
+                buffers.append('[' + length[3:] + ']')
         
         
         if parts[0] == 'const':
@@ -245,6 +278,7 @@ class ZigOutputGenerator(OutputGenerator):
                 numStars += 1
         
         lengths = noneStr(param.get('len')).split(',')
+        if len(lengths) == 1 and len(lengths[0]) == 0: lengths = []
         while len(lengths) < numStars: lengths.append('1')
         while len(lengths) > numStars: lengths.pop()
         
@@ -253,9 +287,73 @@ class ZigOutputGenerator(OutputGenerator):
             parts.pop()
             parts.pop()
             valueType = 'VkCString'
-        
-        # Squeeze out multiple spaces other than the indentation
-        paramdecl = '    ' + name + ': ' + ''.join(buffers) + ', '.join(parts) + ' ' + valueType
+
+        isParamOptional = param.get('optional') == 'true'
+        defaultValue = '0'
+
+        typeDecl = ''.join(buffers)
+        starIndex = 0
+        parenDepth = 0
+        for part in parts:
+            if part == '*':
+                defaultValue = 'null'
+                isVoid = valueType == 'void'
+                isArray = lengths[starIndex] != '1'
+                isOptional = starIndex == 0 and (isParamOptional or isVoid)
+                if isOptional:
+                    if len(typeDecl) > 0:
+                        typeDecl += '('
+                        parenDepth += 1
+                    typeDecl += '?'
+                if isArray and not isVoid:
+                    typeDecl += '[*]'
+                else:
+                    typeDecl += '*'
+                starIndex += 1
+
+            else:
+                typeDecl += part
+
+        if starIndex == 0 and isParamOptional and False:
+            # TODO: Only if pointer type!!
+            if len(typeDecl) > 0:
+                typeDecl += '('
+                parenDepth += 1
+            typeDecl += '?'
+
+        # if the type ends with const we need a space before the value
+        if len(typeDecl) > 0 and typeDecl[-1].isalpha():
+            typeDecl += ' '
+
+        typeDecl += valueTypeToZigType(valueType)
+        for x in range(parenDepth):
+            typeDecl += ')'
+
+        # construct the declaration
+        paramdecl = '    ' + name + ': ' + typeDecl
+
+        # add a default initialization value
+        if includeDefault:
+            if isParamOptional:
+                paramdecl += ' = ' + defaultValue
+            elif name == 'pNext' and valueType == 'void':
+                paramdecl += ' = null'
+            elif len(lengths) >= 1:
+                # determine if the parent is optional
+                parentElem = None
+                for m in allParams:
+                    mName = m.find('name').text
+                    if mName == lengths[0]:
+                        parentElem = m
+                        break
+                if parentElem and parentElem.get('optional') == 'true':
+                    paramdecl += ' = undefined'
+            else:
+                valuesStr = param.get('values')
+                if valuesStr:
+                    values = valuesStr.split(',')
+                    if len(values) == 1 and values[0].startswith('VK_STRUCTURE_TYPE_'):
+                        paramdecl += ' = ' + values[0].replace('VK_STRUCTURE_TYPE_', '.')
 
         return paramdecl
 
@@ -279,7 +377,7 @@ class ZigOutputGenerator(OutputGenerator):
         if alias:
             # If the group name is aliased, just emit a typedef declaration
             # for the alias.
-            body = 'pub const ' + groupName[2:] + ' = ' + alias[2:] + ';\n'
+            body = 'pub const ' + valueTypeToZigType(groupName) + ' = ' + valueTypeToZigType(alias) + ';\n'
             self.appendSection(section, body)
         else:
             (section, body) = self.buildEnumZigDecl(groupinfo, groupName)
@@ -312,19 +410,33 @@ class ZigOutputGenerator(OutputGenerator):
         flagTypeName = flagBitsName.replace('FlagBits', 'Flags')
         rootName = flagBitsName.replace('FlagBits', '')
         expandName = re.sub(r'([0-9a-z_])([A-Z0-9])', r'\1_\2', rootName).upper() + '_'
+        zigFlagTypeName = valueTypeToZigType(flagTypeName)
 
         # Prefix
-        body = "pub const " + flagTypeName[2:] + " = Flags;\n"
-        body += "pub const " + flagBitsName[2:] + " = struct {\n"
+        body = "pub const " + zigFlagTypeName + " = Flags;\n"
+        body += "pub const " + valueTypeToZigType(flagBitsName) + " = struct {\n"
+
+        declBody = ''
+        aliasBody = ''
 
         # Loop over the nested 'enum' tags.
         for elem in groupElem.findall('enum'):
             # Convert the value to an integer and use that to track min/max.
             # Values of form -(number) are accepted but nothing more complex.
             # Should catch exceptions here for more complex constructs. Not yet.
-            (_, strVal) = self.enumToValue(elem, True)
+            (numVal, strVal) = self.enumToValue(elem, True)
             name = elem.get('name').replace(expandName, '')
-            body += "    pub const {}: {} = {};\n".format(name, flagTypeName[2:], strVal)
+            if numVal is not None:
+                declBody += "    pub const {}: {} = {};\n".format(name, zigFlagTypeName, strVal)
+            else:
+                # this is an alias
+                strVal = strVal.replace(expandName, '')
+                aliasBody += '    pub const {} = {};\n'.format(name, strVal)
+
+        body += declBody
+        if declBody and aliasBody:
+            body += '\n'
+        body += aliasBody
 
         # Postfix
         body += '};\n'
@@ -348,7 +460,7 @@ class ZigOutputGenerator(OutputGenerator):
         expandPrefix = expandPrefix + '_'
 
         # Prefix
-        body = ["pub const %s = extern enum {" % groupName[2:]]
+        body = ["pub const %s = extern enum {" % valueTypeToZigType(groupName)]
 
         # Get a list of nested 'enum' tags.
         enums = groupElem.findall('enum')
@@ -389,7 +501,6 @@ class ZigOutputGenerator(OutputGenerator):
 
         return ('group', '\n'.join(body))
 
-
     def genCmd(self, cmdinfo, name, alias):
         "Command generation"
         OutputGenerator.genCmd(self, cmdinfo, name, alias)
@@ -412,7 +523,7 @@ class ZigOutputGenerator(OutputGenerator):
         proto = cmd.find('proto')
         params = cmd.findall('param')
         # Begin accumulating prototype and typedef strings
-        pdecl = ''
+        pdecl = 'pub extern fn '
         tdecl = 'typedef '
 
         # Insert the function return type/name.
@@ -423,8 +534,7 @@ class ZigOutputGenerator(OutputGenerator):
         # etree has elem.text followed by (elem[i], elem[i].tail)
         #   for each child element and any following text
         # Leading text
-        pdecl += noneStr(proto.text)
-        tdecl += noneStr(proto.text)
+        returnType = noneStr(proto.text)
         # For each child element, if it's a <name> wrap in appropriate
         # declaration. Otherwise append its contents and tail contents.
         for elem in proto:
@@ -434,8 +544,10 @@ class ZigOutputGenerator(OutputGenerator):
                 pdecl += self.makeProtoName(text, tail)
                 tdecl += self.makeTypedefName(text, tail)
             else:
-                pdecl += text + tail
-                tdecl += text + tail
+                returnType += text + tail
+
+        returnType = valueTypeToZigType(returnType.strip())
+        tdecl += returnType
 
         # Squeeze out multiple spaces - there is no indentation
         pdecl = ' '.join(pdecl.split())
@@ -451,11 +563,11 @@ class ZigOutputGenerator(OutputGenerator):
         # Indented parameters
         if n > 0:
             indentdecl = '(\n'
-            indentdecl += ',\n'.join(self.makeZigParamDecl(p)
+            indentdecl += ',\n'.join(self.makeZigParamDecl(params, p)
                                      for p in params)
-            indentdecl += ');'
+            indentdecl += ',\n)'
         else:
-            indentdecl = '(void);'
+            indentdecl = '()'
         # Non-indented parameters
         paramdecl = '('
         if n > 0:
@@ -463,9 +575,9 @@ class ZigOutputGenerator(OutputGenerator):
                           for p in params)
             paramdecl += ', '.join(paramnames)
         else:
-            paramdecl += 'void'
-        paramdecl += ");"
-        return [pdecl + indentdecl, tdecl + paramdecl]
+            paramdecl += ''
+        paramdecl += ")"
+        return [pdecl + indentdecl + ' ' + returnType + ';', tdecl + paramdecl + ';']
     
     def makeProtoName(self, name, tail):
         """Turn a `<proto>` `<name>` into C-language prototype
