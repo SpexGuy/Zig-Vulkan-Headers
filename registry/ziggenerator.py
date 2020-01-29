@@ -37,9 +37,16 @@ typeReplacements = {
     'int8_t': 'i8',
 }
 
-def valueTypeToZigType(typeName):
+def valueTypeToZigType(typeName, fixFlagType=False):
     if typeName.startswith('Vk'):
-        return typeName[2:]
+        zigName = typeName[2:]
+        if fixFlagType:
+            # Some parameters/fields incorrectly use XXFlagBitsEXT instead of XXFlagsEXT as their type.
+            # This works fine in C because the two enums are the same size and implicitly cast,
+            # but in Zig the XXFlagBitsEXT struct is a namespace and has no size, so we need to
+            # correct this to be XXFlagsEXT
+            zigName = zigName.replace('FlagBits', 'Flags')
+        return zigName
     if typeName.startswith('PFN_vk'):
         return 'PFN_' + typeName[6:]
     if typeName in typeReplacements:
@@ -47,6 +54,11 @@ def valueTypeToZigType(typeName):
     print('Warning: Cant convert type name: ' + typeName)
     return typeName
 
+def enumNameToZigName(enumName, enumTypeExpanded):
+        name = enumName.replace(enumTypeExpanded, '')
+        if name.startswith('VK_'): name = name[3:]
+        if name[0].isdecimal(): name = 'T_' + name
+        return name
 
 class ZigGeneratorOptions(GeneratorOptions):
     """ZigGeneratorOptions - subclass of GeneratorOptions.
@@ -94,6 +106,7 @@ class ZigOutputGenerator(OutputGenerator):
         self.sections = {section: [] for section in self.ALL_SECTIONS}
         self.feature_not_empty = False
         self.may_alias = None
+        self.handleTypes = { 'VkCString': True }
 
     def beginFile(self, genOpts):
         OutputGenerator.beginFile(self, genOpts)
@@ -103,6 +116,7 @@ class ZigOutputGenerator(OutputGenerator):
         if genOpts.prefixText:
             for s in genOpts.prefixText:
                 write(s, file=self.outFile)
+        write('pub const CString = [*]const u8;', file=self.outFile)
 
     def beginFeature(self, interface, emit):
         # Start processing in superclass
@@ -128,8 +142,8 @@ class ZigOutputGenerator(OutputGenerator):
                             write('\n'.join(contents), file=self.outFile)
                     if self.sections['command']:
                         write('\n'.join(self.sections['command']), file=self.outFile)
-                    if self.sections['commandWrapper']:
-                        write('\n'.join(self.sections['commandWrapper']), file=self.outFile)
+                    #if self.sections['commandWrapper']:
+                        #write('\n'.join(self.sections['commandWrapper']), file=self.outFile)
         # Finish processing in superclass
         OutputGenerator.endFeature(self)
 
@@ -156,30 +170,18 @@ class ZigOutputGenerator(OutputGenerator):
         else:
             section = category
 
-        if category in ('struct', 'union'):
+        if alias:
+            # If the type is an alias, just emit a typedef declaration
+            body = 'pub const ' + valueTypeToZigType(name) + ' = ' + valueTypeToZigType(alias) + ';'
+            self.appendSection(section, body)
+        elif category in ('struct', 'union'):
             # If the type is a struct type, generate it using the
             # special-purpose generator.
-            self.genStruct(typeinfo, name, alias)
+            self.genStruct(typeinfo, name)
+        elif category == 'bitmask':
+            self.genFlags(typeinfo, name)
         else:
-            # OpenXR: this section was not under 'else:' previously, just fell through
-            if alias:
-                # If the type is an alias, just emit a typedef declaration
-                body = 'pub const ' + valueTypeToZigType(name) + ' = ' + valueTypeToZigType(alias) + ';\n'
-            else:
-                # Replace <apientry /> tags with an APIENTRY-style string
-                # (from self.genOpts). Copy other text through unchanged.
-                # If the resulting text is an empty string, don't emit it.
-                body = noneStr(typeElem.text)
-                for elem in typeElem:
-                    if elem.tag == 'apientry':
-                        body += noneStr(elem.tail)
-                    else:
-                        body += noneStr(elem.text) + noneStr(elem.tail)
-            if body:
-                # Add extra newline after multi-line entries.
-                if '\n' in body[0:-1]:
-                    body += '\n'
-                self.appendSection(section, body)
+            self.genSimpleType(typeinfo, name, section)
 
     def typeMayAlias(self, typeName):
         if not self.may_alias:
@@ -198,7 +200,69 @@ class ZigOutputGenerator(OutputGenerator):
                                       if x is not None))
         return typeName in self.may_alias
 
-    def genStruct(self, typeinfo, typeName, alias):
+    def genSimpleType(self, typeinfo, typeName, section):
+        typeElem = typeinfo.elem
+        category = typeElem.get('category')
+        body = ''
+        if category == 'basetype':
+            rawType = typeElem.find('type').text
+            body = 'pub const ' + valueTypeToZigType(typeName) + ' = ' + valueTypeToZigType(rawType) + ';'
+        elif category == 'define':
+            commentText = ''
+            text = typeElem.text
+            while text.startswith('//'):
+                try:
+                    newline = text.index('\n') + 1
+                except:
+                    newline = 2 # just include the //
+                commentText += text[0:newline]
+                text = text[newline:]
+                            
+            innerTypeElem = typeElem.find('type')
+            
+            definition = ''
+            
+            # special cases
+            if typeName == 'VK_MAKE_VERSION':
+                definition = "pub fn MAKE_VERSION(major: u32, minor: u32, patch: u32) u32 { return @shlExact(major, 22) | @shlExact(minor, 12) | patch; }"
+            elif typeName == 'VK_VERSION_MAJOR':
+                definition = "pub fn VERSION_MAJOR(version: u32) u32 { return version >> 22; }"
+            elif typeName == 'VK_VERSION_MINOR':
+                definition = "pub fn VERSION_MINOR(version: u32) u32 { return (version >> 12) & 0x3ff; }"
+            elif typeName == 'VK_VERSION_PATCH':
+                definition = "pub fn VERSION_PATCH(version: u32) u32 { return version & 0xfff; }"
+            elif innerTypeElem is not None and innerTypeElem.text == 'VK_MAKE_VERSION':
+                definition = 'pub const ' + typeName[3:] + ' = MAKE_VERSION' + innerTypeElem.tail.replace(')', ');')
+            elif typeName in ('VK_DEFINE_HANDLE', 'VK_DEFINE_NON_DISPATCHABLE_HANDLE', 'VK_NULL_HANDLE'):
+                pass # ignore these definitions
+            elif not innerTypeElem:
+                if text.startswith('#define'):
+                    definition = 'pub const ' + typeName[3:] + ' = ' + typeElem.find('name').tail.strip() + ';'
+                else:
+                    definition = 'pub const ' + typeName + ' = @OpaqueType();'
+            else:
+                print("Warning: Couldn't generate zig definition for define " + typeName)
+
+            if definition:
+                body = commentText + definition
+        elif category == 'handle':
+            body = 'pub const ' + valueTypeToZigType(typeName) + ' = *@OpaqueType();'
+            self.handleTypes[typeName] = True
+        elif category == 'include':
+            pass # don't generate includes
+        else:
+            body = noneStr(typeElem.text)
+            for elem in typeElem:
+                body += noneStr(elem.text) + noneStr(elem.tail)
+
+        if body:
+            if '\n' in body[0:-1]:
+                body += '\n'
+            self.appendSection(section, body)
+
+
+
+    def genStruct(self, typeinfo, typeName):
         """Generate struct (e.g. C "struct" type).
 
         This is a special case of the <type> tag where the contents are
@@ -210,21 +274,18 @@ class ZigOutputGenerator(OutputGenerator):
 
         If alias is not None, then this struct aliases another; just
         generate a typedef of that alias."""
-        OutputGenerator.genStruct(self, typeinfo, typeName, alias)
+        OutputGenerator.genStruct(self, typeinfo, typeName, None)
 
         typeElem = typeinfo.elem
 
-        if alias:
-            body = 'pub const ' + valueTypeToZigType(typeName) + ' = ' + valueTypeToZigType(alias) + ';\n'
-        else:
-            body = 'pub const ' + valueTypeToZigType(typeName) + ' = extern ' + typeElem.get('category') + ' {\n'
+        body = 'pub const ' + valueTypeToZigType(typeName) + ' = extern ' + typeElem.get('category') + ' {\n'
 
-            allMembers = list(typeElem.findall('.//member'))
-            for member in allMembers:
-                body += self.makeZigParamDecl(allMembers, member, True)
-                body += ',\n'
+        allMembers = list(typeElem.findall('.//member'))
+        for member in allMembers:
+            body += self.makeZigParamDecl(allMembers, member, True)
+            body += ',\n'
 
-            body += '};\n'
+        body += '};\n'
 
         self.appendSection('struct', body)
 
@@ -314,7 +375,8 @@ class ZigOutputGenerator(OutputGenerator):
             else:
                 typeDecl += part
 
-        if starIndex == 0 and isParamOptional and False:
+        if starIndex == 0 and isParamOptional and self.isValueTypePointer(valueType):
+            defaultValue = 'null'
             # TODO: Only if pointer type!!
             if len(typeDecl) > 0:
                 typeDecl += '('
@@ -325,7 +387,7 @@ class ZigOutputGenerator(OutputGenerator):
         if len(typeDecl) > 0 and typeDecl[-1].isalpha():
             typeDecl += ' '
 
-        typeDecl += valueTypeToZigType(valueType)
+        typeDecl += valueTypeToZigType(valueType, fixFlagType=True)
         for x in range(parenDepth):
             typeDecl += ')'
 
@@ -402,6 +464,17 @@ class ZigOutputGenerator(OutputGenerator):
         else:
             return self.buildEnumZigDecl_Enum(groupinfo, groupName)
 
+    def genFlags(self, typeinfo, name, alias=None):
+        body = ''
+        if alias:
+            body = 'pub const ' + valueTypeToZigType(name) + ' = ' + valueTypeToZigType(alias) + ';'
+        elif not typeinfo.elem.get('requires'):
+            body = 'pub const ' + valueTypeToZigType(name) + ' = Flags;'
+        
+        if body:
+            self.appendSection("bitmask", body)
+            
+
     def buildEnumZigDecl_Bitmask(self, groupinfo, groupName):
         """Generate the Zig declaration for an "enum" that is actually a
         set of flag bits"""
@@ -425,12 +498,13 @@ class ZigOutputGenerator(OutputGenerator):
             # Values of form -(number) are accepted but nothing more complex.
             # Should catch exceptions here for more complex constructs. Not yet.
             (numVal, strVal) = self.enumToValue(elem, True)
-            name = elem.get('name').replace(expandName, '')
+            name = enumNameToZigName(elem.get('name'), expandName)
+
             if numVal is not None:
                 declBody += "    pub const {}: {} = {};\n".format(name, zigFlagTypeName, strVal)
             else:
                 # this is an alias
-                strVal = strVal.replace(expandName, '')
+                strVal = enumNameToZigName(strVal, expandName)
                 aliasBody += '    pub const {} = {};\n'.format(name, strVal)
 
         body += declBody
@@ -480,16 +554,15 @@ class ZigOutputGenerator(OutputGenerator):
             # Values of form -(number) are accepted but nothing more complex.
             # Should catch exceptions here for more complex constructs. Not yet.
             (numVal, strVal) = self.enumToValue(elem, True)
-            name = elem.get('name')
+            name = enumNameToZigName(elem.get('name'), expandPrefix)
 
             # Extension enumerants are only included if they are required
             if self.isEnumRequired(elem):
-                name = name.replace(expandPrefix, '')
                 if numVal is not None:
                     decl = "    {} = {},".format(name, strVal)
                     body.append(decl)
                 else:
-                    strVal = strVal.replace(expandPrefix, '')
+                    strVal = enumNameToZigName(strVal, expandPrefix)
                     decl = "    pub const {} = {};".format(name, strVal)
                     aliasText.append(decl)
 
@@ -546,7 +619,9 @@ class ZigOutputGenerator(OutputGenerator):
             else:
                 returnType += text + tail
 
-        returnType = valueTypeToZigType(returnType.strip())
+        returnType = returnType.strip()
+        if returnType != 'void':
+            returnType = valueTypeToZigType(returnType, fixFlagType=True)
         tdecl += returnType
 
         # Squeeze out multiple spaces - there is no indentation
@@ -659,3 +734,6 @@ class ZigOutputGenerator(OutputGenerator):
         if 'alias' in elem.keys():
             return [None, elem.get('alias')]
         return [None, None]
+        
+    def isValueTypePointer(self, typeName):
+        return typeName.startswith('PFN_') or typeName in self.handleTypes
