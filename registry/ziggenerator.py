@@ -180,6 +180,8 @@ class ZigOutputGenerator(OutputGenerator):
             self.genStruct(typeinfo, name)
         elif category == 'bitmask':
             self.genFlags(typeinfo, name)
+        elif category == 'funcpointer':
+            self.genFuncPointer(typeinfo, name, section)
         else:
             self.genSimpleType(typeinfo, name, section)
 
@@ -260,7 +262,30 @@ class ZigOutputGenerator(OutputGenerator):
                 body += '\n'
             self.appendSection(section, body)
 
-
+    def genFuncPointer(self, typeinfo, name, section):
+        typeElem = typeinfo.elem
+        # generate the full typedef text
+        text = noneStr(typeElem.text)
+        for elem in typeElem:
+            if elem.tag == 'name':
+                preNameText = text
+            text += noneStr(elem.text) + noneStr(elem.tail)
+            
+        # parse out the return type
+        returnText = preNameText.split('(')[0]
+        returnText = returnText.replace('typedef', '').strip()
+        # turn it into a variable declaration and parse it
+        returnText += ' retVal'
+        #returnParam = self.parseParam(returnText)
+        
+        # parse out the parameter list
+        paramStart = text.rindex('(')
+        paramEnd = text.rindex(')')
+        paramStrings = text[paramStart+1 : paramEnd].split(',')
+        #params = [self.parseParam(x) for x in paramStrings]
+        
+        #self.appendSection(section, body)
+    
 
     def genStruct(self, typeinfo, typeName):
         """Generate struct (e.g. C "struct" type).
