@@ -137,12 +137,19 @@ class ZigOutputGenerator(OutputGenerator):
         # User-supplied prefix text, if any (list of strings)
         if genOpts.prefixText:
             for s in genOpts.prefixText:
+                # convert to single-line comments
+                if len(s) >= 2:
+                    s = '//' + s[2:]
                 write(s, file=self.outFile)
         
         if genOpts.coreFile:
             write('usingnamespace @import("' + genOpts.coreFile + '");', file=self.outFile)
         else:
             write('pub const CString = [*]const u8;', file=self.outFile)
+
+    def endFile(self):
+        write('\ntest "Compile All" { _ = @typeInfo(@This()); }', file=self.outFile)
+        OutputGenerator.endFile(self)
 
     def beginFeature(self, interface, emit):
         # Start processing in superclass
@@ -304,13 +311,13 @@ class ZigOutputGenerator(OutputGenerator):
         if returnText == 'void':
             returnType = 'void'
         else:
-            returnType = self.parseParam(returnText + ' retVal').fullType
+            returnType = self.parseParam(returnText + ' retVal', True).fullType
         
         # parse out the parameter list
         paramStart = text.rindex('(')
         paramEnd = text.rindex(')')
         paramStrings = text[paramStart+1 : paramEnd].split(',')
-        params = [self.parseParam(x) for x in paramStrings if x != 'void']
+        params = [self.parseParam(x, True) for x in paramStrings if x != 'void']
         
         body = 'pub const ' + valueTypeToZigType(name) + ' = extern fn ('
         if len(params) > 1:
@@ -354,7 +361,7 @@ class ZigOutputGenerator(OutputGenerator):
         self.appendSection('struct', body)
 
         
-    def parseParam(self, text, param=None, allParams=[]):
+    def parseParam(self, text, isFunctionParam, param=None, allParams=[]):
         parts = re.sub(r'(\S)\*', r'\1 *', re.sub(r'\*(\S)', r'* \1', re.sub(r'\]', r'] ', text))).split()
         parts = [x for x in parts if x != 'struct']
 
@@ -402,11 +409,15 @@ class ZigOutputGenerator(OutputGenerator):
             lengths.pop()
             parts.pop()
             parts.pop()
-            valueType = 'VkCString'
+            valueType = 'VkCString'           
     
         defaultValue = '0'
 
-        typeDecl = ''.join(buffers)
+        typeDecl = ''
+        if isFunctionParam and len(buffers) > 0:
+            typeDecl += '*'
+        typeDecl += ''.join(buffers)
+
         starIndex = 0
         parenDepth = 0
         for part in parts:
@@ -486,7 +497,7 @@ class ZigOutputGenerator(OutputGenerator):
             #    # OpenXR-specific macro insertion - but not in apiinc for the spec
             #    tail = self.genOpts.conventions.make_voidpointer_alias(tail)
         
-        return '    ' + self.parseParam(paramText, param, allParams).structDecl()
+        return '    ' + self.parseParam(paramText, False, param, allParams).structDecl()
 
     def genGroup(self, groupinfo, groupName, alias=None):
         """Generate groups (e.g. C "enum" type).
@@ -663,7 +674,7 @@ class ZigOutputGenerator(OutputGenerator):
 
         - cmd - Element containing a `<command>` tag"""
         proto = cmd.find('proto')
-        params = cmd.findall('param')
+        paramTags = cmd.findall('param')
         # Begin accumulating prototype and typedef strings
         pdecl = 'pub extern fn '
         tdecl = 'typedef '
@@ -697,6 +708,14 @@ class ZigOutputGenerator(OutputGenerator):
         pdecl = ' '.join(pdecl.split())
         tdecl = ' '.join(tdecl.split())
 
+        params = []
+        for param in paramTags:
+            paramText = noneStr(param.text)
+            for tag in param:
+                paramText += ' ' + noneStr(tag.text)
+                paramText += ' ' + noneStr(tag.tail)
+            params.append(self.parseParam(paramText, True, param, paramTags))
+
         # Now add the parameter declaration list, which is identical
         # for prototypes and typedefs. Concatenate all the text from
         # a <param> node without the tags. No tree walking required
@@ -705,23 +724,18 @@ class ZigOutputGenerator(OutputGenerator):
         # self.indentFuncPointer
         n = len(params)
         # Indented parameters
-        if n > 0:
+        if len(params) > 1:
             indentdecl = '(\n'
-            indentdecl += ',\n'.join(self.makeZigParamDecl(params, p)
-                                     for p in params)
-            indentdecl += ',\n)'
+            for p in params:
+                indentdecl += '    ' + p.paramDecl() + ',\n'
+            indentdecl += ')'
         else:
-            indentdecl = '()'
-        # Non-indented parameters
-        paramdecl = '('
-        if n > 0:
-            paramnames = (''.join(t for t in p.itertext())
-                          for p in params)
-            paramdecl += ', '.join(paramnames)
-        else:
-            paramdecl += ''
-        paramdecl += ")"
-        return [pdecl + indentdecl + ' ' + returnType + ';', tdecl + paramdecl + ';']
+            indentdecl = '('
+            for p in params:
+                indentdecl += p.paramDecl()
+            indentdecl += ')'
+
+        return [pdecl + indentdecl + ' ' + returnType + ';', '']
     
     def makeProtoName(self, name, tail):
         """Turn a `<proto>` `<name>` into C-language prototype
