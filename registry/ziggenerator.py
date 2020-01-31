@@ -128,7 +128,14 @@ class ZigOutputGenerator(OutputGenerator):
         self.sections = {section: [] for section in self.ALL_SECTIONS}
         self.feature_not_empty = False
         self.may_alias = None
-        self.handleTypes = { 'VkCString': True }
+        self.handleTypes = {
+            'VkCString': True,
+            'HANDLE': True,
+            'HINSTANCE': True,
+            'HWND': True,
+            'HMONITOR': True,
+            'LPCWSTR': True,
+        }
 
     def beginFile(self, genOpts):
         OutputGenerator.beginFile(self, genOpts)
@@ -353,15 +360,20 @@ class ZigOutputGenerator(OutputGenerator):
 
         allMembers = list(typeElem.findall('.//member'))
         for member in allMembers:
-            body += self.makeZigParamDecl(allMembers, member)
-            body += ',\n'
+            paramText = noneStr(member.text)
+            for elem in member:
+                if elem.text: paramText += ' ' + elem.text
+                if elem.tail: paramText += ' ' + elem.tail
 
+            param = self.parseParam(paramText, False, member, allMembers, typeName)
+            body += '    ' + param.structDecl() + ',\n'
+        
         body += '};\n'
 
         self.appendSection('struct', body)
 
         
-    def parseParam(self, text, isFunctionParam, param=None, allParams=[]):
+    def parseParam(self, text, isFunctionParam, param=None, allParams=[], enclosingType=None):
         parts = re.sub(r'(\S)\*', r'\1 *', re.sub(r'\*(\S)', r'* \1', re.sub(r'\]', r'] ', text))).split()
         parts = [x for x in parts if x != 'struct']
 
@@ -415,7 +427,11 @@ class ZigOutputGenerator(OutputGenerator):
 
         typeDecl = ''
         if isFunctionParam and len(buffers) > 0:
+            # fix up fixed-length buffer params: const float[4] becomes *const[4]f32
             typeDecl += '*'
+            if len(parts) > 0 and parts[0] == 'const':
+                parts.pop(0)
+                typeDecl += 'const'
         typeDecl += ''.join(buffers)
 
         starIndex = 0
@@ -452,7 +468,11 @@ class ZigOutputGenerator(OutputGenerator):
         if len(typeDecl) > 0 and typeDecl[-1].isalpha():
             typeDecl += ' '
 
-        typeDecl += valueTypeToZigType(valueType, fixFlagType=True)
+        if valueType == enclosingType:
+            typeDecl += '@This()'
+        else:
+            typeDecl += valueTypeToZigType(valueType, fixFlagType=True)
+
         for x in range(parenDepth):
             typeDecl += ')'
 
@@ -478,26 +498,7 @@ class ZigOutputGenerator(OutputGenerator):
                 if len(values) == 1 and values[0].startswith('VK_STRUCTURE_TYPE_'):
                     defaultInitValue = values[0].replace('VK_STRUCTURE_TYPE_', '.')
         
-        return ZigParam(typeDecl, valueType, name, defaultInitValue)
-
-
-    def makeZigParamDecl(self, allParams, param):
-        """Return a string which is an indented, formatted
-        declaration for a `<param>` or `<member>` block (e.g. function parameter
-        or structure/union member).
-
-        - param - Element (`<param>` or `<member>`) to format"""
-        
-        paramText = noneStr(param.text)
-        for elem in param:
-            if elem.text: paramText += ' ' + elem.text
-            if elem.tail: paramText += ' ' + elem.tail
-
-            #if self.should_insert_may_alias_macro and self.genOpts.conventions.is_voidpointer_alias(elem.tag, text, tail):
-            #    # OpenXR-specific macro insertion - but not in apiinc for the spec
-            #    tail = self.genOpts.conventions.make_voidpointer_alias(tail)
-        
-        return '    ' + self.parseParam(paramText, False, param, allParams).structDecl()
+        return ZigParam(typeDecl, valueType, name, defaultInitValue)        
 
     def genGroup(self, groupinfo, groupName, alias=None):
         """Generate groups (e.g. C "enum" type).
@@ -532,6 +533,7 @@ class ZigOutputGenerator(OutputGenerator):
         just integers."""
         OutputGenerator.genEnum(self, enuminfo, name, alias)
         (_, strVal) = self.enumToValue(enuminfo.elem, False)
+        if strVal.startswith('VK_'): strVal = strVal[3:]
         body = 'pub const ' + name[3:] + ' = ' + strVal + ';'
         self.appendSection('enum', body)
 
@@ -571,6 +573,7 @@ class ZigOutputGenerator(OutputGenerator):
 
         declBody = ''
         aliasBody = ''
+        usedNames = {}
 
         # Loop over the nested 'enum' tags.
         for elem in groupElem.findall('enum'):
@@ -579,6 +582,9 @@ class ZigOutputGenerator(OutputGenerator):
             # Should catch exceptions here for more complex constructs. Not yet.
             (numVal, strVal) = self.enumToValue(elem, True)
             name = enumNameToZigName(elem.get('name'), expandName)
+            # some enums incorrectly have duplicated names :(
+            if name in usedNames: continue
+            usedNames[name] = True
 
             if numVal is not None:
                 declBody += "    pub const {}: {} = {};\n".format(name, zigFlagTypeName, strVal)
@@ -625,9 +631,8 @@ class ZigOutputGenerator(OutputGenerator):
 
         # Accumulate non-numeric enumerant values separately and append
         # them following the numeric values, to allow for aliases.
-        # NOTE: this doesn't do a topological sort yet, so aliases of
-        # aliases can still get in the wrong order.
         aliasText = []
+        usedNames = {}
 
         for elem in enums:
             # Convert the value to an integer and use that to track min/max.
@@ -635,6 +640,9 @@ class ZigOutputGenerator(OutputGenerator):
             # Should catch exceptions here for more complex constructs. Not yet.
             (numVal, strVal) = self.enumToValue(elem, True)
             name = enumNameToZigName(elem.get('name'), expandPrefix)
+            # some enums incorrectly have duplicated names :(
+            if name in usedNames: continue
+            usedNames[name] = True
 
             # Extension enumerants are only included if they are required
             if self.isEnumRequired(elem):
@@ -647,7 +655,9 @@ class ZigOutputGenerator(OutputGenerator):
                     aliasText.append(decl)
 
         # Now append the non-numeric enumerant values
-        body.extend(aliasText)
+        if aliasText:
+            body.append('')
+            body.extend(aliasText)
 
         # Postfix
         body.append("};")
