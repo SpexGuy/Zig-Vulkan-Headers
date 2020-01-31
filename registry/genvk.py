@@ -336,26 +336,11 @@ def makeGenOpts(args):
             addExtensions     = addPlatformExtensionsRE,
             removeExtensions  = None,
             emitExtensions    = emitPlatformExtensionsRE,
-            prefixText        = prefixStrings + vkPrefixStrings)
+            prefixText        = prefixStrings + vkPrefixStrings,
+            lineEndings       = '\n',
+            coreFile          = 'vulkan_core.zig')
 
         genOpts[headername] = [ ZigOutputGenerator, opts ]
-        
-    genOpts['vulkan_core.zig'] = [
-          ZigOutputGenerator,
-          ZigGeneratorOptions(
-            conventions       = conventions,
-            filename          = 'vulkan_core.zig',
-            directory         = directory,
-            apiname           = 'vulkan',
-            profile           = None,
-            versions          = featuresPat,
-            emitversions      = featuresPat,
-            defaultExtensions = defaultExtensions,
-            addExtensions     = None,
-            removeExtensions  = removeExtensionsPat,
-            emitExtensions    = emitExtensionsPat,
-            prefixText        = prefixStrings + vkPrefixStrings)
-        ]
 
 
     # Header for core API + extensions.
@@ -394,6 +379,24 @@ def makeGenOpts(args):
             apientryp         = 'VKAPI_PTR *',
             alignFuncParam    = 48,
             genEnumBeginEndRange = True)
+        ]
+
+    genOpts['vulkan_core.zig'] = [
+          ZigOutputGenerator,
+          ZigGeneratorOptions(
+            conventions       = conventions,
+            filename          = 'vulkan_core.zig',
+            directory         = directory,
+            apiname           = 'vulkan',
+            profile           = None,
+            versions          = featuresPat,
+            emitversions      = featuresPat,
+            defaultExtensions = defaultExtensions,
+            addExtensions     = None,
+            removeExtensions  = removeExtensionsPat,
+            emitExtensions    = emitExtensionsPat,
+            prefixText        = prefixStrings + vkPrefixStrings,
+            lineEndings       = '\n')
         ]
 
     # Unused - vulkan10.h target.

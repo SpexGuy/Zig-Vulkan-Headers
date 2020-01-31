@@ -126,7 +126,8 @@ class GeneratorOptions:
                  addExtensions=None,
                  removeExtensions=None,
                  emitExtensions=None,
-                 sortProcedure=regSortFeatures):
+                 sortProcedure=regSortFeatures,
+                 lineEndings=None):
         """Constructor.
 
         Arguments:
@@ -212,6 +213,10 @@ class GeneratorOptions:
         them in place to a preferred order in the generated output.
         Default is core API versions, ARB/KHR/OES extensions, all
         other extensions, alphabetically within each group."""
+        
+        self.lineEndings = lineEndings
+        """line endings to use for the generated header.
+        can be '\n' (unix), '\r\n' (windows), or None (platform default)"""
 
     def emptyRegex(self, pat):
         """Substitute a regular expression which matches no version
@@ -560,7 +565,7 @@ class OutputGenerator:
 
         # Open a temporary file for accumulating output.
         if self.genOpts.filename is not None:
-            self.outFile = tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', delete=False)
+            self.outFile = tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', delete=False, newline=genOpts.lineEndings)
         else:
             self.outFile = sys.stdout
 

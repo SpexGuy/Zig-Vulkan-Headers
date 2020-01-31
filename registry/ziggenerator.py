@@ -60,6 +60,22 @@ def enumNameToZigName(enumName, enumTypeExpanded):
         if name[0].isdecimal(): name = 'T_' + name
         return name
 
+class ZigParam:
+    def __init__(self, fullType, cValueType, name, defaultValue):
+        self.fullType = fullType
+        self.cValueType = cValueType
+        self.name = name
+        self.defaultValue = defaultValue
+    
+    def structDecl(self):
+        decl = self.name + ': ' + self.fullType
+        if self.defaultValue:
+            decl += ' = ' + self.defaultValue
+        return decl
+    
+    def paramDecl(self):
+        return self.name + ': ' + self.fullType
+
 class ZigGeneratorOptions(GeneratorOptions):
     """ZigGeneratorOptions - subclass of GeneratorOptions.
 
@@ -70,6 +86,7 @@ class ZigGeneratorOptions(GeneratorOptions):
                  prefixText="",
                  indentFuncProto=True,
                  indentFuncPointer=False,
+                 coreFile=None,
                  **kwargs
                  ):
         """Constructor.
@@ -91,6 +108,11 @@ class ZigGeneratorOptions(GeneratorOptions):
 
         self.indentFuncPointer = indentFuncPointer
         """True if typedefed function pointers should put each parameter on a separate line"""
+        
+        if coreFile == self.filename: coreFile = None
+        self.coreFile = coreFile
+        """Set to the file name that this file should include for core, or None if this is the core"""
+        
 
 class ZigOutputGenerator(OutputGenerator):
     """Generates Zig-language API interfaces."""
@@ -116,7 +138,11 @@ class ZigOutputGenerator(OutputGenerator):
         if genOpts.prefixText:
             for s in genOpts.prefixText:
                 write(s, file=self.outFile)
-        write('pub const CString = [*]const u8;', file=self.outFile)
+        
+        if genOpts.coreFile:
+            write('usingnamespace @import("' + genOpts.coreFile + '");', file=self.outFile)
+        else:
+            write('pub const CString = [*]const u8;', file=self.outFile)
 
     def beginFeature(self, interface, emit):
         # Start processing in superclass
@@ -275,16 +301,29 @@ class ZigOutputGenerator(OutputGenerator):
         returnText = preNameText.split('(')[0]
         returnText = returnText.replace('typedef', '').strip()
         # turn it into a variable declaration and parse it
-        returnText += ' retVal'
-        #returnParam = self.parseParam(returnText)
+        if returnText == 'void':
+            returnType = 'void'
+        else:
+            returnType = self.parseParam(returnText + ' retVal').fullType
         
         # parse out the parameter list
         paramStart = text.rindex('(')
         paramEnd = text.rindex(')')
         paramStrings = text[paramStart+1 : paramEnd].split(',')
-        #params = [self.parseParam(x) for x in paramStrings]
+        params = [self.parseParam(x) for x in paramStrings if x != 'void']
         
-        #self.appendSection(section, body)
+        body = 'pub const ' + valueTypeToZigType(name) + ' = extern fn ('
+        if len(params) > 1:
+            body += '\n'
+            for param in params:
+                body += '    ' + param.fullType + ',\n'
+        else:
+            for param in params:
+                body += param.fullType
+        
+        body += ') ' + returnType + ';\n'
+        
+        self.appendSection(section, body)
     
 
     def genStruct(self, typeinfo, typeName):
@@ -307,31 +346,16 @@ class ZigOutputGenerator(OutputGenerator):
 
         allMembers = list(typeElem.findall('.//member'))
         for member in allMembers:
-            body += self.makeZigParamDecl(allMembers, member, True)
+            body += self.makeZigParamDecl(allMembers, member)
             body += ',\n'
 
         body += '};\n'
 
         self.appendSection('struct', body)
 
-    def makeZigParamDecl(self, allParams, param, includeDefault=False):
-        """Return a string which is an indented, formatted
-        declaration for a `<param>` or `<member>` block (e.g. function parameter
-        or structure/union member).
-
-        - param - Element (`<param>` or `<member>`) to format"""
         
-        tokenize = lambda text : re.sub(r'(\S)\*', r'\1 *', re.sub(r'\*(\S)', r'* \1', text)).split()
-        parts = []
-        if param.text: parts.extend(tokenize(param.text))
-        for elem in param:
-            if elem.text: parts.extend(tokenize(elem.text))
-            if elem.tail: parts.extend(tokenize(elem.tail))
-
-            if self.should_insert_may_alias_macro and self.genOpts.conventions.is_voidpointer_alias(elem.tag, text, tail):
-                # OpenXR-specific macro insertion - but not in apiinc for the spec
-                tail = self.genOpts.conventions.make_voidpointer_alias(tail)
-        
+    def parseParam(self, text, param=None, allParams=[]):
+        parts = re.sub(r'(\S)\*', r'\1 *', re.sub(r'\*(\S)', r'* \1', re.sub(r'\]', r'] ', text))).split()
         parts = [x for x in parts if x != 'struct']
 
         # parts is of the form
@@ -346,14 +370,13 @@ class ZigOutputGenerator(OutputGenerator):
                 parts.pop()
                 buffers.append('[' + length[3:] + ']')
         
-        
         if parts[0] == 'const':
             parts[0] = parts[1]
             parts[1] = 'const'
             # check for redundant const
             if len(parts) > 2 and parts[2] == 'const':
                 parts.pop(2)
-        
+                        
         name = parts.pop()
         valueType = parts.pop(0)
         parts.reverse()
@@ -363,18 +386,24 @@ class ZigOutputGenerator(OutputGenerator):
             if part == '*':
                 numStars += 1
         
-        lengths = noneStr(param.get('len')).split(',')
-        if len(lengths) == 1 and len(lengths[0]) == 0: lengths = []
-        while len(lengths) < numStars: lengths.append('1')
-        while len(lengths) > numStars: lengths.pop()
-        
+        if param is not None:
+            lengths = noneStr(param.get('len')).split(',')
+            if len(lengths) == 1 and len(lengths[0]) == 0: lengths = []
+            while len(lengths) < numStars: lengths.append('1')
+            while len(lengths) > numStars: lengths.pop()
+            isParamOptional = param.get('optional') == 'true'
+        else:
+            lengths = ["_" for x in range(numStars)]
+            isParamOptional = True
+            if valueType == 'char' and numStars > 0:
+                lengths[-1] = 'null-terminated'
+            
         if valueType == 'char' and len(parts) >= 2 and parts[-1] == 'const' and parts[-2] == '*' and lengths[-1] == 'null-terminated':
             lengths.pop()
             parts.pop()
             parts.pop()
             valueType = 'VkCString'
-
-        isParamOptional = param.get('optional') == 'true'
+    
         defaultValue = '0'
 
         typeDecl = ''.join(buffers)
@@ -416,33 +445,48 @@ class ZigOutputGenerator(OutputGenerator):
         for x in range(parenDepth):
             typeDecl += ')'
 
-        # construct the declaration
-        paramdecl = '    ' + name + ': ' + typeDecl
+        defaultInitValue = None
+        if isParamOptional:
+            defaultInitValue = defaultValue
+        elif name == 'pNext' and valueType == 'void':
+            defaultInitValue = 'null'
+        elif allParams and len(lengths) >= 1:
+            parentElem = None
+            for m in allParams:
+                mName = m.find('name').text
+                if mName == lengths[0]:
+                    parentElem = m
+                    break
+            # determine if the parent is optional
+            if parentElem and parentElem.get('optional') == 'true':
+                defaultInitValue = 'undefined'
+        else:
+            valuesStr = param.get('values')
+            if valuesStr:
+                values = valuesStr.split(',')
+                if len(values) == 1 and values[0].startswith('VK_STRUCTURE_TYPE_'):
+                    defaultInitValue = values[0].replace('VK_STRUCTURE_TYPE_', '.')
+        
+        return ZigParam(typeDecl, valueType, name, defaultInitValue)
 
-        # add a default initialization value
-        if includeDefault:
-            if isParamOptional:
-                paramdecl += ' = ' + defaultValue
-            elif name == 'pNext' and valueType == 'void':
-                paramdecl += ' = null'
-            elif len(lengths) >= 1:
-                # determine if the parent is optional
-                parentElem = None
-                for m in allParams:
-                    mName = m.find('name').text
-                    if mName == lengths[0]:
-                        parentElem = m
-                        break
-                if parentElem and parentElem.get('optional') == 'true':
-                    paramdecl += ' = undefined'
-            else:
-                valuesStr = param.get('values')
-                if valuesStr:
-                    values = valuesStr.split(',')
-                    if len(values) == 1 and values[0].startswith('VK_STRUCTURE_TYPE_'):
-                        paramdecl += ' = ' + values[0].replace('VK_STRUCTURE_TYPE_', '.')
 
-        return paramdecl
+    def makeZigParamDecl(self, allParams, param):
+        """Return a string which is an indented, formatted
+        declaration for a `<param>` or `<member>` block (e.g. function parameter
+        or structure/union member).
+
+        - param - Element (`<param>` or `<member>`) to format"""
+        
+        paramText = noneStr(param.text)
+        for elem in param:
+            if elem.text: paramText += ' ' + elem.text
+            if elem.tail: paramText += ' ' + elem.tail
+
+            #if self.should_insert_may_alias_macro and self.genOpts.conventions.is_voidpointer_alias(elem.tag, text, tail):
+            #    # OpenXR-specific macro insertion - but not in apiinc for the spec
+            #    tail = self.genOpts.conventions.make_voidpointer_alias(tail)
+        
+        return '    ' + self.parseParam(paramText, param, allParams).structDecl()
 
     def genGroup(self, groupinfo, groupName, alias=None):
         """Generate groups (e.g. C "enum" type).
