@@ -55,26 +55,178 @@ def valueTypeToZigType(typeName, fixFlagType=False):
     return typeName
 
 def enumNameToZigName(enumName, enumTypeExpanded):
-        name = enumName.replace(enumTypeExpanded, '')
-        if name.startswith('VK_'): name = name[3:]
-        if name[0].isdecimal(): name = 'T_' + name
-        return name
+    name = enumName.replace(enumTypeExpanded, '')
+    if name.startswith('VK_'): name = name[3:]
+    if name[0].isdecimal(): name = 'T_' + name
+    return name
+
+class ZigValueType:
+    def __init__(self, cValueType, declValueType, isPointer, isOptional):
+        self.cValueType = cValueType
+        self.declValueType = declValueType
+        self.isPointer = isPointer
+        self.isOptional = isOptional
+
+class ZigIndirect:
+    TYPE_BUFFER = 1
+    TYPE_POINTER = 2
+    TYPE_SLICE = 3
+
+    def __init__(self, type, cLength, isOptional, isConst):
+        self.type = type
+        self.cLength = cLength
+        self.isOptional = isOptional
+        self.isConst = isConst
+        
+        self.lenParam = None
+        """ After linking, pointer to the ZigParam with the length of this pointer """
 
 class ZigParam:
-    def __init__(self, fullType, cValueType, name, defaultValue):
-        self.fullType = fullType
-        self.cValueType = cValueType
+    def __init__(self, name, valueType, indirections, defaultValue, isOptional):
         self.name = name
+        """ The name of this parameter or member """
+        
+        self.valueType = valueType
+        """ The ZigValueType of this parameter """
+
+        self.indirections = indirections
+        """ The []ZigIndirect buffers and pointers, from outermost to innermost """
+        
         self.defaultValue = defaultValue
+        """ If the member should be initialized to a default value, the default value literal """
+        
+        self.isOptional = isOptional
+
+        self.buffers = []
+        """ After linking, the list of parameters for which this parameter is the length """
+        
+    def isOutParam(self):
+        if self.valueType.cValueType == 'void': return False
+        if len(self.indirections) == 0: return False
+        outermost = self.indirections[0]
+        return outermost.type == ZigIndirect.TYPE_POINTER and not outermost.isConst and outermost.cLength == '1' and not outermost.isOptional
+    
+    def isValueInParam(self):
+        if self.valueType.cValueType == 'void': return False
+        if len(self.indirections) == 0: return False
+        outermost = self.indirections[0]
+        return outermost.type == ZigIndirect.TYPE_POINTER and outermost.isConst and outermost.cLength == '1' and not outermost.isOptional
+    
+    def isMutableBufferLen(self):
+        if not self.buffers: return False
+        if len(self.indirections) == 0: return False
+        outermost = self.indirections[0]
+        return outermost.type == ZigIndirect.TYPE_POINTER and not outermost.isConst and outermost.cLength == '1'
+        
+    def isConstBufferLen(self):
+        if not self.buffers: return False
+        return len(self.indirections) == 0
+        
+    def isBuffer(self):
+        if len(self.indirections) == 0: return False
+        outermost = self.indirections[0]
+        return outermost.type == ZigIndirect.TYPE_POINTER and outermost.cLength != '1'
+
+    def getValueParam(self):
+        """ Get a parameter that has one less indirection """
+        name = self.bufferName()
+        return ZigParam(name, self.valueType, self.indirections[1:], None, self.isOptional)
+        
+    def bufferName(self):
+        name = self.name
+        if name[0] == 'p' and (name[1].isupper() or name[1] == 'p'):
+            name = name[1:2].lower() + name[2:]
+        return name
+
+    def getBufferParam(self):
+        ind0 = self.indirections[0]
+        name = self.bufferName()
+        valueType = self.valueType
+        if valueType.cValueType == 'void':
+            # translate to []u8
+            valueType = ZigValueType(valueType.cValueType, 'u8', valueType.isPointer, valueType.isOptional)
+        value = ZigParam(name, valueType, self.indirections[1:], None, self.isOptional)
+        value.indirections.insert(0, ZigIndirect(ZigIndirect.TYPE_SLICE, ind0.cLength, False, ind0.isConst))
+        return value
+        
+    def getCopy(self):
+        return ZigParam(self.name, self.valueType, self.indirections, self.defaultValue, self.isOptional)
+        
+        
+    def link(params):
+        for param in params:
+            if len(param.indirections) >= 1 and param.indirections[0].type == ZigIndirect.TYPE_POINTER:
+                lenName = param.indirections[0].cLength
+                for other in params:
+                    if other.name == lenName:
+                        param.indirections[0].lenParam = other
+                        other.buffers.append(param)
+                        break
+    
+    def typeDecl(self):
+        parenDepth = 0
+        decl = ''
+        for indirect in self.indirections:
+            if indirect.type == ZigIndirect.TYPE_BUFFER:
+                zigLen = indirect.cLength
+                if zigLen.startswith('VK_'): zigLen = zigLen[3:]
+                decl += '[' + zigLen + ']'
+            elif indirect.type == ZigIndirect.TYPE_POINTER:
+                isVoid = self.valueType.cValueType == 'void'
+                isArray = indirect.cLength != '1'
+                isOptional = indirect.isOptional
+                if isOptional:
+                    if len(decl) > 0:
+                        decl += '('
+                        parenDepth += 1
+                    decl += '?'
+                if isArray and not isVoid:
+                    decl += '[*]'
+                else:
+                    decl += '*'
+            elif indirect.type == ZigIndirect.TYPE_SLICE:
+                if indirect.isOptional:
+                    if len(decl) > 0:
+                        decl += '('
+                        parenDepth += 1
+                    decl += '?'
+                decl += '[]'
+            
+            if indirect.isConst:
+                decl += 'const'
+                
+        if self.valueType.isOptional:
+            if len(decl) > 0:
+                decl += '('
+                parenDepth += 1
+            decl += '?'
+
+        if len(decl) > 0 and decl[-1].isalpha():
+            decl += ' '
+        decl += self.valueType.declValueType
+        
+        for _ in range(parenDepth):
+            decl += ')'
+            
+        return decl
     
     def structDecl(self):
-        decl = self.name + ': ' + self.fullType
+        decl = self.name + ': ' + self.typeDecl()
         if self.defaultValue:
             decl += ' = ' + self.defaultValue
         return decl
     
     def paramDecl(self):
-        return self.name + ': ' + self.fullType
+        return self.name + ': ' + self.typeDecl()
+        
+    def varDecl(self):
+        decl = 'var ' + self.name + ': ' + self.typeDecl()
+        if self.defaultValue:
+            decl += ' = ' + self.defaultValue
+        else:
+            decl += ' = undefined'
+        return decl
+    
 
 class ZigGeneratorOptions(GeneratorOptions):
     """ZigGeneratorOptions - subclass of GeneratorOptions.
@@ -136,6 +288,8 @@ class ZigOutputGenerator(OutputGenerator):
             'HMONITOR': True,
             'LPCWSTR': True,
         }
+        self.resultAliases = {}
+
 
     def beginFile(self, genOpts):
         OutputGenerator.beginFile(self, genOpts)
@@ -149,6 +303,7 @@ class ZigOutputGenerator(OutputGenerator):
                     s = '//' + s[2:]
                 write(s, file=self.outFile)
         
+        write('const assert = @import("std").debug.assert;', file=self.outFile)
         if genOpts.coreFile:
             write('usingnamespace @import("' + genOpts.coreFile + '");', file=self.outFile)
         else:
@@ -182,8 +337,8 @@ class ZigOutputGenerator(OutputGenerator):
                             write('\n'.join(contents), file=self.outFile)
                     if self.sections['command']:
                         write('\n'.join(self.sections['command']), file=self.outFile)
-                    #if self.sections['commandWrapper']:
-                        #write('\n'.join(self.sections['commandWrapper']), file=self.outFile)
+                    if self.sections['commandWrapper']:
+                        write('\n'.join(self.sections['commandWrapper']), file=self.outFile)
         # Finish processing in superclass
         OutputGenerator.endFeature(self)
 
@@ -318,7 +473,7 @@ class ZigOutputGenerator(OutputGenerator):
         if returnText == 'void':
             returnType = 'void'
         else:
-            returnType = self.parseParam(returnText + ' retVal', True).fullType
+            returnType = self.parseParam(returnText + ' retVal', True).typeDecl()
         
         # parse out the parameter list
         paramStart = text.rindex('(')
@@ -330,10 +485,10 @@ class ZigOutputGenerator(OutputGenerator):
         if len(params) > 1:
             body += '\n'
             for param in params:
-                body += '    ' + param.fullType + ',\n'
+                body += '    ' + param.typeDecl() + ',\n'
         else:
             for param in params:
-                body += param.fullType
+                body += param.typeDecl()
         
         body += ') ' + returnType + ';\n'
         
@@ -379,108 +534,96 @@ class ZigOutputGenerator(OutputGenerator):
 
         # parts is of the form
         # (const)? <valueType> ((const)? \*)* <name> (\[ <bufferLen> \])*      
-        buffers = []
+        indirects = []
+
         while parts[-1].endswith(']'):
             if parts[-1].startswith('['):
-                buffers.append(parts.pop())
+                fullDecl = parts.pop()
+                length = fullDecl[1:-1].strip()
             else:
                 parts.pop()
                 length = parts.pop()
                 parts.pop()
-                buffers.append('[' + length[3:] + ']')
+
+            indirects.append(ZigIndirect(ZigIndirect.TYPE_BUFFER, length, False, False))
         
         if parts[0] == 'const':
             parts[0] = parts[1]
             parts[1] = 'const'
-            # check for redundant const
+            # check for redundant const (e.g. const char const * const)
             if len(parts) > 2 and parts[2] == 'const':
                 parts.pop(2)
-                        
+
         name = parts.pop()
-        valueType = parts.pop(0)
+        cValueType = parts.pop(0)
         parts.reverse()
+        
+        # fix name collisions with zig keywords
+        if name == 'type':
+            name = 'inType'
         
         numStars = 0
         for part in parts:
             if part == '*':
                 numStars += 1
-        
+
         if param is not None:
             lengths = noneStr(param.get('len')).split(',')
             if len(lengths) == 1 and len(lengths[0]) == 0: lengths = []
-            while len(lengths) < numStars: lengths.append('1')
             while len(lengths) > numStars: lengths.pop()
+            while len(lengths) < numStars: lengths.append('1')
             isParamOptional = param.get('optional') == 'true'
         else:
             lengths = ["_" for x in range(numStars)]
             isParamOptional = True
-            if valueType == 'char' and numStars > 0:
+            if cValueType == 'char' and numStars > 0:
                 lengths[-1] = 'null-terminated'
             
-        if valueType == 'char' and len(parts) >= 2 and parts[-1] == 'const' and parts[-2] == '*' and lengths[-1] == 'null-terminated':
+        if cValueType == 'char' and len(parts) >= 2 and parts[-1] == 'const' and parts[-2] == '*' and lengths[-1] == 'null-terminated':
             lengths.pop()
             parts.pop()
             parts.pop()
-            valueType = 'VkCString'           
+            cValueType = 'VkCString'
     
-        defaultValue = '0'
-
-        typeDecl = ''
-        if isFunctionParam and len(buffers) > 0:
+        # IMPORTANT: We have only processed buffers up to this point.
+        if isFunctionParam and len(indirects) > 0:
             # fix up fixed-length buffer params: const float[4] becomes *const[4]f32
-            typeDecl += '*'
-            if len(parts) > 0 and parts[0] == 'const':
-                parts.pop(0)
-                typeDecl += 'const'
-        typeDecl += ''.join(buffers)
+            isConst = len(parts) > 0 and parts[0] == 'const'
+            if isConst: parts.pop(0)
+
+            extraPointer = ZigIndirect(ZigIndirect.TYPE_POINTER, '1', isParamOptional, isConst)
+            indirects.insert(0, extraPointer)
 
         starIndex = 0
-        parenDepth = 0
         for part in parts:
             if part == '*':
-                defaultValue = 'null'
-                isVoid = valueType == 'void'
-                isArray = lengths[starIndex] != '1'
-                isOptional = starIndex == 0 and (isParamOptional or isVoid)
-                if isOptional:
-                    if len(typeDecl) > 0:
-                        typeDecl += '('
-                        parenDepth += 1
-                    typeDecl += '?'
-                if isArray and not isVoid:
-                    typeDecl += '[*]'
-                else:
-                    typeDecl += '*'
+                isOptional = len(indirects) == 0 and (isParamOptional or cValueType == 'void')
+                length = lengths[starIndex]
                 starIndex += 1
+                # set isConst to false, we will set it after if the next token is 'const'
+                indirects.append(ZigIndirect(ZigIndirect.TYPE_POINTER, length, isOptional, False))
 
-            else:
-                typeDecl += part
+            elif part == 'const':
+                indirects[-1].isConst = True
 
-        if starIndex == 0 and isParamOptional and self.isValueTypePointer(valueType):
-            defaultValue = 'null'
-            # TODO: Only if pointer type!!
-            if len(typeDecl) > 0:
-                typeDecl += '('
-                parenDepth += 1
-            typeDecl += '?'
+        valueTypeIsHandle = self.isValueTypePointer(cValueType)
+        valueTypeOptional = isParamOptional and len(indirects) == 0 and valueTypeIsHandle
 
-        # if the type ends with const we need a space before the value
-        if len(typeDecl) > 0 and typeDecl[-1].isalpha():
-            typeDecl += ' '
-
-        if valueType == enclosingType:
-            typeDecl += '@This()'
+        if cValueType == enclosingType:
+            declValueType = '@This()'
         else:
-            typeDecl += valueTypeToZigType(valueType, fixFlagType=True)
+            declValueType = valueTypeToZigType(cValueType, fixFlagType=True)
+        
+        if len(indirects) > 0:
+            isPointer = indirects[0].type == ZigIndirect.TYPE_POINTER
+        else:
+            isPointer = valueTypeIsHandle
 
-        for x in range(parenDepth):
-            typeDecl += ')'
-
-        defaultInitValue = None
+        defaultValue = None
         if isParamOptional:
-            defaultInitValue = defaultValue
-        elif name == 'pNext' and valueType == 'void':
-            defaultInitValue = 'null'
+            defaultValue = 'null' if isPointer else '0'
+        elif name == 'pNext' and cValueType == 'void':
+            defaultValue = 'null'
         elif allParams and len(lengths) >= 1:
             parentElem = None
             for m in allParams:
@@ -490,15 +633,16 @@ class ZigOutputGenerator(OutputGenerator):
                     break
             # determine if the parent is optional
             if parentElem and parentElem.get('optional') == 'true':
-                defaultInitValue = 'undefined'
+                defaultValue = 'undefined'
         else:
             valuesStr = param.get('values')
             if valuesStr:
                 values = valuesStr.split(',')
                 if len(values) == 1 and values[0].startswith('VK_STRUCTURE_TYPE_'):
-                    defaultInitValue = values[0].replace('VK_STRUCTURE_TYPE_', '.')
+                    defaultValue = values[0].replace('VK_STRUCTURE_TYPE_', '.')
         
-        return ZigParam(typeDecl, valueType, name, defaultInitValue)        
+        valueType = ZigValueType(cValueType, declValueType, valueTypeIsHandle, valueTypeOptional)
+        return ZigParam(name, valueType, indirects, defaultValue, isParamOptional)
 
     def genGroup(self, groupinfo, groupName, alias=None):
         """Generate groups (e.g. C "enum" type).
@@ -650,13 +794,16 @@ class ZigOutputGenerator(OutputGenerator):
                     decl = "    {} = {},".format(name, strVal)
                     body.append(decl)
                 else:
+                    if groupName == 'VkResult':
+                        self.resultAliases[elem.get('name')] = strVal
                     strVal = enumNameToZigName(strVal, expandPrefix)
-                    decl = "    pub const {} = {};".format(name, strVal)
+                    decl = "    pub const {} = Self.{};".format(name, strVal)
                     aliasText.append(decl)
 
         # Now append the non-numeric enumerant values
         if aliasText:
             body.append('')
+            body.append('    const Self = @This();')
             body.extend(aliasText)
 
         # Postfix
@@ -668,17 +815,11 @@ class ZigOutputGenerator(OutputGenerator):
         "Command generation"
         OutputGenerator.genCmd(self, cmdinfo, name, alias)
 
-        # if alias:
-        #     prefix = '// ' + name + ' is an alias of command ' + alias + '\n'
-        # else:
-        #     prefix = ''
-
-        prefix = ''
-        decls = self.makeZigDecls(cmdinfo.elem)
-        self.appendSection('command', prefix + decls[0] + '\n')
+        decls = self.makeZigDecls(cmdinfo.elem, name)
+        self.appendSection('command', decls[0] + '\n')
         self.appendSection('commandWrapper', decls[1])
 
-    def makeZigDecls(self, cmd):
+    def makeZigDecls(self, cmd, name):
         """Return Zig prototype and function pointer typedef for a
         `<command>` Element, as a two-element list of strings.
 
@@ -686,8 +827,6 @@ class ZigOutputGenerator(OutputGenerator):
         proto = cmd.find('proto')
         paramTags = cmd.findall('param')
         # Begin accumulating prototype and typedef strings
-        pdecl = 'pub extern fn '
-        tdecl = 'typedef '
 
         # Insert the function return type/name.
         # For prototypes, add APIENTRY macro before the name
@@ -704,19 +843,14 @@ class ZigOutputGenerator(OutputGenerator):
             text = noneStr(elem.text)
             tail = noneStr(elem.tail)
             if elem.tag == 'name':
-                pdecl += self.makeProtoName(text, tail)
-                tdecl += self.makeTypedefName(text, tail)
+                commandName = text
             else:
                 returnType += text + tail
 
         returnType = returnType.strip()
+        zigReturnType = returnType
         if returnType != 'void':
-            returnType = valueTypeToZigType(returnType, fixFlagType=True)
-        tdecl += returnType
-
-        # Squeeze out multiple spaces - there is no indentation
-        pdecl = ' '.join(pdecl.split())
-        tdecl = ' '.join(tdecl.split())
+            zigReturnType = valueTypeToZigType(returnType, fixFlagType=True)
 
         params = []
         for param in paramTags:
@@ -730,34 +864,238 @@ class ZigOutputGenerator(OutputGenerator):
         # for prototypes and typedefs. Concatenate all the text from
         # a <param> node without the tags. No tree walking required
         # since all tags are ignored.
-        # Uses: self.indentFuncProto
-        # self.indentFuncPointer
-        n = len(params)
+
+        externFn = 'pub extern fn ' + commandName
         # Indented parameters
         if len(params) > 1:
-            indentdecl = '(\n'
+            externFn += '(\n'
             for p in params:
-                indentdecl += '    ' + p.paramDecl() + ',\n'
-            indentdecl += ')'
+                externFn += '    ' + p.paramDecl() + ',\n'
+            externFn += ')'
         else:
-            indentdecl = '('
+            externFn += '('
             for p in params:
-                indentdecl += p.paramDecl()
-            indentdecl += ')'
+                externFn += p.paramDecl()
+            externFn += ')'
+            
+        externFn += ' ' + zigReturnType + ';'
 
-        return [pdecl + indentdecl + ' ' + returnType + ';', '']
-    
-    def makeProtoName(self, name, tail):
-        """Turn a `<proto>` `<name>` into C-language prototype
-        and typedef declarations for that name.
+        # Figure out the wrapper function
+        ZigParam.link(params)
 
-        - name - contents of `<name>` tag
-        - tail - whatever text follows that tag in the Element"""
-        return name + tail
+        funcDecl = ''
+        variants = ['']
+        index = 0
+        while index < len(variants):
+            variant = variants[index]
+            index += 1
 
-    def makeTypedefName(self, name, tail):
-        """Make the function-pointer typedef name for a command."""
-        return '(PFN_' + name + tail + ')'
+            # Start with the return type.  It is one of four things:
+            # VkResult with multiple success codes (return result)
+            # VkResult with only error codes
+            # void
+            # other
+
+            # bool, whether to return the returned value
+            forwardReturn = False
+            # list of ZigParam, parameters which are out values
+            returnParams = []
+            # list of string, assert conditions
+            asserts = []
+            # list of ZigParam, local declarations
+            locals = []
+            # list of string, cleanup lines of zig code
+            cleanup = []
+            # list of ZigParam, exposed params
+            userParams = []
+            # list of string, passed parameter values
+            apiParams = []
+            # list of string, lines of error handler code
+            errorHandler = []
+            # list of string, zig error names
+            returnErrors = []
+            # list of string, C VkResult values that indicate success
+            successCodes = []
+            
+            shouldWrap = False
+
+            if returnType == 'VkResult':
+                shouldWrap = True
+                successCodes = cmd.get('successcodes')
+                if successCodes is None: successCodes = []
+                else: successCodes = [x for x in successCodes.split(',') if x]
+                
+                errorCodes = cmd.get('errorcodes')
+                if errorCodes is None: errorCodes = []
+                else: errorCodes = [x for x in errorCodes.split(',') if x]
+                
+                undocumentedError = 'VK_UNDOCUMENTED_ERROR'
+                # TODO: When Zig implements @expect, declare this as unexpected to reduce overhead
+                errorHandler.append('    if (@bitCast(c_int, result) < 0) {')
+                if errorCodes:
+                    errorHandler.append('        return switch (result) {')
+                    for err in errorCodes:
+                        while err in self.resultAliases:
+                            err = self.resultAliases[err]
+                        zigError = err.replace('ERROR_', '')
+                        zigEnum = err.replace('VK_', '')
+                        returnErrors.append(zigError)
+                        errorHandler.append('            .'+zigEnum+' => error.'+zigError+',')
+                    errorHandler.append('            else => error.' + undocumentedError + ',')
+                    errorHandler.append('        };')
+                else:
+                    errorHandler.append('        return error.' + undocumentedError + ';')
+                returnErrors.append(undocumentedError)
+                errorHandler.append('    }')
+                
+                if variant == 'Count':
+                    successCodes.remove('VK_INCOMPLETE')
+
+                apiReturnLocation = 'const result'
+                if len(successCodes) > 1:
+                    forwardReturn = True
+            elif returnType == 'void':
+                apiReturnLocation = None
+            else:
+                apiReturnLocation = 'returnValues.result'
+                forwardReturn = True
+
+            for param in params:
+                if param.isConstBufferLen():
+                    shouldWrap = True
+                    buffer = param.buffers[0].bufferName()
+                    apiParams.append('@intCast('+param.valueType.declValueType+', '+buffer+'.len)')
+                elif param.isMutableBufferLen():
+                    shouldWrap = True
+                    buffer = param.buffers[0].bufferName()
+                    valueParam = param.getValueParam()
+                    if variant == 'Count':
+                        returnParams.append(valueParam)
+                        apiParams.append('&returnValues.' + valueParam.name)
+                    else:
+                        valueParam.defaultValue = '@intCast('+valueParam.valueType.declValueType+', '+buffer+'.len)'
+                        locals.append(valueParam)
+                        apiParams.append('&' + valueParam.name)
+                elif param.isBuffer():
+                    shouldWrap = True
+                    sliceParam = param.getBufferParam()
+                    
+                    if param.indirections[0].lenParam is not None:
+                        parent = param.indirections[0].lenParam
+                        generateUserParam = True
+                        if parent.isMutableBufferLen() and param.isOptional:
+                            if variant == 'Count':
+                                apiParams.append('null')
+                                generateUserParam = False
+                            else:
+                                returnParams.append(sliceParam.getCopy())
+                                cleanup.append('returnValues.'+sliceParam.name+' = '+sliceParam.name+'[0..'+parent.bufferName()+'];')
+                                if variant == '' and not ('Count' in variants):
+                                    variants.append('Count')
+
+                        if generateUserParam:
+                            userParams.append(sliceParam)
+                            apiParams.append(sliceParam.name+'.ptr')
+                            if param != parent.buffers[0]:
+                                lenBuffer = parent.buffers[0].bufferName()
+                                asserts.append(sliceParam.name+'.len >= '+lenBuffer+'.len')
+                            
+                    elif '::' in param.indirections[0].cLength:
+                        lengthParts = param.indirections[0].cLength.split('::')
+                        parentParam = None
+                        for p in params:
+                            if p.name == lengthParts[0]:
+                                parentParam = p
+                                break
+                        if parentParam is not None:
+                            if parentParam.isValueInParam():
+                                lengthParts[0] = parentParam.bufferName()
+                            asserts.append(sliceParam.name + '.len >= ' + '.'.join(lengthParts))
+                        userParams.append(sliceParam)
+                        apiParams.append(sliceParam.name+'.ptr')
+                    else:
+                        userParams.append(sliceParam)
+                        apiParams.append(sliceParam.name+'.ptr')
+                
+                elif param.isOutParam():
+                    shouldWrap = True
+                    valueParam = param.getValueParam()
+                    returnParams.append(valueParam)
+                    apiParams.append('&returnValues.'+valueParam.name)
+                elif param.isValueInParam():
+                    shouldWrap = True
+                    valueParam = param.getValueParam()
+                    userParams.append(valueParam)
+                    apiParams.append('&'+valueParam.name)
+                else:
+                    userParams.append(param)
+                    apiParams.append(param.name)
+                    
+            if not shouldWrap:
+                funcDecl = 'pub const ' + name[2:] + ' = ' + name + ';'
+            else:                
+                # set wrapperReturnType, returnStatement
+                numReturns = len(returnParams)
+                if forwardReturn: numReturns += 1
+                if numReturns >= 2:
+                    # generate a result struct
+                    wrapperReturnType = name[2:]+'Result'
+                    funcDecl += 'pub const '+wrapperReturnType+' = struct {\n'
+                    if forwardReturn:
+                        funcDecl += '    result: '+zigReturnType+',\n'
+                    for param in returnParams:
+                        funcDecl += '    ' + param.structDecl() + ',\n'
+                    funcDecl += '};\n'
+                    locals.insert(0, ZigParam('returnValues', ZigValueType('', wrapperReturnType, False, False), [], 'undefined', False)) 
+                    if len(successCodes) > 1:
+                        cleanup.append('returnValues.result = result;')
+                    returnStatement = 'return returnValues;'
+                elif forwardReturn:
+                    wrapperReturnType = zigReturnType
+                    apiReturnLocation = 'const result'
+                    returnStatement = 'return result;'
+                elif numReturns == 1:
+                    returnVal = returnParams[0]
+                    returnVal.name = 'out_' + returnVal.name
+                    locals.insert(0, returnVal)
+                    wrapperReturnType = returnVal.typeDecl()
+                    returnStatement = 'return '+returnVal.name+';'
+
+                    apiParams = [x.replace('returnValues.', 'out_') for x in apiParams]
+                    cleanup = [x.replace('returnValues.', 'out_') for x in cleanup]
+                else:
+                    wrapperReturnType = 'void'
+                    returnStatement = None
+                    
+                if returnErrors:
+                    wrapperReturnType = 'error{' + ','.join(returnErrors) + '}!' + wrapperReturnType
+                    
+                funcDecl += 'pub inline fn '+name[2:]+variant+'('
+                funcDecl += ', '.join(p.paramDecl() for p in userParams)
+                funcDecl += ') ' + wrapperReturnType + ' {\n'
+                for local in locals:
+                    funcDecl += '    ' + local.varDecl() + ';\n'
+
+                for cond in asserts:
+                    funcDecl += '    assert(' + cond + ');\n'
+
+                funcDecl += '    '
+                if apiReturnLocation:
+                    funcDecl += apiReturnLocation + ' = '
+                funcDecl += name + '(' + ', '.join(apiParams) + ');\n'
+                
+                if errorHandler:
+                    funcDecl += '\n'.join(errorHandler) + '\n'
+                
+                for line in cleanup:
+                    funcDecl += '    ' + line + '\n'
+                
+                if returnStatement:
+                    funcDecl += '    ' + returnStatement + '\n'
+                    
+                funcDecl += '}\n'
+        
+        return [externFn, funcDecl]
         
     def enumToValue(self, elem, needsNum):
         """Parse and convert an `<enum>` tag into a value.
