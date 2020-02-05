@@ -6881,7 +6881,7 @@ pub const KHR_surface = 1;
 pub const SurfaceKHR = *@OpaqueType();
 
 pub const KHR_SURFACE_SPEC_VERSION = 25;
-pub const KHR_SURFACE_EXTENSION_NAME = "VK_KHR_surface";
+pub const KHR_SURFACE_EXTENSION_NAME = c"VK_KHR_surface";
 
 pub const ColorSpaceKHR = extern enum {
     SRGB_NONLINEAR_KHR = 0,
@@ -7090,7 +7090,7 @@ pub const KHR_swapchain = 1;
 pub const SwapchainKHR = *@OpaqueType();
 
 pub const KHR_SWAPCHAIN_SPEC_VERSION = 70;
-pub const KHR_SWAPCHAIN_EXTENSION_NAME = "VK_KHR_swapchain";
+pub const KHR_SWAPCHAIN_EXTENSION_NAME = c"VK_KHR_swapchain";
 
 pub const SwapchainCreateFlagsKHR = Flags;
 pub const SwapchainCreateFlagBitsKHR = struct {
@@ -7417,7 +7417,7 @@ pub const DisplayKHR = *@OpaqueType();
 pub const DisplayModeKHR = *@OpaqueType();
 
 pub const KHR_DISPLAY_SPEC_VERSION = 23;
-pub const KHR_DISPLAY_EXTENSION_NAME = "VK_KHR_display";
+pub const KHR_DISPLAY_EXTENSION_NAME = c"VK_KHR_display";
 
 pub const DisplayPlaneAlphaFlagsKHR = Flags;
 pub const DisplayPlaneAlphaFlagBitsKHR = struct {
@@ -7706,7 +7706,7 @@ pub inline fn CreateDisplayPlaneSurfaceKHR(instance: Instance, createInfo: Displ
 
 pub const KHR_display_swapchain = 1;
 pub const KHR_DISPLAY_SWAPCHAIN_SPEC_VERSION = 10;
-pub const KHR_DISPLAY_SWAPCHAIN_EXTENSION_NAME = "VK_KHR_display_swapchain";
+pub const KHR_DISPLAY_SWAPCHAIN_EXTENSION_NAME = c"VK_KHR_display_swapchain";
 
 pub const DisplayPresentInfoKHR = extern struct {
     sType: StructureType = .DISPLAY_PRESENT_INFO_KHR,
@@ -7742,12 +7742,12 @@ pub inline fn CreateSharedSwapchainsKHR(device: Device, createInfos: []const Swa
 
 pub const KHR_sampler_mirror_clamp_to_edge = 1;
 pub const KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE_SPEC_VERSION = 3;
-pub const KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE_EXTENSION_NAME = "VK_KHR_sampler_mirror_clamp_to_edge";
+pub const KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE_EXTENSION_NAME = c"VK_KHR_sampler_mirror_clamp_to_edge";
 
 
 pub const KHR_multiview = 1;
 pub const KHR_MULTIVIEW_SPEC_VERSION = 1;
-pub const KHR_MULTIVIEW_EXTENSION_NAME = "VK_KHR_multiview";
+pub const KHR_MULTIVIEW_EXTENSION_NAME = c"VK_KHR_multiview";
 
 pub const RenderPassMultiviewCreateInfoKHR = RenderPassMultiviewCreateInfo;
 pub const PhysicalDeviceMultiviewFeaturesKHR = PhysicalDeviceMultiviewFeatures;
@@ -7756,7 +7756,7 @@ pub const PhysicalDeviceMultiviewPropertiesKHR = PhysicalDeviceMultiviewProperti
 
 pub const KHR_get_physical_device_properties2 = 1;
 pub const KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_SPEC_VERSION = 2;
-pub const KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME = "VK_KHR_get_physical_device_properties2";
+pub const KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME = c"VK_KHR_get_physical_device_properties2";
 
 pub const PhysicalDeviceFeatures2KHR = PhysicalDeviceFeatures2;
 pub const PhysicalDeviceProperties2KHR = PhysicalDeviceProperties2;
@@ -7875,7 +7875,7 @@ pub inline fn GetPhysicalDeviceSparseImageFormatProperties2KHRCount(physicalDevi
 
 pub const KHR_device_group = 1;
 pub const KHR_DEVICE_GROUP_SPEC_VERSION = 4;
-pub const KHR_DEVICE_GROUP_EXTENSION_NAME = "VK_KHR_device_group";
+pub const KHR_DEVICE_GROUP_EXTENSION_NAME = c"VK_KHR_device_group";
 
 pub const PeerMemoryFeatureFlagsKHR = PeerMemoryFeatureFlags;
 pub const PeerMemoryFeatureFlagBitsKHR = PeerMemoryFeatureFlagBits;
@@ -7925,12 +7925,12 @@ pub const CmdDispatchBaseKHR = vkCmdDispatchBaseKHR;
 
 pub const KHR_shader_draw_parameters = 1;
 pub const KHR_SHADER_DRAW_PARAMETERS_SPEC_VERSION = 1;
-pub const KHR_SHADER_DRAW_PARAMETERS_EXTENSION_NAME = "VK_KHR_shader_draw_parameters";
+pub const KHR_SHADER_DRAW_PARAMETERS_EXTENSION_NAME = c"VK_KHR_shader_draw_parameters";
 
 
 pub const KHR_maintenance1 = 1;
 pub const KHR_MAINTENANCE1_SPEC_VERSION = 2;
-pub const KHR_MAINTENANCE1_EXTENSION_NAME = "VK_KHR_maintenance1";
+pub const KHR_MAINTENANCE1_EXTENSION_NAME = c"VK_KHR_maintenance1";
 
 pub const CommandPoolTrimFlagsKHR = CommandPoolTrimFlags;
 
@@ -7945,7 +7945,7 @@ pub const TrimCommandPoolKHR = vkTrimCommandPoolKHR;
 
 pub const KHR_device_group_creation = 1;
 pub const KHR_DEVICE_GROUP_CREATION_SPEC_VERSION = 1;
-pub const KHR_DEVICE_GROUP_CREATION_EXTENSION_NAME = "VK_KHR_device_group_creation";
+pub const KHR_DEVICE_GROUP_CREATION_EXTENSION_NAME = c"VK_KHR_device_group_creation";
 pub const MAX_DEVICE_GROUP_SIZE_KHR = MAX_DEVICE_GROUP_SIZE;
 
 pub const PhysicalDeviceGroupPropertiesKHR = PhysicalDeviceGroupProperties;
@@ -7994,7 +7994,7 @@ pub inline fn EnumeratePhysicalDeviceGroupsKHRCount(instance: Instance) error{VK
 
 pub const KHR_external_memory_capabilities = 1;
 pub const KHR_EXTERNAL_MEMORY_CAPABILITIES_SPEC_VERSION = 1;
-pub const KHR_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME = "VK_KHR_external_memory_capabilities";
+pub const KHR_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME = c"VK_KHR_external_memory_capabilities";
 pub const LUID_SIZE_KHR = LUID_SIZE;
 
 pub const ExternalMemoryHandleTypeFlagsKHR = ExternalMemoryHandleTypeFlags;
@@ -8024,7 +8024,7 @@ pub inline fn GetPhysicalDeviceExternalBufferPropertiesKHR(physicalDevice: Physi
 
 pub const KHR_external_memory = 1;
 pub const KHR_EXTERNAL_MEMORY_SPEC_VERSION = 1;
-pub const KHR_EXTERNAL_MEMORY_EXTENSION_NAME = "VK_KHR_external_memory";
+pub const KHR_EXTERNAL_MEMORY_EXTENSION_NAME = c"VK_KHR_external_memory";
 pub const QUEUE_FAMILY_EXTERNAL_KHR = QUEUE_FAMILY_EXTERNAL;
 
 pub const ExternalMemoryImageCreateInfoKHR = ExternalMemoryImageCreateInfo;
@@ -8034,7 +8034,7 @@ pub const ExportMemoryAllocateInfoKHR = ExportMemoryAllocateInfo;
 
 pub const KHR_external_memory_fd = 1;
 pub const KHR_EXTERNAL_MEMORY_FD_SPEC_VERSION = 1;
-pub const KHR_EXTERNAL_MEMORY_FD_EXTENSION_NAME = "VK_KHR_external_memory_fd";
+pub const KHR_EXTERNAL_MEMORY_FD_EXTENSION_NAME = c"VK_KHR_external_memory_fd";
 
 pub const ImportMemoryFdInfoKHR = extern struct {
     sType: StructureType = .IMPORT_MEMORY_FD_INFO_KHR,
@@ -8097,7 +8097,7 @@ pub inline fn GetMemoryFdPropertiesKHR(device: Device, handleType: ExternalMemor
 
 pub const KHR_external_semaphore_capabilities = 1;
 pub const KHR_EXTERNAL_SEMAPHORE_CAPABILITIES_SPEC_VERSION = 1;
-pub const KHR_EXTERNAL_SEMAPHORE_CAPABILITIES_EXTENSION_NAME = "VK_KHR_external_semaphore_capabilities";
+pub const KHR_EXTERNAL_SEMAPHORE_CAPABILITIES_EXTENSION_NAME = c"VK_KHR_external_semaphore_capabilities";
 
 pub const ExternalSemaphoreHandleTypeFlagsKHR = ExternalSemaphoreHandleTypeFlags;
 pub const ExternalSemaphoreHandleTypeFlagBitsKHR = ExternalSemaphoreHandleTypeFlagBits;
@@ -8122,7 +8122,7 @@ pub inline fn GetPhysicalDeviceExternalSemaphorePropertiesKHR(physicalDevice: Ph
 
 pub const KHR_external_semaphore = 1;
 pub const KHR_EXTERNAL_SEMAPHORE_SPEC_VERSION = 1;
-pub const KHR_EXTERNAL_SEMAPHORE_EXTENSION_NAME = "VK_KHR_external_semaphore";
+pub const KHR_EXTERNAL_SEMAPHORE_EXTENSION_NAME = c"VK_KHR_external_semaphore";
 
 pub const SemaphoreImportFlagsKHR = SemaphoreImportFlags;
 pub const SemaphoreImportFlagBitsKHR = SemaphoreImportFlagBits;
@@ -8132,7 +8132,7 @@ pub const ExportSemaphoreCreateInfoKHR = ExportSemaphoreCreateInfo;
 
 pub const KHR_external_semaphore_fd = 1;
 pub const KHR_EXTERNAL_SEMAPHORE_FD_SPEC_VERSION = 1;
-pub const KHR_EXTERNAL_SEMAPHORE_FD_EXTENSION_NAME = "VK_KHR_external_semaphore_fd";
+pub const KHR_EXTERNAL_SEMAPHORE_FD_EXTENSION_NAME = c"VK_KHR_external_semaphore_fd";
 
 pub const ImportSemaphoreFdInfoKHR = extern struct {
     sType: StructureType = .IMPORT_SEMAPHORE_FD_INFO_KHR,
@@ -8188,7 +8188,7 @@ pub inline fn GetSemaphoreFdKHR(device: Device, getFdInfo: SemaphoreGetFdInfoKHR
 
 pub const KHR_push_descriptor = 1;
 pub const KHR_PUSH_DESCRIPTOR_SPEC_VERSION = 2;
-pub const KHR_PUSH_DESCRIPTOR_EXTENSION_NAME = "VK_KHR_push_descriptor";
+pub const KHR_PUSH_DESCRIPTOR_EXTENSION_NAME = c"VK_KHR_push_descriptor";
 
 pub const PhysicalDevicePushDescriptorPropertiesKHR = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES_KHR,
@@ -8222,7 +8222,7 @@ pub const CmdPushDescriptorSetWithTemplateKHR = vkCmdPushDescriptorSetWithTempla
 
 pub const KHR_shader_float16_int8 = 1;
 pub const KHR_SHADER_FLOAT16_INT8_SPEC_VERSION = 1;
-pub const KHR_SHADER_FLOAT16_INT8_EXTENSION_NAME = "VK_KHR_shader_float16_int8";
+pub const KHR_SHADER_FLOAT16_INT8_EXTENSION_NAME = c"VK_KHR_shader_float16_int8";
 
 pub const PhysicalDeviceShaderFloat16Int8FeaturesKHR = PhysicalDeviceShaderFloat16Int8Features;
 pub const PhysicalDeviceFloat16Int8FeaturesKHR = PhysicalDeviceShaderFloat16Int8Features;
@@ -8230,14 +8230,14 @@ pub const PhysicalDeviceFloat16Int8FeaturesKHR = PhysicalDeviceShaderFloat16Int8
 
 pub const KHR_16bit_storage = 1;
 pub const KHR_16BIT_STORAGE_SPEC_VERSION = 1;
-pub const KHR_16BIT_STORAGE_EXTENSION_NAME = "VK_KHR_16bit_storage";
+pub const KHR_16BIT_STORAGE_EXTENSION_NAME = c"VK_KHR_16bit_storage";
 
 pub const PhysicalDevice16BitStorageFeaturesKHR = PhysicalDevice16BitStorageFeatures;
 
 
 pub const KHR_incremental_present = 1;
 pub const KHR_INCREMENTAL_PRESENT_SPEC_VERSION = 1;
-pub const KHR_INCREMENTAL_PRESENT_EXTENSION_NAME = "VK_KHR_incremental_present";
+pub const KHR_INCREMENTAL_PRESENT_EXTENSION_NAME = c"VK_KHR_incremental_present";
 
 pub const RectLayerKHR = extern struct {
     offset: Offset2D,
@@ -8262,7 +8262,7 @@ pub const KHR_descriptor_update_template = 1;
 pub const DescriptorUpdateTemplateKHR = DescriptorUpdateTemplate;
 
 pub const KHR_DESCRIPTOR_UPDATE_TEMPLATE_SPEC_VERSION = 1;
-pub const KHR_DESCRIPTOR_UPDATE_TEMPLATE_EXTENSION_NAME = "VK_KHR_descriptor_update_template";
+pub const KHR_DESCRIPTOR_UPDATE_TEMPLATE_EXTENSION_NAME = c"VK_KHR_descriptor_update_template";
 
 pub const DescriptorUpdateTemplateTypeKHR = DescriptorUpdateTemplateType;
 
@@ -8310,7 +8310,7 @@ pub const UpdateDescriptorSetWithTemplateKHR = vkUpdateDescriptorSetWithTemplate
 
 pub const KHR_imageless_framebuffer = 1;
 pub const KHR_IMAGELESS_FRAMEBUFFER_SPEC_VERSION = 1;
-pub const KHR_IMAGELESS_FRAMEBUFFER_EXTENSION_NAME = "VK_KHR_imageless_framebuffer";
+pub const KHR_IMAGELESS_FRAMEBUFFER_EXTENSION_NAME = c"VK_KHR_imageless_framebuffer";
 
 pub const PhysicalDeviceImagelessFramebufferFeaturesKHR = PhysicalDeviceImagelessFramebufferFeatures;
 pub const FramebufferAttachmentsCreateInfoKHR = FramebufferAttachmentsCreateInfo;
@@ -8320,7 +8320,7 @@ pub const RenderPassAttachmentBeginInfoKHR = RenderPassAttachmentBeginInfo;
 
 pub const KHR_create_renderpass2 = 1;
 pub const KHR_CREATE_RENDERPASS_2_SPEC_VERSION = 1;
-pub const KHR_CREATE_RENDERPASS_2_EXTENSION_NAME = "VK_KHR_create_renderpass2";
+pub const KHR_CREATE_RENDERPASS_2_EXTENSION_NAME = c"VK_KHR_create_renderpass2";
 
 pub const RenderPassCreateInfo2KHR = RenderPassCreateInfo2;
 pub const AttachmentDescription2KHR = AttachmentDescription2;
@@ -8382,7 +8382,7 @@ pub inline fn CmdEndRenderPass2KHR(commandBuffer: CommandBuffer, subpassEndInfo:
 
 pub const KHR_shared_presentable_image = 1;
 pub const KHR_SHARED_PRESENTABLE_IMAGE_SPEC_VERSION = 1;
-pub const KHR_SHARED_PRESENTABLE_IMAGE_EXTENSION_NAME = "VK_KHR_shared_presentable_image";
+pub const KHR_SHARED_PRESENTABLE_IMAGE_EXTENSION_NAME = c"VK_KHR_shared_presentable_image";
 
 pub const SharedPresentSurfaceCapabilitiesKHR = extern struct {
     sType: StructureType = .SHARED_PRESENT_SURFACE_CAPABILITIES_KHR,
@@ -8414,7 +8414,7 @@ pub inline fn GetSwapchainStatusKHR(device: Device, swapchain: SwapchainKHR) err
 
 pub const KHR_external_fence_capabilities = 1;
 pub const KHR_EXTERNAL_FENCE_CAPABILITIES_SPEC_VERSION = 1;
-pub const KHR_EXTERNAL_FENCE_CAPABILITIES_EXTENSION_NAME = "VK_KHR_external_fence_capabilities";
+pub const KHR_EXTERNAL_FENCE_CAPABILITIES_EXTENSION_NAME = c"VK_KHR_external_fence_capabilities";
 
 pub const ExternalFenceHandleTypeFlagsKHR = ExternalFenceHandleTypeFlags;
 pub const ExternalFenceHandleTypeFlagBitsKHR = ExternalFenceHandleTypeFlagBits;
@@ -8439,7 +8439,7 @@ pub inline fn GetPhysicalDeviceExternalFencePropertiesKHR(physicalDevice: Physic
 
 pub const KHR_external_fence = 1;
 pub const KHR_EXTERNAL_FENCE_SPEC_VERSION = 1;
-pub const KHR_EXTERNAL_FENCE_EXTENSION_NAME = "VK_KHR_external_fence";
+pub const KHR_EXTERNAL_FENCE_EXTENSION_NAME = c"VK_KHR_external_fence";
 
 pub const FenceImportFlagsKHR = FenceImportFlags;
 pub const FenceImportFlagBitsKHR = FenceImportFlagBits;
@@ -8449,7 +8449,7 @@ pub const ExportFenceCreateInfoKHR = ExportFenceCreateInfo;
 
 pub const KHR_external_fence_fd = 1;
 pub const KHR_EXTERNAL_FENCE_FD_SPEC_VERSION = 1;
-pub const KHR_EXTERNAL_FENCE_FD_EXTENSION_NAME = "VK_KHR_external_fence_fd";
+pub const KHR_EXTERNAL_FENCE_FD_EXTENSION_NAME = c"VK_KHR_external_fence_fd";
 
 pub const ImportFenceFdInfoKHR = extern struct {
     sType: StructureType = .IMPORT_FENCE_FD_INFO_KHR,
@@ -8505,7 +8505,7 @@ pub inline fn GetFenceFdKHR(device: Device, getFdInfo: FenceGetFdInfoKHR) error{
 
 pub const KHR_performance_query = 1;
 pub const KHR_PERFORMANCE_QUERY_SPEC_VERSION = 1;
-pub const KHR_PERFORMANCE_QUERY_EXTENSION_NAME = "VK_KHR_performance_query";
+pub const KHR_PERFORMANCE_QUERY_EXTENSION_NAME = c"VK_KHR_performance_query";
 
 pub const PerformanceCounterUnitKHR = extern enum {
     GENERIC_KHR = 0,
@@ -8691,7 +8691,7 @@ pub const ReleaseProfilingLockKHR = vkReleaseProfilingLockKHR;
 
 pub const KHR_maintenance2 = 1;
 pub const KHR_MAINTENANCE2_SPEC_VERSION = 1;
-pub const KHR_MAINTENANCE2_EXTENSION_NAME = "VK_KHR_maintenance2";
+pub const KHR_MAINTENANCE2_EXTENSION_NAME = c"VK_KHR_maintenance2";
 
 pub const PointClippingBehaviorKHR = PointClippingBehavior;
 pub const TessellationDomainOriginKHR = TessellationDomainOrigin;
@@ -8705,7 +8705,7 @@ pub const PipelineTessellationDomainOriginStateCreateInfoKHR = PipelineTessellat
 
 pub const KHR_get_surface_capabilities2 = 1;
 pub const KHR_GET_SURFACE_CAPABILITIES_2_SPEC_VERSION = 1;
-pub const KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME = "VK_KHR_get_surface_capabilities2";
+pub const KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME = c"VK_KHR_get_surface_capabilities2";
 
 pub const PhysicalDeviceSurfaceInfo2KHR = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_SURFACE_INFO_2_KHR,
@@ -8789,7 +8789,7 @@ pub inline fn GetPhysicalDeviceSurfaceFormats2KHRCount(physicalDevice: PhysicalD
 
 pub const KHR_variable_pointers = 1;
 pub const KHR_VARIABLE_POINTERS_SPEC_VERSION = 1;
-pub const KHR_VARIABLE_POINTERS_EXTENSION_NAME = "VK_KHR_variable_pointers";
+pub const KHR_VARIABLE_POINTERS_EXTENSION_NAME = c"VK_KHR_variable_pointers";
 
 pub const PhysicalDeviceVariablePointerFeaturesKHR = PhysicalDeviceVariablePointersFeatures;
 pub const PhysicalDeviceVariablePointersFeaturesKHR = PhysicalDeviceVariablePointersFeatures;
@@ -8797,7 +8797,7 @@ pub const PhysicalDeviceVariablePointersFeaturesKHR = PhysicalDeviceVariablePoin
 
 pub const KHR_get_display_properties2 = 1;
 pub const KHR_GET_DISPLAY_PROPERTIES_2_SPEC_VERSION = 1;
-pub const KHR_GET_DISPLAY_PROPERTIES_2_EXTENSION_NAME = "VK_KHR_get_display_properties2";
+pub const KHR_GET_DISPLAY_PROPERTIES_2_EXTENSION_NAME = c"VK_KHR_get_display_properties2";
 
 pub const DisplayProperties2KHR = extern struct {
     sType: StructureType = .DISPLAY_PROPERTIES_2_KHR,
@@ -8967,7 +8967,7 @@ pub inline fn GetDisplayPlaneCapabilities2KHR(physicalDevice: PhysicalDevice, di
 
 pub const KHR_dedicated_allocation = 1;
 pub const KHR_DEDICATED_ALLOCATION_SPEC_VERSION = 3;
-pub const KHR_DEDICATED_ALLOCATION_EXTENSION_NAME = "VK_KHR_dedicated_allocation";
+pub const KHR_DEDICATED_ALLOCATION_EXTENSION_NAME = c"VK_KHR_dedicated_allocation";
 
 pub const MemoryDedicatedRequirementsKHR = MemoryDedicatedRequirements;
 pub const MemoryDedicatedAllocateInfoKHR = MemoryDedicatedAllocateInfo;
@@ -8975,17 +8975,17 @@ pub const MemoryDedicatedAllocateInfoKHR = MemoryDedicatedAllocateInfo;
 
 pub const KHR_storage_buffer_storage_class = 1;
 pub const KHR_STORAGE_BUFFER_STORAGE_CLASS_SPEC_VERSION = 1;
-pub const KHR_STORAGE_BUFFER_STORAGE_CLASS_EXTENSION_NAME = "VK_KHR_storage_buffer_storage_class";
+pub const KHR_STORAGE_BUFFER_STORAGE_CLASS_EXTENSION_NAME = c"VK_KHR_storage_buffer_storage_class";
 
 
 pub const KHR_relaxed_block_layout = 1;
 pub const KHR_RELAXED_BLOCK_LAYOUT_SPEC_VERSION = 1;
-pub const KHR_RELAXED_BLOCK_LAYOUT_EXTENSION_NAME = "VK_KHR_relaxed_block_layout";
+pub const KHR_RELAXED_BLOCK_LAYOUT_EXTENSION_NAME = c"VK_KHR_relaxed_block_layout";
 
 
 pub const KHR_get_memory_requirements2 = 1;
 pub const KHR_GET_MEMORY_REQUIREMENTS_2_SPEC_VERSION = 1;
-pub const KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME = "VK_KHR_get_memory_requirements2";
+pub const KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME = c"VK_KHR_get_memory_requirements2";
 
 pub const BufferMemoryRequirementsInfo2KHR = BufferMemoryRequirementsInfo2;
 pub const ImageMemoryRequirementsInfo2KHR = ImageMemoryRequirementsInfo2;
@@ -9039,7 +9039,7 @@ pub inline fn GetImageSparseMemoryRequirements2KHRCount(device: Device, info: Im
 
 pub const KHR_image_format_list = 1;
 pub const KHR_IMAGE_FORMAT_LIST_SPEC_VERSION = 1;
-pub const KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME = "VK_KHR_image_format_list";
+pub const KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME = c"VK_KHR_image_format_list";
 
 pub const ImageFormatListCreateInfoKHR = ImageFormatListCreateInfo;
 
@@ -9048,7 +9048,7 @@ pub const KHR_sampler_ycbcr_conversion = 1;
 pub const SamplerYcbcrConversionKHR = SamplerYcbcrConversion;
 
 pub const KHR_SAMPLER_YCBCR_CONVERSION_SPEC_VERSION = 14;
-pub const KHR_SAMPLER_YCBCR_CONVERSION_EXTENSION_NAME = "VK_KHR_sampler_ycbcr_conversion";
+pub const KHR_SAMPLER_YCBCR_CONVERSION_EXTENSION_NAME = c"VK_KHR_sampler_ycbcr_conversion";
 
 pub const SamplerYcbcrModelConversionKHR = SamplerYcbcrModelConversion;
 pub const SamplerYcbcrRangeKHR = SamplerYcbcrRange;
@@ -9092,7 +9092,7 @@ pub const DestroySamplerYcbcrConversionKHR = vkDestroySamplerYcbcrConversionKHR;
 
 pub const KHR_bind_memory2 = 1;
 pub const KHR_BIND_MEMORY_2_SPEC_VERSION = 1;
-pub const KHR_BIND_MEMORY_2_EXTENSION_NAME = "VK_KHR_bind_memory2";
+pub const KHR_BIND_MEMORY_2_EXTENSION_NAME = c"VK_KHR_bind_memory2";
 
 pub const BindBufferMemoryInfoKHR = BindBufferMemoryInfo;
 pub const BindImageMemoryInfoKHR = BindImageMemoryInfo;
@@ -9135,7 +9135,7 @@ pub inline fn BindImageMemory2KHR(device: Device, bindInfos: []const BindImageMe
 
 pub const KHR_maintenance3 = 1;
 pub const KHR_MAINTENANCE3_SPEC_VERSION = 1;
-pub const KHR_MAINTENANCE3_EXTENSION_NAME = "VK_KHR_maintenance3";
+pub const KHR_MAINTENANCE3_EXTENSION_NAME = c"VK_KHR_maintenance3";
 
 pub const PhysicalDeviceMaintenance3PropertiesKHR = PhysicalDeviceMaintenance3Properties;
 pub const DescriptorSetLayoutSupportKHR = DescriptorSetLayoutSupport;
@@ -9155,7 +9155,7 @@ pub inline fn GetDescriptorSetLayoutSupportKHR(device: Device, createInfo: Descr
 
 pub const KHR_draw_indirect_count = 1;
 pub const KHR_DRAW_INDIRECT_COUNT_SPEC_VERSION = 1;
-pub const KHR_DRAW_INDIRECT_COUNT_EXTENSION_NAME = "VK_KHR_draw_indirect_count";
+pub const KHR_DRAW_INDIRECT_COUNT_EXTENSION_NAME = c"VK_KHR_draw_indirect_count";
 
 pub extern fn vkCmdDrawIndirectCountKHR(
     commandBuffer: CommandBuffer,
@@ -9183,28 +9183,28 @@ pub const CmdDrawIndexedIndirectCountKHR = vkCmdDrawIndexedIndirectCountKHR;
 
 pub const KHR_shader_subgroup_extended_types = 1;
 pub const KHR_SHADER_SUBGROUP_EXTENDED_TYPES_SPEC_VERSION = 1;
-pub const KHR_SHADER_SUBGROUP_EXTENDED_TYPES_EXTENSION_NAME = "VK_KHR_shader_subgroup_extended_types";
+pub const KHR_SHADER_SUBGROUP_EXTENDED_TYPES_EXTENSION_NAME = c"VK_KHR_shader_subgroup_extended_types";
 
 pub const PhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR = PhysicalDeviceShaderSubgroupExtendedTypesFeatures;
 
 
 pub const KHR_8bit_storage = 1;
 pub const KHR_8BIT_STORAGE_SPEC_VERSION = 1;
-pub const KHR_8BIT_STORAGE_EXTENSION_NAME = "VK_KHR_8bit_storage";
+pub const KHR_8BIT_STORAGE_EXTENSION_NAME = c"VK_KHR_8bit_storage";
 
 pub const PhysicalDevice8BitStorageFeaturesKHR = PhysicalDevice8BitStorageFeatures;
 
 
 pub const KHR_shader_atomic_int64 = 1;
 pub const KHR_SHADER_ATOMIC_INT64_SPEC_VERSION = 1;
-pub const KHR_SHADER_ATOMIC_INT64_EXTENSION_NAME = "VK_KHR_shader_atomic_int64";
+pub const KHR_SHADER_ATOMIC_INT64_EXTENSION_NAME = c"VK_KHR_shader_atomic_int64";
 
 pub const PhysicalDeviceShaderAtomicInt64FeaturesKHR = PhysicalDeviceShaderAtomicInt64Features;
 
 
 pub const KHR_shader_clock = 1;
 pub const KHR_SHADER_CLOCK_SPEC_VERSION = 1;
-pub const KHR_SHADER_CLOCK_EXTENSION_NAME = "VK_KHR_shader_clock";
+pub const KHR_SHADER_CLOCK_EXTENSION_NAME = c"VK_KHR_shader_clock";
 
 pub const PhysicalDeviceShaderClockFeaturesKHR = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR,
@@ -9216,7 +9216,7 @@ pub const PhysicalDeviceShaderClockFeaturesKHR = extern struct {
 
 pub const KHR_driver_properties = 1;
 pub const KHR_DRIVER_PROPERTIES_SPEC_VERSION = 1;
-pub const KHR_DRIVER_PROPERTIES_EXTENSION_NAME = "VK_KHR_driver_properties";
+pub const KHR_DRIVER_PROPERTIES_EXTENSION_NAME = c"VK_KHR_driver_properties";
 pub const MAX_DRIVER_NAME_SIZE_KHR = MAX_DRIVER_NAME_SIZE;
 pub const MAX_DRIVER_INFO_SIZE_KHR = MAX_DRIVER_INFO_SIZE;
 
@@ -9228,7 +9228,7 @@ pub const PhysicalDeviceDriverPropertiesKHR = PhysicalDeviceDriverProperties;
 
 pub const KHR_shader_float_controls = 1;
 pub const KHR_SHADER_FLOAT_CONTROLS_SPEC_VERSION = 4;
-pub const KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME = "VK_KHR_shader_float_controls";
+pub const KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME = c"VK_KHR_shader_float_controls";
 
 pub const ShaderFloatControlsIndependenceKHR = ShaderFloatControlsIndependence;
 
@@ -9237,7 +9237,7 @@ pub const PhysicalDeviceFloatControlsPropertiesKHR = PhysicalDeviceFloatControls
 
 pub const KHR_depth_stencil_resolve = 1;
 pub const KHR_DEPTH_STENCIL_RESOLVE_SPEC_VERSION = 1;
-pub const KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME = "VK_KHR_depth_stencil_resolve";
+pub const KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME = c"VK_KHR_depth_stencil_resolve";
 
 pub const ResolveModeFlagBitsKHR = ResolveModeFlagBits;
 pub const ResolveModeFlagsKHR = ResolveModeFlags;
@@ -9248,12 +9248,12 @@ pub const PhysicalDeviceDepthStencilResolvePropertiesKHR = PhysicalDeviceDepthSt
 
 pub const KHR_swapchain_mutable_format = 1;
 pub const KHR_SWAPCHAIN_MUTABLE_FORMAT_SPEC_VERSION = 1;
-pub const KHR_SWAPCHAIN_MUTABLE_FORMAT_EXTENSION_NAME = "VK_KHR_swapchain_mutable_format";
+pub const KHR_SWAPCHAIN_MUTABLE_FORMAT_EXTENSION_NAME = c"VK_KHR_swapchain_mutable_format";
 
 
 pub const KHR_timeline_semaphore = 1;
 pub const KHR_TIMELINE_SEMAPHORE_SPEC_VERSION = 2;
-pub const KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME = "VK_KHR_timeline_semaphore";
+pub const KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME = c"VK_KHR_timeline_semaphore";
 
 pub const SemaphoreTypeKHR = SemaphoreType;
 
@@ -9325,19 +9325,19 @@ pub inline fn SignalSemaphoreKHR(device: Device, signalInfo: SemaphoreSignalInfo
 
 pub const KHR_vulkan_memory_model = 1;
 pub const KHR_VULKAN_MEMORY_MODEL_SPEC_VERSION = 3;
-pub const KHR_VULKAN_MEMORY_MODEL_EXTENSION_NAME = "VK_KHR_vulkan_memory_model";
+pub const KHR_VULKAN_MEMORY_MODEL_EXTENSION_NAME = c"VK_KHR_vulkan_memory_model";
 
 pub const PhysicalDeviceVulkanMemoryModelFeaturesKHR = PhysicalDeviceVulkanMemoryModelFeatures;
 
 
 pub const KHR_spirv_1_4 = 1;
 pub const KHR_SPIRV_1_4_SPEC_VERSION = 1;
-pub const KHR_SPIRV_1_4_EXTENSION_NAME = "VK_KHR_spirv_1_4";
+pub const KHR_SPIRV_1_4_EXTENSION_NAME = c"VK_KHR_spirv_1_4";
 
 
 pub const KHR_surface_protected_capabilities = 1;
 pub const KHR_SURFACE_PROTECTED_CAPABILITIES_SPEC_VERSION = 1;
-pub const KHR_SURFACE_PROTECTED_CAPABILITIES_EXTENSION_NAME = "VK_KHR_surface_protected_capabilities";
+pub const KHR_SURFACE_PROTECTED_CAPABILITIES_EXTENSION_NAME = c"VK_KHR_surface_protected_capabilities";
 
 pub const SurfaceProtectedCapabilitiesKHR = extern struct {
     sType: StructureType = .SURFACE_PROTECTED_CAPABILITIES_KHR,
@@ -9348,7 +9348,7 @@ pub const SurfaceProtectedCapabilitiesKHR = extern struct {
 
 pub const KHR_separate_depth_stencil_layouts = 1;
 pub const KHR_SEPARATE_DEPTH_STENCIL_LAYOUTS_SPEC_VERSION = 1;
-pub const KHR_SEPARATE_DEPTH_STENCIL_LAYOUTS_EXTENSION_NAME = "VK_KHR_separate_depth_stencil_layouts";
+pub const KHR_SEPARATE_DEPTH_STENCIL_LAYOUTS_EXTENSION_NAME = c"VK_KHR_separate_depth_stencil_layouts";
 
 pub const PhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR = PhysicalDeviceSeparateDepthStencilLayoutsFeatures;
 pub const AttachmentReferenceStencilLayoutKHR = AttachmentReferenceStencilLayout;
@@ -9357,14 +9357,14 @@ pub const AttachmentDescriptionStencilLayoutKHR = AttachmentDescriptionStencilLa
 
 pub const KHR_uniform_buffer_standard_layout = 1;
 pub const KHR_UNIFORM_BUFFER_STANDARD_LAYOUT_SPEC_VERSION = 1;
-pub const KHR_UNIFORM_BUFFER_STANDARD_LAYOUT_EXTENSION_NAME = "VK_KHR_uniform_buffer_standard_layout";
+pub const KHR_UNIFORM_BUFFER_STANDARD_LAYOUT_EXTENSION_NAME = c"VK_KHR_uniform_buffer_standard_layout";
 
 pub const PhysicalDeviceUniformBufferStandardLayoutFeaturesKHR = PhysicalDeviceUniformBufferStandardLayoutFeatures;
 
 
 pub const KHR_buffer_device_address = 1;
 pub const KHR_BUFFER_DEVICE_ADDRESS_SPEC_VERSION = 1;
-pub const KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME = "VK_KHR_buffer_device_address";
+pub const KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME = c"VK_KHR_buffer_device_address";
 
 pub const PhysicalDeviceBufferDeviceAddressFeaturesKHR = PhysicalDeviceBufferDeviceAddressFeatures;
 pub const BufferDeviceAddressInfoKHR = BufferDeviceAddressInfo;
@@ -9405,7 +9405,7 @@ pub inline fn GetDeviceMemoryOpaqueCaptureAddressKHR(device: Device, info: Devic
 
 pub const KHR_pipeline_executable_properties = 1;
 pub const KHR_PIPELINE_EXECUTABLE_PROPERTIES_SPEC_VERSION = 1;
-pub const KHR_PIPELINE_EXECUTABLE_PROPERTIES_EXTENSION_NAME = "VK_KHR_pipeline_executable_properties";
+pub const KHR_PIPELINE_EXECUTABLE_PROPERTIES_EXTENSION_NAME = c"VK_KHR_pipeline_executable_properties";
 
 pub const PipelineExecutableStatisticFormatKHR = extern enum {
     BOOL32_KHR = 0,
@@ -9590,7 +9590,7 @@ pub const EXT_debug_report = 1;
 pub const DebugReportCallbackEXT = *@OpaqueType();
 
 pub const EXT_DEBUG_REPORT_SPEC_VERSION = 9;
-pub const EXT_DEBUG_REPORT_EXTENSION_NAME = "VK_EXT_debug_report";
+pub const EXT_DEBUG_REPORT_EXTENSION_NAME = c"VK_EXT_debug_report";
 
 pub const DebugReportObjectTypeEXT = extern enum {
     UNKNOWN_EXT = 0,
@@ -9708,22 +9708,22 @@ pub const DebugReportMessageEXT = vkDebugReportMessageEXT;
 
 pub const NV_glsl_shader = 1;
 pub const NV_GLSL_SHADER_SPEC_VERSION = 1;
-pub const NV_GLSL_SHADER_EXTENSION_NAME = "VK_NV_glsl_shader";
+pub const NV_GLSL_SHADER_EXTENSION_NAME = c"VK_NV_glsl_shader";
 
 
 pub const EXT_depth_range_unrestricted = 1;
 pub const EXT_DEPTH_RANGE_UNRESTRICTED_SPEC_VERSION = 1;
-pub const EXT_DEPTH_RANGE_UNRESTRICTED_EXTENSION_NAME = "VK_EXT_depth_range_unrestricted";
+pub const EXT_DEPTH_RANGE_UNRESTRICTED_EXTENSION_NAME = c"VK_EXT_depth_range_unrestricted";
 
 
 pub const IMG_filter_cubic = 1;
 pub const IMG_FILTER_CUBIC_SPEC_VERSION = 1;
-pub const IMG_FILTER_CUBIC_EXTENSION_NAME = "VK_IMG_filter_cubic";
+pub const IMG_FILTER_CUBIC_EXTENSION_NAME = c"VK_IMG_filter_cubic";
 
 
 pub const AMD_rasterization_order = 1;
 pub const AMD_RASTERIZATION_ORDER_SPEC_VERSION = 1;
-pub const AMD_RASTERIZATION_ORDER_EXTENSION_NAME = "VK_AMD_rasterization_order";
+pub const AMD_RASTERIZATION_ORDER_EXTENSION_NAME = c"VK_AMD_rasterization_order";
 
 pub const RasterizationOrderAMD = extern enum {
     STRICT_AMD = 0,
@@ -9739,17 +9739,17 @@ pub const PipelineRasterizationStateRasterizationOrderAMD = extern struct {
 
 pub const AMD_shader_trinary_minmax = 1;
 pub const AMD_SHADER_TRINARY_MINMAX_SPEC_VERSION = 1;
-pub const AMD_SHADER_TRINARY_MINMAX_EXTENSION_NAME = "VK_AMD_shader_trinary_minmax";
+pub const AMD_SHADER_TRINARY_MINMAX_EXTENSION_NAME = c"VK_AMD_shader_trinary_minmax";
 
 
 pub const AMD_shader_explicit_vertex_parameter = 1;
 pub const AMD_SHADER_EXPLICIT_VERTEX_PARAMETER_SPEC_VERSION = 1;
-pub const AMD_SHADER_EXPLICIT_VERTEX_PARAMETER_EXTENSION_NAME = "VK_AMD_shader_explicit_vertex_parameter";
+pub const AMD_SHADER_EXPLICIT_VERTEX_PARAMETER_EXTENSION_NAME = c"VK_AMD_shader_explicit_vertex_parameter";
 
 
 pub const EXT_debug_marker = 1;
 pub const EXT_DEBUG_MARKER_SPEC_VERSION = 4;
-pub const EXT_DEBUG_MARKER_EXTENSION_NAME = "VK_EXT_debug_marker";
+pub const EXT_DEBUG_MARKER_EXTENSION_NAME = c"VK_EXT_debug_marker";
 
 pub const DebugMarkerObjectNameInfoEXT = extern struct {
     sType: StructureType = .DEBUG_MARKER_OBJECT_NAME_INFO_EXT,
@@ -9833,12 +9833,12 @@ pub inline fn CmdDebugMarkerInsertEXT(commandBuffer: CommandBuffer, markerInfo: 
 
 pub const AMD_gcn_shader = 1;
 pub const AMD_GCN_SHADER_SPEC_VERSION = 1;
-pub const AMD_GCN_SHADER_EXTENSION_NAME = "VK_AMD_gcn_shader";
+pub const AMD_GCN_SHADER_EXTENSION_NAME = c"VK_AMD_gcn_shader";
 
 
 pub const NV_dedicated_allocation = 1;
 pub const NV_DEDICATED_ALLOCATION_SPEC_VERSION = 1;
-pub const NV_DEDICATED_ALLOCATION_EXTENSION_NAME = "VK_NV_dedicated_allocation";
+pub const NV_DEDICATED_ALLOCATION_EXTENSION_NAME = c"VK_NV_dedicated_allocation";
 
 pub const DedicatedAllocationImageCreateInfoNV = extern struct {
     sType: StructureType = .DEDICATED_ALLOCATION_IMAGE_CREATE_INFO_NV,
@@ -9862,7 +9862,7 @@ pub const DedicatedAllocationMemoryAllocateInfoNV = extern struct {
 
 pub const EXT_transform_feedback = 1;
 pub const EXT_TRANSFORM_FEEDBACK_SPEC_VERSION = 1;
-pub const EXT_TRANSFORM_FEEDBACK_EXTENSION_NAME = "VK_EXT_transform_feedback";
+pub const EXT_TRANSFORM_FEEDBACK_EXTENSION_NAME = c"VK_EXT_transform_feedback";
 
 pub const PipelineRasterizationStateStreamCreateFlagsEXT = Flags;
 
@@ -9968,7 +9968,7 @@ pub const CmdDrawIndirectByteCountEXT = vkCmdDrawIndirectByteCountEXT;
 
 pub const NVX_image_view_handle = 1;
 pub const NVX_IMAGE_VIEW_HANDLE_SPEC_VERSION = 1;
-pub const NVX_IMAGE_VIEW_HANDLE_EXTENSION_NAME = "VK_NVX_image_view_handle";
+pub const NVX_IMAGE_VIEW_HANDLE_EXTENSION_NAME = c"VK_NVX_image_view_handle";
 
 pub const ImageViewHandleInfoNVX = extern struct {
     sType: StructureType = .IMAGE_VIEW_HANDLE_INFO_NVX,
@@ -9991,7 +9991,7 @@ pub inline fn GetImageViewHandleNVX(device: Device, info: ImageViewHandleInfoNVX
 
 pub const AMD_draw_indirect_count = 1;
 pub const AMD_DRAW_INDIRECT_COUNT_SPEC_VERSION = 2;
-pub const AMD_DRAW_INDIRECT_COUNT_EXTENSION_NAME = "VK_AMD_draw_indirect_count";
+pub const AMD_DRAW_INDIRECT_COUNT_EXTENSION_NAME = c"VK_AMD_draw_indirect_count";
 
 pub extern fn vkCmdDrawIndirectCountAMD(
     commandBuffer: CommandBuffer,
@@ -10019,22 +10019,22 @@ pub const CmdDrawIndexedIndirectCountAMD = vkCmdDrawIndexedIndirectCountAMD;
 
 pub const AMD_negative_viewport_height = 1;
 pub const AMD_NEGATIVE_VIEWPORT_HEIGHT_SPEC_VERSION = 1;
-pub const AMD_NEGATIVE_VIEWPORT_HEIGHT_EXTENSION_NAME = "VK_AMD_negative_viewport_height";
+pub const AMD_NEGATIVE_VIEWPORT_HEIGHT_EXTENSION_NAME = c"VK_AMD_negative_viewport_height";
 
 
 pub const AMD_gpu_shader_half_float = 1;
 pub const AMD_GPU_SHADER_HALF_FLOAT_SPEC_VERSION = 2;
-pub const AMD_GPU_SHADER_HALF_FLOAT_EXTENSION_NAME = "VK_AMD_gpu_shader_half_float";
+pub const AMD_GPU_SHADER_HALF_FLOAT_EXTENSION_NAME = c"VK_AMD_gpu_shader_half_float";
 
 
 pub const AMD_shader_ballot = 1;
 pub const AMD_SHADER_BALLOT_SPEC_VERSION = 1;
-pub const AMD_SHADER_BALLOT_EXTENSION_NAME = "VK_AMD_shader_ballot";
+pub const AMD_SHADER_BALLOT_EXTENSION_NAME = c"VK_AMD_shader_ballot";
 
 
 pub const AMD_texture_gather_bias_lod = 1;
 pub const AMD_TEXTURE_GATHER_BIAS_LOD_SPEC_VERSION = 1;
-pub const AMD_TEXTURE_GATHER_BIAS_LOD_EXTENSION_NAME = "VK_AMD_texture_gather_bias_lod";
+pub const AMD_TEXTURE_GATHER_BIAS_LOD_EXTENSION_NAME = c"VK_AMD_texture_gather_bias_lod";
 
 pub const TextureLODGatherFormatPropertiesAMD = extern struct {
     sType: StructureType = .TEXTURE_LOD_GATHER_FORMAT_PROPERTIES_AMD,
@@ -10045,7 +10045,7 @@ pub const TextureLODGatherFormatPropertiesAMD = extern struct {
 
 pub const AMD_shader_info = 1;
 pub const AMD_SHADER_INFO_SPEC_VERSION = 1;
-pub const AMD_SHADER_INFO_EXTENSION_NAME = "VK_AMD_shader_info";
+pub const AMD_SHADER_INFO_EXTENSION_NAME = c"VK_AMD_shader_info";
 
 pub const ShaderInfoTypeAMD = extern enum {
     STATISTICS_AMD = 0,
@@ -10115,12 +10115,12 @@ pub inline fn GetShaderInfoAMDCount(device: Device, pipeline: Pipeline, shaderSt
 
 pub const AMD_shader_image_load_store_lod = 1;
 pub const AMD_SHADER_IMAGE_LOAD_STORE_LOD_SPEC_VERSION = 1;
-pub const AMD_SHADER_IMAGE_LOAD_STORE_LOD_EXTENSION_NAME = "VK_AMD_shader_image_load_store_lod";
+pub const AMD_SHADER_IMAGE_LOAD_STORE_LOD_EXTENSION_NAME = c"VK_AMD_shader_image_load_store_lod";
 
 
 pub const NV_corner_sampled_image = 1;
 pub const NV_CORNER_SAMPLED_IMAGE_SPEC_VERSION = 2;
-pub const NV_CORNER_SAMPLED_IMAGE_EXTENSION_NAME = "VK_NV_corner_sampled_image";
+pub const NV_CORNER_SAMPLED_IMAGE_EXTENSION_NAME = c"VK_NV_corner_sampled_image";
 
 pub const PhysicalDeviceCornerSampledImageFeaturesNV = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_CORNER_SAMPLED_IMAGE_FEATURES_NV,
@@ -10131,12 +10131,12 @@ pub const PhysicalDeviceCornerSampledImageFeaturesNV = extern struct {
 
 pub const IMG_format_pvrtc = 1;
 pub const IMG_FORMAT_PVRTC_SPEC_VERSION = 1;
-pub const IMG_FORMAT_PVRTC_EXTENSION_NAME = "VK_IMG_format_pvrtc";
+pub const IMG_FORMAT_PVRTC_EXTENSION_NAME = c"VK_IMG_format_pvrtc";
 
 
 pub const NV_external_memory_capabilities = 1;
 pub const NV_EXTERNAL_MEMORY_CAPABILITIES_SPEC_VERSION = 1;
-pub const NV_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME = "VK_NV_external_memory_capabilities";
+pub const NV_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME = c"VK_NV_external_memory_capabilities";
 
 pub const ExternalMemoryHandleTypeFlagsNV = Flags;
 pub const ExternalMemoryHandleTypeFlagBitsNV = struct {
@@ -10188,7 +10188,7 @@ pub inline fn GetPhysicalDeviceExternalImageFormatPropertiesNV(physicalDevice: P
 
 pub const NV_external_memory = 1;
 pub const NV_EXTERNAL_MEMORY_SPEC_VERSION = 1;
-pub const NV_EXTERNAL_MEMORY_EXTENSION_NAME = "VK_NV_external_memory";
+pub const NV_EXTERNAL_MEMORY_EXTENSION_NAME = c"VK_NV_external_memory";
 
 pub const ExternalMemoryImageCreateInfoNV = extern struct {
     sType: StructureType = .EXTERNAL_MEMORY_IMAGE_CREATE_INFO_NV,
@@ -10205,7 +10205,7 @@ pub const ExportMemoryAllocateInfoNV = extern struct {
 
 pub const EXT_validation_flags = 1;
 pub const EXT_VALIDATION_FLAGS_SPEC_VERSION = 2;
-pub const EXT_VALIDATION_FLAGS_EXTENSION_NAME = "VK_EXT_validation_flags";
+pub const EXT_VALIDATION_FLAGS_EXTENSION_NAME = c"VK_EXT_validation_flags";
 
 pub const ValidationCheckEXT = extern enum {
     ALL_EXT = 0,
@@ -10222,17 +10222,17 @@ pub const ValidationFlagsEXT = extern struct {
 
 pub const EXT_shader_subgroup_ballot = 1;
 pub const EXT_SHADER_SUBGROUP_BALLOT_SPEC_VERSION = 1;
-pub const EXT_SHADER_SUBGROUP_BALLOT_EXTENSION_NAME = "VK_EXT_shader_subgroup_ballot";
+pub const EXT_SHADER_SUBGROUP_BALLOT_EXTENSION_NAME = c"VK_EXT_shader_subgroup_ballot";
 
 
 pub const EXT_shader_subgroup_vote = 1;
 pub const EXT_SHADER_SUBGROUP_VOTE_SPEC_VERSION = 1;
-pub const EXT_SHADER_SUBGROUP_VOTE_EXTENSION_NAME = "VK_EXT_shader_subgroup_vote";
+pub const EXT_SHADER_SUBGROUP_VOTE_EXTENSION_NAME = c"VK_EXT_shader_subgroup_vote";
 
 
 pub const EXT_texture_compression_astc_hdr = 1;
 pub const EXT_TEXTURE_COMPRESSION_ASTC_HDR_SPEC_VERSION = 1;
-pub const EXT_TEXTURE_COMPRESSION_ASTC_HDR_EXTENSION_NAME = "VK_EXT_texture_compression_astc_hdr";
+pub const EXT_TEXTURE_COMPRESSION_ASTC_HDR_EXTENSION_NAME = c"VK_EXT_texture_compression_astc_hdr";
 
 pub const PhysicalDeviceTextureCompressionASTCHDRFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_HDR_FEATURES_EXT,
@@ -10243,7 +10243,7 @@ pub const PhysicalDeviceTextureCompressionASTCHDRFeaturesEXT = extern struct {
 
 pub const EXT_astc_decode_mode = 1;
 pub const EXT_ASTC_DECODE_MODE_SPEC_VERSION = 1;
-pub const EXT_ASTC_DECODE_MODE_EXTENSION_NAME = "VK_EXT_astc_decode_mode";
+pub const EXT_ASTC_DECODE_MODE_EXTENSION_NAME = c"VK_EXT_astc_decode_mode";
 
 pub const ImageViewASTCDecodeModeEXT = extern struct {
     sType: StructureType = .IMAGE_VIEW_ASTC_DECODE_MODE_EXT,
@@ -10260,7 +10260,7 @@ pub const PhysicalDeviceASTCDecodeFeaturesEXT = extern struct {
 
 pub const EXT_conditional_rendering = 1;
 pub const EXT_CONDITIONAL_RENDERING_SPEC_VERSION = 2;
-pub const EXT_CONDITIONAL_RENDERING_EXTENSION_NAME = "VK_EXT_conditional_rendering";
+pub const EXT_CONDITIONAL_RENDERING_EXTENSION_NAME = c"VK_EXT_conditional_rendering";
 
 pub const ConditionalRenderingFlagsEXT = Flags;
 pub const ConditionalRenderingFlagBitsEXT = struct {
@@ -10307,7 +10307,7 @@ pub const ObjectTableNVX = *@OpaqueType();
 pub const IndirectCommandsLayoutNVX = *@OpaqueType();
 
 pub const NVX_DEVICE_GENERATED_COMMANDS_SPEC_VERSION = 3;
-pub const NVX_DEVICE_GENERATED_COMMANDS_EXTENSION_NAME = "VK_NVX_device_generated_commands";
+pub const NVX_DEVICE_GENERATED_COMMANDS_EXTENSION_NAME = c"VK_NVX_device_generated_commands";
 
 pub const IndirectCommandsTokenTypeNVX = extern enum {
     PIPELINE_NVX = 0,
@@ -10588,7 +10588,7 @@ pub inline fn GetPhysicalDeviceGeneratedCommandsPropertiesNVX(physicalDevice: Ph
 
 pub const NV_clip_space_w_scaling = 1;
 pub const NV_CLIP_SPACE_W_SCALING_SPEC_VERSION = 1;
-pub const NV_CLIP_SPACE_W_SCALING_EXTENSION_NAME = "VK_NV_clip_space_w_scaling";
+pub const NV_CLIP_SPACE_W_SCALING_EXTENSION_NAME = c"VK_NV_clip_space_w_scaling";
 
 pub const ViewportWScalingNV = extern struct {
     xcoeff: f32,
@@ -10617,7 +10617,7 @@ pub inline fn CmdSetViewportWScalingNV(commandBuffer: CommandBuffer, firstViewpo
 
 pub const EXT_direct_mode_display = 1;
 pub const EXT_DIRECT_MODE_DISPLAY_SPEC_VERSION = 1;
-pub const EXT_DIRECT_MODE_DISPLAY_EXTENSION_NAME = "VK_EXT_direct_mode_display";
+pub const EXT_DIRECT_MODE_DISPLAY_EXTENSION_NAME = c"VK_EXT_direct_mode_display";
 
 pub extern fn vkReleaseDisplayEXT(
     physicalDevice: PhysicalDevice,
@@ -10634,7 +10634,7 @@ pub inline fn ReleaseDisplayEXT(physicalDevice: PhysicalDevice, display: Display
 
 pub const EXT_display_surface_counter = 1;
 pub const EXT_DISPLAY_SURFACE_COUNTER_SPEC_VERSION = 1;
-pub const EXT_DISPLAY_SURFACE_COUNTER_EXTENSION_NAME = "VK_EXT_display_surface_counter";
+pub const EXT_DISPLAY_SURFACE_COUNTER_EXTENSION_NAME = c"VK_EXT_display_surface_counter";
 
 pub const SurfaceCounterFlagsEXT = Flags;
 pub const SurfaceCounterFlagBitsEXT = struct {
@@ -10680,7 +10680,7 @@ pub inline fn GetPhysicalDeviceSurfaceCapabilities2EXT(physicalDevice: PhysicalD
 
 pub const EXT_display_control = 1;
 pub const EXT_DISPLAY_CONTROL_SPEC_VERSION = 1;
-pub const EXT_DISPLAY_CONTROL_EXTENSION_NAME = "VK_EXT_display_control";
+pub const EXT_DISPLAY_CONTROL_EXTENSION_NAME = c"VK_EXT_display_control";
 
 pub const DisplayPowerStateEXT = extern enum {
     OFF_EXT = 0,
@@ -10789,7 +10789,7 @@ pub inline fn GetSwapchainCounterEXT(device: Device, swapchain: SwapchainKHR, co
 
 pub const GOOGLE_display_timing = 1;
 pub const GOOGLE_DISPLAY_TIMING_SPEC_VERSION = 1;
-pub const GOOGLE_DISPLAY_TIMING_EXTENSION_NAME = "VK_GOOGLE_display_timing";
+pub const GOOGLE_DISPLAY_TIMING_EXTENSION_NAME = c"VK_GOOGLE_display_timing";
 
 pub const RefreshCycleDurationGOOGLE = extern struct {
     refreshDuration: u64,
@@ -10878,22 +10878,22 @@ pub inline fn GetPastPresentationTimingGOOGLECount(device: Device, swapchain: Sw
 
 pub const NV_sample_mask_override_coverage = 1;
 pub const NV_SAMPLE_MASK_OVERRIDE_COVERAGE_SPEC_VERSION = 1;
-pub const NV_SAMPLE_MASK_OVERRIDE_COVERAGE_EXTENSION_NAME = "VK_NV_sample_mask_override_coverage";
+pub const NV_SAMPLE_MASK_OVERRIDE_COVERAGE_EXTENSION_NAME = c"VK_NV_sample_mask_override_coverage";
 
 
 pub const NV_geometry_shader_passthrough = 1;
 pub const NV_GEOMETRY_SHADER_PASSTHROUGH_SPEC_VERSION = 1;
-pub const NV_GEOMETRY_SHADER_PASSTHROUGH_EXTENSION_NAME = "VK_NV_geometry_shader_passthrough";
+pub const NV_GEOMETRY_SHADER_PASSTHROUGH_EXTENSION_NAME = c"VK_NV_geometry_shader_passthrough";
 
 
 pub const NV_viewport_array2 = 1;
 pub const NV_VIEWPORT_ARRAY2_SPEC_VERSION = 1;
-pub const NV_VIEWPORT_ARRAY2_EXTENSION_NAME = "VK_NV_viewport_array2";
+pub const NV_VIEWPORT_ARRAY2_EXTENSION_NAME = c"VK_NV_viewport_array2";
 
 
 pub const NVX_multiview_per_view_attributes = 1;
 pub const NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES_SPEC_VERSION = 1;
-pub const NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES_EXTENSION_NAME = "VK_NVX_multiview_per_view_attributes";
+pub const NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES_EXTENSION_NAME = c"VK_NVX_multiview_per_view_attributes";
 
 pub const PhysicalDeviceMultiviewPerViewAttributesPropertiesNVX = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_ATTRIBUTES_PROPERTIES_NVX,
@@ -10904,7 +10904,7 @@ pub const PhysicalDeviceMultiviewPerViewAttributesPropertiesNVX = extern struct 
 
 pub const NV_viewport_swizzle = 1;
 pub const NV_VIEWPORT_SWIZZLE_SPEC_VERSION = 1;
-pub const NV_VIEWPORT_SWIZZLE_EXTENSION_NAME = "VK_NV_viewport_swizzle";
+pub const NV_VIEWPORT_SWIZZLE_EXTENSION_NAME = c"VK_NV_viewport_swizzle";
 
 pub const ViewportCoordinateSwizzleNV = extern enum {
     POSITIVE_X_NV = 0,
@@ -10937,7 +10937,7 @@ pub const PipelineViewportSwizzleStateCreateInfoNV = extern struct {
 
 pub const EXT_discard_rectangles = 1;
 pub const EXT_DISCARD_RECTANGLES_SPEC_VERSION = 1;
-pub const EXT_DISCARD_RECTANGLES_EXTENSION_NAME = "VK_EXT_discard_rectangles";
+pub const EXT_DISCARD_RECTANGLES_EXTENSION_NAME = c"VK_EXT_discard_rectangles";
 
 pub const DiscardRectangleModeEXT = extern enum {
     INCLUSIVE_EXT = 0,
@@ -10975,7 +10975,7 @@ pub inline fn CmdSetDiscardRectangleEXT(commandBuffer: CommandBuffer, firstDisca
 
 pub const EXT_conservative_rasterization = 1;
 pub const EXT_CONSERVATIVE_RASTERIZATION_SPEC_VERSION = 1;
-pub const EXT_CONSERVATIVE_RASTERIZATION_EXTENSION_NAME = "VK_EXT_conservative_rasterization";
+pub const EXT_CONSERVATIVE_RASTERIZATION_EXTENSION_NAME = c"VK_EXT_conservative_rasterization";
 
 pub const ConservativeRasterizationModeEXT = extern enum {
     DISABLED_EXT = 0,
@@ -11010,7 +11010,7 @@ pub const PipelineRasterizationConservativeStateCreateInfoEXT = extern struct {
 
 pub const EXT_depth_clip_enable = 1;
 pub const EXT_DEPTH_CLIP_ENABLE_SPEC_VERSION = 1;
-pub const EXT_DEPTH_CLIP_ENABLE_EXTENSION_NAME = "VK_EXT_depth_clip_enable";
+pub const EXT_DEPTH_CLIP_ENABLE_EXTENSION_NAME = c"VK_EXT_depth_clip_enable";
 
 pub const PipelineRasterizationDepthClipStateCreateFlagsEXT = Flags;
 
@@ -11030,12 +11030,12 @@ pub const PipelineRasterizationDepthClipStateCreateInfoEXT = extern struct {
 
 pub const EXT_swapchain_colorspace = 1;
 pub const EXT_SWAPCHAIN_COLOR_SPACE_SPEC_VERSION = 4;
-pub const EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME = "VK_EXT_swapchain_colorspace";
+pub const EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME = c"VK_EXT_swapchain_colorspace";
 
 
 pub const EXT_hdr_metadata = 1;
 pub const EXT_HDR_METADATA_SPEC_VERSION = 2;
-pub const EXT_HDR_METADATA_EXTENSION_NAME = "VK_EXT_hdr_metadata";
+pub const EXT_HDR_METADATA_EXTENSION_NAME = c"VK_EXT_hdr_metadata";
 
 pub const XYColorEXT = extern struct {
     x: f32,
@@ -11070,12 +11070,12 @@ pub inline fn SetHdrMetadataEXT(device: Device, swapchains: []const SwapchainKHR
 
 pub const EXT_external_memory_dma_buf = 1;
 pub const EXT_EXTERNAL_MEMORY_DMA_BUF_SPEC_VERSION = 1;
-pub const EXT_EXTERNAL_MEMORY_DMA_BUF_EXTENSION_NAME = "VK_EXT_external_memory_dma_buf";
+pub const EXT_EXTERNAL_MEMORY_DMA_BUF_EXTENSION_NAME = c"VK_EXT_external_memory_dma_buf";
 
 
 pub const EXT_queue_family_foreign = 1;
 pub const EXT_QUEUE_FAMILY_FOREIGN_SPEC_VERSION = 1;
-pub const EXT_QUEUE_FAMILY_FOREIGN_EXTENSION_NAME = "VK_EXT_queue_family_foreign";
+pub const EXT_QUEUE_FAMILY_FOREIGN_EXTENSION_NAME = c"VK_EXT_queue_family_foreign";
 pub const QUEUE_FAMILY_FOREIGN_EXT = (~u32(0)-2);
 
 
@@ -11083,7 +11083,7 @@ pub const EXT_debug_utils = 1;
 pub const DebugUtilsMessengerEXT = *@OpaqueType();
 
 pub const EXT_DEBUG_UTILS_SPEC_VERSION = 1;
-pub const EXT_DEBUG_UTILS_EXTENSION_NAME = "VK_EXT_debug_utils";
+pub const EXT_DEBUG_UTILS_EXTENSION_NAME = c"VK_EXT_debug_utils";
 
 pub const DebugUtilsMessengerCallbackDataFlagsEXT = Flags;
 pub const DebugUtilsMessengerCreateFlagsEXT = Flags;
@@ -11277,7 +11277,7 @@ pub inline fn SubmitDebugUtilsMessageEXT(instance: Instance, messageSeverity: De
 
 pub const EXT_sampler_filter_minmax = 1;
 pub const EXT_SAMPLER_FILTER_MINMAX_SPEC_VERSION = 2;
-pub const EXT_SAMPLER_FILTER_MINMAX_EXTENSION_NAME = "VK_EXT_sampler_filter_minmax";
+pub const EXT_SAMPLER_FILTER_MINMAX_EXTENSION_NAME = c"VK_EXT_sampler_filter_minmax";
 
 pub const SamplerReductionModeEXT = SamplerReductionMode;
 
@@ -11287,22 +11287,22 @@ pub const PhysicalDeviceSamplerFilterMinmaxPropertiesEXT = PhysicalDeviceSampler
 
 pub const AMD_gpu_shader_int16 = 1;
 pub const AMD_GPU_SHADER_INT16_SPEC_VERSION = 2;
-pub const AMD_GPU_SHADER_INT16_EXTENSION_NAME = "VK_AMD_gpu_shader_int16";
+pub const AMD_GPU_SHADER_INT16_EXTENSION_NAME = c"VK_AMD_gpu_shader_int16";
 
 
 pub const AMD_mixed_attachment_samples = 1;
 pub const AMD_MIXED_ATTACHMENT_SAMPLES_SPEC_VERSION = 1;
-pub const AMD_MIXED_ATTACHMENT_SAMPLES_EXTENSION_NAME = "VK_AMD_mixed_attachment_samples";
+pub const AMD_MIXED_ATTACHMENT_SAMPLES_EXTENSION_NAME = c"VK_AMD_mixed_attachment_samples";
 
 
 pub const AMD_shader_fragment_mask = 1;
 pub const AMD_SHADER_FRAGMENT_MASK_SPEC_VERSION = 1;
-pub const AMD_SHADER_FRAGMENT_MASK_EXTENSION_NAME = "VK_AMD_shader_fragment_mask";
+pub const AMD_SHADER_FRAGMENT_MASK_EXTENSION_NAME = c"VK_AMD_shader_fragment_mask";
 
 
 pub const EXT_inline_uniform_block = 1;
 pub const EXT_INLINE_UNIFORM_BLOCK_SPEC_VERSION = 1;
-pub const EXT_INLINE_UNIFORM_BLOCK_EXTENSION_NAME = "VK_EXT_inline_uniform_block";
+pub const EXT_INLINE_UNIFORM_BLOCK_EXTENSION_NAME = c"VK_EXT_inline_uniform_block";
 
 pub const PhysicalDeviceInlineUniformBlockFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_FEATURES_EXT,
@@ -11337,12 +11337,12 @@ pub const DescriptorPoolInlineUniformBlockCreateInfoEXT = extern struct {
 
 pub const EXT_shader_stencil_export = 1;
 pub const EXT_SHADER_STENCIL_EXPORT_SPEC_VERSION = 1;
-pub const EXT_SHADER_STENCIL_EXPORT_EXTENSION_NAME = "VK_EXT_shader_stencil_export";
+pub const EXT_SHADER_STENCIL_EXPORT_EXTENSION_NAME = c"VK_EXT_shader_stencil_export";
 
 
 pub const EXT_sample_locations = 1;
 pub const EXT_SAMPLE_LOCATIONS_SPEC_VERSION = 1;
-pub const EXT_SAMPLE_LOCATIONS_EXTENSION_NAME = "VK_EXT_sample_locations";
+pub const EXT_SAMPLE_LOCATIONS_EXTENSION_NAME = c"VK_EXT_sample_locations";
 
 pub const SampleLocationEXT = extern struct {
     x: f32,
@@ -11424,7 +11424,7 @@ pub inline fn GetPhysicalDeviceMultisamplePropertiesEXT(physicalDevice: Physical
 
 pub const EXT_blend_operation_advanced = 1;
 pub const EXT_BLEND_OPERATION_ADVANCED_SPEC_VERSION = 2;
-pub const EXT_BLEND_OPERATION_ADVANCED_EXTENSION_NAME = "VK_EXT_blend_operation_advanced";
+pub const EXT_BLEND_OPERATION_ADVANCED_EXTENSION_NAME = c"VK_EXT_blend_operation_advanced";
 
 pub const BlendOverlapEXT = extern enum {
     UNCORRELATED_EXT = 0,
@@ -11460,7 +11460,7 @@ pub const PipelineColorBlendAdvancedStateCreateInfoEXT = extern struct {
 
 pub const NV_fragment_coverage_to_color = 1;
 pub const NV_FRAGMENT_COVERAGE_TO_COLOR_SPEC_VERSION = 1;
-pub const NV_FRAGMENT_COVERAGE_TO_COLOR_EXTENSION_NAME = "VK_NV_fragment_coverage_to_color";
+pub const NV_FRAGMENT_COVERAGE_TO_COLOR_EXTENSION_NAME = c"VK_NV_fragment_coverage_to_color";
 
 pub const PipelineCoverageToColorStateCreateFlagsNV = Flags;
 
@@ -11475,7 +11475,7 @@ pub const PipelineCoverageToColorStateCreateInfoNV = extern struct {
 
 pub const NV_framebuffer_mixed_samples = 1;
 pub const NV_FRAMEBUFFER_MIXED_SAMPLES_SPEC_VERSION = 1;
-pub const NV_FRAMEBUFFER_MIXED_SAMPLES_EXTENSION_NAME = "VK_NV_framebuffer_mixed_samples";
+pub const NV_FRAMEBUFFER_MIXED_SAMPLES_EXTENSION_NAME = c"VK_NV_framebuffer_mixed_samples";
 
 pub const CoverageModulationModeNV = extern enum {
     NONE_NV = 0,
@@ -11499,12 +11499,12 @@ pub const PipelineCoverageModulationStateCreateInfoNV = extern struct {
 
 pub const NV_fill_rectangle = 1;
 pub const NV_FILL_RECTANGLE_SPEC_VERSION = 1;
-pub const NV_FILL_RECTANGLE_EXTENSION_NAME = "VK_NV_fill_rectangle";
+pub const NV_FILL_RECTANGLE_EXTENSION_NAME = c"VK_NV_fill_rectangle";
 
 
 pub const NV_shader_sm_builtins = 1;
 pub const NV_SHADER_SM_BUILTINS_SPEC_VERSION = 1;
-pub const NV_SHADER_SM_BUILTINS_EXTENSION_NAME = "VK_NV_shader_sm_builtins";
+pub const NV_SHADER_SM_BUILTINS_EXTENSION_NAME = c"VK_NV_shader_sm_builtins";
 
 pub const PhysicalDeviceShaderSMBuiltinsPropertiesNV = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_SHADER_SM_BUILTINS_PROPERTIES_NV,
@@ -11522,12 +11522,12 @@ pub const PhysicalDeviceShaderSMBuiltinsFeaturesNV = extern struct {
 
 pub const EXT_post_depth_coverage = 1;
 pub const EXT_POST_DEPTH_COVERAGE_SPEC_VERSION = 1;
-pub const EXT_POST_DEPTH_COVERAGE_EXTENSION_NAME = "VK_EXT_post_depth_coverage";
+pub const EXT_POST_DEPTH_COVERAGE_EXTENSION_NAME = c"VK_EXT_post_depth_coverage";
 
 
 pub const EXT_image_drm_format_modifier = 1;
 pub const EXT_IMAGE_DRM_FORMAT_MODIFIER_SPEC_VERSION = 1;
-pub const EXT_IMAGE_DRM_FORMAT_MODIFIER_EXTENSION_NAME = "VK_EXT_image_drm_format_modifier";
+pub const EXT_IMAGE_DRM_FORMAT_MODIFIER_EXTENSION_NAME = c"VK_EXT_image_drm_format_modifier";
 
 pub const DrmFormatModifierPropertiesEXT = extern struct {
     drmFormatModifier: u64,
@@ -11592,7 +11592,7 @@ pub const EXT_validation_cache = 1;
 pub const ValidationCacheEXT = *@OpaqueType();
 
 pub const EXT_VALIDATION_CACHE_SPEC_VERSION = 1;
-pub const EXT_VALIDATION_CACHE_EXTENSION_NAME = "VK_EXT_validation_cache";
+pub const EXT_VALIDATION_CACHE_EXTENSION_NAME = c"VK_EXT_validation_cache";
 
 pub const ValidationCacheHeaderVersionEXT = extern enum {
     ONE_EXT = 1,
@@ -11701,7 +11701,7 @@ pub inline fn GetValidationCacheDataEXTCount(device: Device, validationCache: Va
 
 pub const EXT_descriptor_indexing = 1;
 pub const EXT_DESCRIPTOR_INDEXING_SPEC_VERSION = 2;
-pub const EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME = "VK_EXT_descriptor_indexing";
+pub const EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME = c"VK_EXT_descriptor_indexing";
 
 pub const DescriptorBindingFlagBitsEXT = DescriptorBindingFlagBits;
 pub const DescriptorBindingFlagsEXT = DescriptorBindingFlags;
@@ -11715,12 +11715,12 @@ pub const DescriptorSetVariableDescriptorCountLayoutSupportEXT = DescriptorSetVa
 
 pub const EXT_shader_viewport_index_layer = 1;
 pub const EXT_SHADER_VIEWPORT_INDEX_LAYER_SPEC_VERSION = 1;
-pub const EXT_SHADER_VIEWPORT_INDEX_LAYER_EXTENSION_NAME = "VK_EXT_shader_viewport_index_layer";
+pub const EXT_SHADER_VIEWPORT_INDEX_LAYER_EXTENSION_NAME = c"VK_EXT_shader_viewport_index_layer";
 
 
 pub const NV_shading_rate_image = 1;
 pub const NV_SHADING_RATE_IMAGE_SPEC_VERSION = 3;
-pub const NV_SHADING_RATE_IMAGE_EXTENSION_NAME = "VK_NV_shading_rate_image";
+pub const NV_SHADING_RATE_IMAGE_EXTENSION_NAME = c"VK_NV_shading_rate_image";
 
 pub const ShadingRatePaletteEntryNV = extern enum {
     NO_INVOCATIONS_NV = 0,
@@ -11828,7 +11828,7 @@ pub const NV_ray_tracing = 1;
 pub const AccelerationStructureNV = *@OpaqueType();
 
 pub const NV_RAY_TRACING_SPEC_VERSION = 3;
-pub const NV_RAY_TRACING_EXTENSION_NAME = "VK_NV_ray_tracing";
+pub const NV_RAY_TRACING_EXTENSION_NAME = c"VK_NV_ray_tracing";
 pub const SHADER_UNUSED_NV = (~u32(0));
 
 pub const AccelerationStructureTypeNV = extern enum {
@@ -12190,7 +12190,7 @@ pub inline fn CompileDeferredNV(device: Device, pipeline: Pipeline, shader: u32)
 
 pub const NV_representative_fragment_test = 1;
 pub const NV_REPRESENTATIVE_FRAGMENT_TEST_SPEC_VERSION = 2;
-pub const NV_REPRESENTATIVE_FRAGMENT_TEST_EXTENSION_NAME = "VK_NV_representative_fragment_test";
+pub const NV_REPRESENTATIVE_FRAGMENT_TEST_EXTENSION_NAME = c"VK_NV_representative_fragment_test";
 
 pub const PhysicalDeviceRepresentativeFragmentTestFeaturesNV = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_REPRESENTATIVE_FRAGMENT_TEST_FEATURES_NV,
@@ -12207,7 +12207,7 @@ pub const PipelineRepresentativeFragmentTestStateCreateInfoNV = extern struct {
 
 pub const EXT_filter_cubic = 1;
 pub const EXT_FILTER_CUBIC_SPEC_VERSION = 3;
-pub const EXT_FILTER_CUBIC_EXTENSION_NAME = "VK_EXT_filter_cubic";
+pub const EXT_FILTER_CUBIC_EXTENSION_NAME = c"VK_EXT_filter_cubic";
 
 pub const PhysicalDeviceImageViewImageFormatInfoEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_IMAGE_VIEW_IMAGE_FORMAT_INFO_EXT,
@@ -12225,7 +12225,7 @@ pub const FilterCubicImageViewImageFormatPropertiesEXT = extern struct {
 
 pub const EXT_global_priority = 1;
 pub const EXT_GLOBAL_PRIORITY_SPEC_VERSION = 2;
-pub const EXT_GLOBAL_PRIORITY_EXTENSION_NAME = "VK_EXT_global_priority";
+pub const EXT_GLOBAL_PRIORITY_EXTENSION_NAME = c"VK_EXT_global_priority";
 
 pub const QueueGlobalPriorityEXT = extern enum {
     LOW_EXT = 128,
@@ -12243,7 +12243,7 @@ pub const DeviceQueueGlobalPriorityCreateInfoEXT = extern struct {
 
 pub const EXT_external_memory_host = 1;
 pub const EXT_EXTERNAL_MEMORY_HOST_SPEC_VERSION = 1;
-pub const EXT_EXTERNAL_MEMORY_HOST_EXTENSION_NAME = "VK_EXT_external_memory_host";
+pub const EXT_EXTERNAL_MEMORY_HOST_EXTENSION_NAME = c"VK_EXT_external_memory_host";
 
 pub const ImportMemoryHostPointerInfoEXT = extern struct {
     sType: StructureType = .IMPORT_MEMORY_HOST_POINTER_INFO_EXT,
@@ -12286,7 +12286,7 @@ pub inline fn GetMemoryHostPointerPropertiesEXT(device: Device, handleType: Exte
 
 pub const AMD_buffer_marker = 1;
 pub const AMD_BUFFER_MARKER_SPEC_VERSION = 1;
-pub const AMD_BUFFER_MARKER_EXTENSION_NAME = "VK_AMD_buffer_marker";
+pub const AMD_BUFFER_MARKER_EXTENSION_NAME = c"VK_AMD_buffer_marker";
 
 pub extern fn vkCmdWriteBufferMarkerAMD(
     commandBuffer: CommandBuffer,
@@ -12301,7 +12301,7 @@ pub const CmdWriteBufferMarkerAMD = vkCmdWriteBufferMarkerAMD;
 
 pub const AMD_pipeline_compiler_control = 1;
 pub const AMD_PIPELINE_COMPILER_CONTROL_SPEC_VERSION = 1;
-pub const AMD_PIPELINE_COMPILER_CONTROL_EXTENSION_NAME = "VK_AMD_pipeline_compiler_control";
+pub const AMD_PIPELINE_COMPILER_CONTROL_EXTENSION_NAME = c"VK_AMD_pipeline_compiler_control";
 
 pub const PipelineCompilerControlFlagsAMD = Flags;
 pub const PipelineCompilerControlFlagBitsAMD = struct {
@@ -12316,7 +12316,7 @@ pub const PipelineCompilerControlCreateInfoAMD = extern struct {
 
 pub const EXT_calibrated_timestamps = 1;
 pub const EXT_CALIBRATED_TIMESTAMPS_SPEC_VERSION = 1;
-pub const EXT_CALIBRATED_TIMESTAMPS_EXTENSION_NAME = "VK_EXT_calibrated_timestamps";
+pub const EXT_CALIBRATED_TIMESTAMPS_EXTENSION_NAME = c"VK_EXT_calibrated_timestamps";
 
 pub const TimeDomainEXT = extern enum {
     DEVICE_EXT = 0,
@@ -12394,7 +12394,7 @@ pub inline fn GetCalibratedTimestampsEXT(device: Device, timestampInfos: []const
 
 pub const AMD_shader_core_properties = 1;
 pub const AMD_SHADER_CORE_PROPERTIES_SPEC_VERSION = 2;
-pub const AMD_SHADER_CORE_PROPERTIES_EXTENSION_NAME = "VK_AMD_shader_core_properties";
+pub const AMD_SHADER_CORE_PROPERTIES_EXTENSION_NAME = c"VK_AMD_shader_core_properties";
 
 pub const PhysicalDeviceShaderCorePropertiesAMD = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_SHADER_CORE_PROPERTIES_AMD,
@@ -12418,7 +12418,7 @@ pub const PhysicalDeviceShaderCorePropertiesAMD = extern struct {
 
 pub const AMD_memory_overallocation_behavior = 1;
 pub const AMD_MEMORY_OVERALLOCATION_BEHAVIOR_SPEC_VERSION = 1;
-pub const AMD_MEMORY_OVERALLOCATION_BEHAVIOR_EXTENSION_NAME = "VK_AMD_memory_overallocation_behavior";
+pub const AMD_MEMORY_OVERALLOCATION_BEHAVIOR_EXTENSION_NAME = c"VK_AMD_memory_overallocation_behavior";
 
 pub const MemoryOverallocationBehaviorAMD = extern enum {
     DEFAULT_AMD = 0,
@@ -12435,7 +12435,7 @@ pub const DeviceMemoryOverallocationCreateInfoAMD = extern struct {
 
 pub const EXT_vertex_attribute_divisor = 1;
 pub const EXT_VERTEX_ATTRIBUTE_DIVISOR_SPEC_VERSION = 3;
-pub const EXT_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME = "VK_EXT_vertex_attribute_divisor";
+pub const EXT_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME = c"VK_EXT_vertex_attribute_divisor";
 
 pub const PhysicalDeviceVertexAttributeDivisorPropertiesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_EXT,
@@ -12465,7 +12465,7 @@ pub const PhysicalDeviceVertexAttributeDivisorFeaturesEXT = extern struct {
 
 pub const EXT_pipeline_creation_feedback = 1;
 pub const EXT_PIPELINE_CREATION_FEEDBACK_SPEC_VERSION = 1;
-pub const EXT_PIPELINE_CREATION_FEEDBACK_EXTENSION_NAME = "VK_EXT_pipeline_creation_feedback";
+pub const EXT_PIPELINE_CREATION_FEEDBACK_EXTENSION_NAME = c"VK_EXT_pipeline_creation_feedback";
 
 pub const PipelineCreationFeedbackFlagsEXT = Flags;
 pub const PipelineCreationFeedbackFlagBitsEXT = struct {
@@ -12490,12 +12490,12 @@ pub const PipelineCreationFeedbackCreateInfoEXT = extern struct {
 
 pub const NV_shader_subgroup_partitioned = 1;
 pub const NV_SHADER_SUBGROUP_PARTITIONED_SPEC_VERSION = 1;
-pub const NV_SHADER_SUBGROUP_PARTITIONED_EXTENSION_NAME = "VK_NV_shader_subgroup_partitioned";
+pub const NV_SHADER_SUBGROUP_PARTITIONED_EXTENSION_NAME = c"VK_NV_shader_subgroup_partitioned";
 
 
 pub const NV_compute_shader_derivatives = 1;
 pub const NV_COMPUTE_SHADER_DERIVATIVES_SPEC_VERSION = 1;
-pub const NV_COMPUTE_SHADER_DERIVATIVES_EXTENSION_NAME = "VK_NV_compute_shader_derivatives";
+pub const NV_COMPUTE_SHADER_DERIVATIVES_EXTENSION_NAME = c"VK_NV_compute_shader_derivatives";
 
 pub const PhysicalDeviceComputeShaderDerivativesFeaturesNV = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_COMPUTE_SHADER_DERIVATIVES_FEATURES_NV,
@@ -12507,7 +12507,7 @@ pub const PhysicalDeviceComputeShaderDerivativesFeaturesNV = extern struct {
 
 pub const NV_mesh_shader = 1;
 pub const NV_MESH_SHADER_SPEC_VERSION = 1;
-pub const NV_MESH_SHADER_EXTENSION_NAME = "VK_NV_mesh_shader";
+pub const NV_MESH_SHADER_EXTENSION_NAME = c"VK_NV_mesh_shader";
 
 pub const PhysicalDeviceMeshShaderFeaturesNV = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_MESH_SHADER_FEATURES_NV,
@@ -12570,7 +12570,7 @@ pub const CmdDrawMeshTasksIndirectCountNV = vkCmdDrawMeshTasksIndirectCountNV;
 
 pub const NV_fragment_shader_barycentric = 1;
 pub const NV_FRAGMENT_SHADER_BARYCENTRIC_SPEC_VERSION = 1;
-pub const NV_FRAGMENT_SHADER_BARYCENTRIC_EXTENSION_NAME = "VK_NV_fragment_shader_barycentric";
+pub const NV_FRAGMENT_SHADER_BARYCENTRIC_EXTENSION_NAME = c"VK_NV_fragment_shader_barycentric";
 
 pub const PhysicalDeviceFragmentShaderBarycentricFeaturesNV = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_FRAGMENT_SHADER_BARYCENTRIC_FEATURES_NV,
@@ -12581,7 +12581,7 @@ pub const PhysicalDeviceFragmentShaderBarycentricFeaturesNV = extern struct {
 
 pub const NV_shader_image_footprint = 1;
 pub const NV_SHADER_IMAGE_FOOTPRINT_SPEC_VERSION = 2;
-pub const NV_SHADER_IMAGE_FOOTPRINT_EXTENSION_NAME = "VK_NV_shader_image_footprint";
+pub const NV_SHADER_IMAGE_FOOTPRINT_EXTENSION_NAME = c"VK_NV_shader_image_footprint";
 
 pub const PhysicalDeviceShaderImageFootprintFeaturesNV = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_SHADER_IMAGE_FOOTPRINT_FEATURES_NV,
@@ -12592,7 +12592,7 @@ pub const PhysicalDeviceShaderImageFootprintFeaturesNV = extern struct {
 
 pub const NV_scissor_exclusive = 1;
 pub const NV_SCISSOR_EXCLUSIVE_SPEC_VERSION = 1;
-pub const NV_SCISSOR_EXCLUSIVE_EXTENSION_NAME = "VK_NV_scissor_exclusive";
+pub const NV_SCISSOR_EXCLUSIVE_EXTENSION_NAME = c"VK_NV_scissor_exclusive";
 
 pub const PipelineViewportExclusiveScissorStateCreateInfoNV = extern struct {
     sType: StructureType = .PIPELINE_VIEWPORT_EXCLUSIVE_SCISSOR_STATE_CREATE_INFO_NV,
@@ -12621,7 +12621,7 @@ pub inline fn CmdSetExclusiveScissorNV(commandBuffer: CommandBuffer, firstExclus
 
 pub const NV_device_diagnostic_checkpoints = 1;
 pub const NV_DEVICE_DIAGNOSTIC_CHECKPOINTS_SPEC_VERSION = 2;
-pub const NV_DEVICE_DIAGNOSTIC_CHECKPOINTS_EXTENSION_NAME = "VK_NV_device_diagnostic_checkpoints";
+pub const NV_DEVICE_DIAGNOSTIC_CHECKPOINTS_EXTENSION_NAME = c"VK_NV_device_diagnostic_checkpoints";
 
 pub const QueueFamilyCheckpointPropertiesNV = extern struct {
     sType: StructureType = .QUEUE_FAMILY_CHECKPOINT_PROPERTIES_NV,
@@ -12665,7 +12665,7 @@ pub inline fn GetQueueCheckpointDataNVCount(queue: Queue) u32 {
 
 pub const INTEL_shader_integer_functions2 = 1;
 pub const INTEL_SHADER_INTEGER_FUNCTIONS_2_SPEC_VERSION = 1;
-pub const INTEL_SHADER_INTEGER_FUNCTIONS_2_EXTENSION_NAME = "VK_INTEL_shader_integer_functions2";
+pub const INTEL_SHADER_INTEGER_FUNCTIONS_2_EXTENSION_NAME = c"VK_INTEL_shader_integer_functions2";
 
 pub const PhysicalDeviceShaderIntegerFunctions2FeaturesINTEL = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_SHADER_INTEGER_FUNCTIONS_2_FEATURES_INTEL,
@@ -12678,7 +12678,7 @@ pub const INTEL_performance_query = 1;
 pub const PerformanceConfigurationINTEL = *@OpaqueType();
 
 pub const INTEL_PERFORMANCE_QUERY_SPEC_VERSION = 1;
-pub const INTEL_PERFORMANCE_QUERY_EXTENSION_NAME = "VK_INTEL_performance_query";
+pub const INTEL_PERFORMANCE_QUERY_EXTENSION_NAME = c"VK_INTEL_performance_query";
 
 pub const PerformanceConfigurationTypeINTEL = extern enum {
     COMMAND_QUEUE_METRICS_DISCOVERY_ACTIVATED_INTEL = 0,
@@ -12898,7 +12898,7 @@ pub inline fn GetPerformanceParameterINTEL(device: Device, parameter: Performanc
 
 pub const EXT_pci_bus_info = 1;
 pub const EXT_PCI_BUS_INFO_SPEC_VERSION = 2;
-pub const EXT_PCI_BUS_INFO_EXTENSION_NAME = "VK_EXT_pci_bus_info";
+pub const EXT_PCI_BUS_INFO_EXTENSION_NAME = c"VK_EXT_pci_bus_info";
 
 pub const PhysicalDevicePCIBusInfoPropertiesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT,
@@ -12912,7 +12912,7 @@ pub const PhysicalDevicePCIBusInfoPropertiesEXT = extern struct {
 
 pub const AMD_display_native_hdr = 1;
 pub const AMD_DISPLAY_NATIVE_HDR_SPEC_VERSION = 1;
-pub const AMD_DISPLAY_NATIVE_HDR_EXTENSION_NAME = "VK_AMD_display_native_hdr";
+pub const AMD_DISPLAY_NATIVE_HDR_EXTENSION_NAME = c"VK_AMD_display_native_hdr";
 
 pub const DisplayNativeHdrSurfaceCapabilitiesAMD = extern struct {
     sType: StructureType = .DISPLAY_NATIVE_HDR_SURFACE_CAPABILITIES_AMD,
@@ -12937,7 +12937,7 @@ pub const SetLocalDimmingAMD = vkSetLocalDimmingAMD;
 
 pub const EXT_fragment_density_map = 1;
 pub const EXT_FRAGMENT_DENSITY_MAP_SPEC_VERSION = 1;
-pub const EXT_FRAGMENT_DENSITY_MAP_EXTENSION_NAME = "VK_EXT_fragment_density_map";
+pub const EXT_FRAGMENT_DENSITY_MAP_EXTENSION_NAME = c"VK_EXT_fragment_density_map";
 
 pub const PhysicalDeviceFragmentDensityMapFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_FEATURES_EXT,
@@ -12964,24 +12964,24 @@ pub const RenderPassFragmentDensityMapCreateInfoEXT = extern struct {
 
 pub const EXT_scalar_block_layout = 1;
 pub const EXT_SCALAR_BLOCK_LAYOUT_SPEC_VERSION = 1;
-pub const EXT_SCALAR_BLOCK_LAYOUT_EXTENSION_NAME = "VK_EXT_scalar_block_layout";
+pub const EXT_SCALAR_BLOCK_LAYOUT_EXTENSION_NAME = c"VK_EXT_scalar_block_layout";
 
 pub const PhysicalDeviceScalarBlockLayoutFeaturesEXT = PhysicalDeviceScalarBlockLayoutFeatures;
 
 
 pub const GOOGLE_hlsl_functionality1 = 1;
 pub const GOOGLE_HLSL_FUNCTIONALITY1_SPEC_VERSION = 1;
-pub const GOOGLE_HLSL_FUNCTIONALITY1_EXTENSION_NAME = "VK_GOOGLE_hlsl_functionality1";
+pub const GOOGLE_HLSL_FUNCTIONALITY1_EXTENSION_NAME = c"VK_GOOGLE_hlsl_functionality1";
 
 
 pub const GOOGLE_decorate_string = 1;
 pub const GOOGLE_DECORATE_STRING_SPEC_VERSION = 1;
-pub const GOOGLE_DECORATE_STRING_EXTENSION_NAME = "VK_GOOGLE_decorate_string";
+pub const GOOGLE_DECORATE_STRING_EXTENSION_NAME = c"VK_GOOGLE_decorate_string";
 
 
 pub const EXT_subgroup_size_control = 1;
 pub const EXT_SUBGROUP_SIZE_CONTROL_SPEC_VERSION = 2;
-pub const EXT_SUBGROUP_SIZE_CONTROL_EXTENSION_NAME = "VK_EXT_subgroup_size_control";
+pub const EXT_SUBGROUP_SIZE_CONTROL_EXTENSION_NAME = c"VK_EXT_subgroup_size_control";
 
 pub const PhysicalDeviceSubgroupSizeControlFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_FEATURES_EXT,
@@ -13008,7 +13008,7 @@ pub const PipelineShaderStageRequiredSubgroupSizeCreateInfoEXT = extern struct {
 
 pub const AMD_shader_core_properties2 = 1;
 pub const AMD_SHADER_CORE_PROPERTIES_2_SPEC_VERSION = 1;
-pub const AMD_SHADER_CORE_PROPERTIES_2_EXTENSION_NAME = "VK_AMD_shader_core_properties2";
+pub const AMD_SHADER_CORE_PROPERTIES_2_EXTENSION_NAME = c"VK_AMD_shader_core_properties2";
 
 pub const ShaderCorePropertiesFlagsAMD = Flags;
 pub const ShaderCorePropertiesFlagBitsAMD = struct {
@@ -13024,7 +13024,7 @@ pub const PhysicalDeviceShaderCoreProperties2AMD = extern struct {
 
 pub const AMD_device_coherent_memory = 1;
 pub const AMD_DEVICE_COHERENT_MEMORY_SPEC_VERSION = 1;
-pub const AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME = "VK_AMD_device_coherent_memory";
+pub const AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME = c"VK_AMD_device_coherent_memory";
 
 pub const PhysicalDeviceCoherentMemoryFeaturesAMD = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_COHERENT_MEMORY_FEATURES_AMD,
@@ -13035,7 +13035,7 @@ pub const PhysicalDeviceCoherentMemoryFeaturesAMD = extern struct {
 
 pub const EXT_memory_budget = 1;
 pub const EXT_MEMORY_BUDGET_SPEC_VERSION = 1;
-pub const EXT_MEMORY_BUDGET_EXTENSION_NAME = "VK_EXT_memory_budget";
+pub const EXT_MEMORY_BUDGET_EXTENSION_NAME = c"VK_EXT_memory_budget";
 
 pub const PhysicalDeviceMemoryBudgetPropertiesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT,
@@ -13047,7 +13047,7 @@ pub const PhysicalDeviceMemoryBudgetPropertiesEXT = extern struct {
 
 pub const EXT_memory_priority = 1;
 pub const EXT_MEMORY_PRIORITY_SPEC_VERSION = 1;
-pub const EXT_MEMORY_PRIORITY_EXTENSION_NAME = "VK_EXT_memory_priority";
+pub const EXT_MEMORY_PRIORITY_EXTENSION_NAME = c"VK_EXT_memory_priority";
 
 pub const PhysicalDeviceMemoryPriorityFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_MEMORY_PRIORITY_FEATURES_EXT,
@@ -13064,7 +13064,7 @@ pub const MemoryPriorityAllocateInfoEXT = extern struct {
 
 pub const NV_dedicated_allocation_image_aliasing = 1;
 pub const NV_DEDICATED_ALLOCATION_IMAGE_ALIASING_SPEC_VERSION = 1;
-pub const NV_DEDICATED_ALLOCATION_IMAGE_ALIASING_EXTENSION_NAME = "VK_NV_dedicated_allocation_image_aliasing";
+pub const NV_DEDICATED_ALLOCATION_IMAGE_ALIASING_EXTENSION_NAME = c"VK_NV_dedicated_allocation_image_aliasing";
 
 pub const PhysicalDeviceDedicatedAllocationImageAliasingFeaturesNV = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_DEDICATED_ALLOCATION_IMAGE_ALIASING_FEATURES_NV,
@@ -13075,7 +13075,7 @@ pub const PhysicalDeviceDedicatedAllocationImageAliasingFeaturesNV = extern stru
 
 pub const EXT_buffer_device_address = 1;
 pub const EXT_BUFFER_DEVICE_ADDRESS_SPEC_VERSION = 2;
-pub const EXT_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME = "VK_EXT_buffer_device_address";
+pub const EXT_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME = c"VK_EXT_buffer_device_address";
 
 pub const PhysicalDeviceBufferDeviceAddressFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES_EXT,
@@ -13107,7 +13107,7 @@ pub inline fn GetBufferDeviceAddressEXT(device: Device, info: BufferDeviceAddres
 
 pub const EXT_tooling_info = 1;
 pub const EXT_TOOLING_INFO_SPEC_VERSION = 1;
-pub const EXT_TOOLING_INFO_EXTENSION_NAME = "VK_EXT_tooling_info";
+pub const EXT_TOOLING_INFO_EXTENSION_NAME = c"VK_EXT_tooling_info";
 
 pub const ToolPurposeFlagsEXT = Flags;
 pub const ToolPurposeFlagBitsEXT = struct {
@@ -13163,14 +13163,14 @@ pub inline fn GetPhysicalDeviceToolPropertiesEXTCount(physicalDevice: PhysicalDe
 
 pub const EXT_separate_stencil_usage = 1;
 pub const EXT_SEPARATE_STENCIL_USAGE_SPEC_VERSION = 1;
-pub const EXT_SEPARATE_STENCIL_USAGE_EXTENSION_NAME = "VK_EXT_separate_stencil_usage";
+pub const EXT_SEPARATE_STENCIL_USAGE_EXTENSION_NAME = c"VK_EXT_separate_stencil_usage";
 
 pub const ImageStencilUsageCreateInfoEXT = ImageStencilUsageCreateInfo;
 
 
 pub const EXT_validation_features = 1;
 pub const EXT_VALIDATION_FEATURES_SPEC_VERSION = 2;
-pub const EXT_VALIDATION_FEATURES_EXTENSION_NAME = "VK_EXT_validation_features";
+pub const EXT_VALIDATION_FEATURES_EXTENSION_NAME = c"VK_EXT_validation_features";
 
 pub const ValidationFeatureEnableEXT = extern enum {
     GPU_ASSISTED_EXT = 0,
@@ -13200,7 +13200,7 @@ pub const ValidationFeaturesEXT = extern struct {
 
 pub const NV_cooperative_matrix = 1;
 pub const NV_COOPERATIVE_MATRIX_SPEC_VERSION = 1;
-pub const NV_COOPERATIVE_MATRIX_EXTENSION_NAME = "VK_NV_cooperative_matrix";
+pub const NV_COOPERATIVE_MATRIX_EXTENSION_NAME = c"VK_NV_cooperative_matrix";
 
 pub const ComponentTypeNV = extern enum {
     FLOAT16_NV = 0,
@@ -13290,7 +13290,7 @@ pub inline fn GetPhysicalDeviceCooperativeMatrixPropertiesNVCount(physicalDevice
 
 pub const NV_coverage_reduction_mode = 1;
 pub const NV_COVERAGE_REDUCTION_MODE_SPEC_VERSION = 1;
-pub const NV_COVERAGE_REDUCTION_MODE_EXTENSION_NAME = "VK_NV_coverage_reduction_mode";
+pub const NV_COVERAGE_REDUCTION_MODE_EXTENSION_NAME = c"VK_NV_coverage_reduction_mode";
 
 pub const CoverageReductionModeNV = extern enum {
     MERGE_NV = 0,
@@ -13362,7 +13362,7 @@ pub inline fn GetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNVCou
 
 pub const EXT_fragment_shader_interlock = 1;
 pub const EXT_FRAGMENT_SHADER_INTERLOCK_SPEC_VERSION = 1;
-pub const EXT_FRAGMENT_SHADER_INTERLOCK_EXTENSION_NAME = "VK_EXT_fragment_shader_interlock";
+pub const EXT_FRAGMENT_SHADER_INTERLOCK_EXTENSION_NAME = c"VK_EXT_fragment_shader_interlock";
 
 pub const PhysicalDeviceFragmentShaderInterlockFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_FRAGMENT_SHADER_INTERLOCK_FEATURES_EXT,
@@ -13375,7 +13375,7 @@ pub const PhysicalDeviceFragmentShaderInterlockFeaturesEXT = extern struct {
 
 pub const EXT_ycbcr_image_arrays = 1;
 pub const EXT_YCBCR_IMAGE_ARRAYS_SPEC_VERSION = 1;
-pub const EXT_YCBCR_IMAGE_ARRAYS_EXTENSION_NAME = "VK_EXT_ycbcr_image_arrays";
+pub const EXT_YCBCR_IMAGE_ARRAYS_EXTENSION_NAME = c"VK_EXT_ycbcr_image_arrays";
 
 pub const PhysicalDeviceYcbcrImageArraysFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_YCBCR_IMAGE_ARRAYS_FEATURES_EXT,
@@ -13386,7 +13386,7 @@ pub const PhysicalDeviceYcbcrImageArraysFeaturesEXT = extern struct {
 
 pub const EXT_headless_surface = 1;
 pub const EXT_HEADLESS_SURFACE_SPEC_VERSION = 1;
-pub const EXT_HEADLESS_SURFACE_EXTENSION_NAME = "VK_EXT_headless_surface";
+pub const EXT_HEADLESS_SURFACE_EXTENSION_NAME = c"VK_EXT_headless_surface";
 
 pub const HeadlessSurfaceCreateFlagsEXT = Flags;
 
@@ -13419,7 +13419,7 @@ pub inline fn CreateHeadlessSurfaceEXT(instance: Instance, createInfo: HeadlessS
 
 pub const EXT_line_rasterization = 1;
 pub const EXT_LINE_RASTERIZATION_SPEC_VERSION = 1;
-pub const EXT_LINE_RASTERIZATION_EXTENSION_NAME = "VK_EXT_line_rasterization";
+pub const EXT_LINE_RASTERIZATION_EXTENSION_NAME = c"VK_EXT_line_rasterization";
 
 pub const LineRasterizationModeEXT = extern enum {
     DEFAULT_EXT = 0,
@@ -13465,7 +13465,7 @@ pub const CmdSetLineStippleEXT = vkCmdSetLineStippleEXT;
 
 pub const EXT_host_query_reset = 1;
 pub const EXT_HOST_QUERY_RESET_SPEC_VERSION = 1;
-pub const EXT_HOST_QUERY_RESET_EXTENSION_NAME = "VK_EXT_host_query_reset";
+pub const EXT_HOST_QUERY_RESET_EXTENSION_NAME = c"VK_EXT_host_query_reset";
 
 pub const PhysicalDeviceHostQueryResetFeaturesEXT = PhysicalDeviceHostQueryResetFeatures;
 
@@ -13481,7 +13481,7 @@ pub const ResetQueryPoolEXT = vkResetQueryPoolEXT;
 
 pub const EXT_index_type_uint8 = 1;
 pub const EXT_INDEX_TYPE_UINT8_SPEC_VERSION = 1;
-pub const EXT_INDEX_TYPE_UINT8_EXTENSION_NAME = "VK_EXT_index_type_uint8";
+pub const EXT_INDEX_TYPE_UINT8_EXTENSION_NAME = c"VK_EXT_index_type_uint8";
 
 pub const PhysicalDeviceIndexTypeUint8FeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES_EXT,
@@ -13492,7 +13492,7 @@ pub const PhysicalDeviceIndexTypeUint8FeaturesEXT = extern struct {
 
 pub const EXT_shader_demote_to_helper_invocation = 1;
 pub const EXT_SHADER_DEMOTE_TO_HELPER_INVOCATION_SPEC_VERSION = 1;
-pub const EXT_SHADER_DEMOTE_TO_HELPER_INVOCATION_EXTENSION_NAME = "VK_EXT_shader_demote_to_helper_invocation";
+pub const EXT_SHADER_DEMOTE_TO_HELPER_INVOCATION_EXTENSION_NAME = c"VK_EXT_shader_demote_to_helper_invocation";
 
 pub const PhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES_EXT,
@@ -13503,7 +13503,7 @@ pub const PhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT = extern struc
 
 pub const EXT_texel_buffer_alignment = 1;
 pub const EXT_TEXEL_BUFFER_ALIGNMENT_SPEC_VERSION = 1;
-pub const EXT_TEXEL_BUFFER_ALIGNMENT_EXTENSION_NAME = "VK_EXT_texel_buffer_alignment";
+pub const EXT_TEXEL_BUFFER_ALIGNMENT_EXTENSION_NAME = c"VK_EXT_texel_buffer_alignment";
 
 pub const PhysicalDeviceTexelBufferAlignmentFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_FEATURES_EXT,
@@ -13523,7 +13523,7 @@ pub const PhysicalDeviceTexelBufferAlignmentPropertiesEXT = extern struct {
 
 pub const GOOGLE_user_type = 1;
 pub const GOOGLE_USER_TYPE_SPEC_VERSION = 1;
-pub const GOOGLE_USER_TYPE_EXTENSION_NAME = "VK_GOOGLE_user_type";
+pub const GOOGLE_USER_TYPE_EXTENSION_NAME = c"VK_GOOGLE_user_type";
 
 
 test "Compile All" { _ = @typeInfo(@This()); }

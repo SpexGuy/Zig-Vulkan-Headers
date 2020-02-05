@@ -1135,12 +1135,15 @@ class ZigOutputGenerator(OutputGenerator):
         numVal = None
         if 'value' in elem.keys():
             value = elem.get('value')
-            value = value.replace("0ULL", "u64(0)").replace("0U", "u32(0)")
-            if value[-1] == 'f':
-                value = 'f32(' + value[:-1] + ')'
-            # print('About to translate value =', value, 'type =', type(value))
-            if needsNum:
-                numVal = int(value, 0)
+            if value[0] == '"':
+                value = 'c'+value
+            else:
+                value = value.replace("0ULL", "u64(0)").replace("0U", "u32(0)")
+                if value[-1] == 'f':
+                    value = 'f32(' + value[:-1] + ')'
+                # print('About to translate value =', value, 'type =', type(value))
+                if needsNum:
+                    numVal = int(value, 0)
             self.logMsg('diag', 'Enum', name, '-> value [', numVal, ',', value, ']')
             return [numVal, value]
         if 'bitpos' in elem.keys():
