@@ -332,15 +332,26 @@ class ZigOutputGenerator(OutputGenerator):
                     self.newline()
                     write('pub const', self.featureName[3:], '= 1;', file=self.outFile)
                     for section in self.TYPE_SECTIONS:
-                        contents = self.sections[section]
-                        if contents:
-                            write('\n'.join(contents), file=self.outFile)
-                    if self.sections['command']:
-                        write('\n'.join(self.sections['command']), file=self.outFile)
-                    if self.sections['commandWrapper']:
-                        write('\n'.join(self.sections['commandWrapper']), file=self.outFile)
+                        self.writeSection(section)
+                    self.writeSection('command')
+                    self.writeSection('commandWrapper')
         # Finish processing in superclass
         OutputGenerator.endFeature(self)
+    
+    def writeSection(self, name):
+        contents = self.sections[name]
+        if contents:
+            wasNewline = True
+            for str in contents:
+                isNewline = '\n' in str
+                if isNewline and not wasNewline:
+                    self.newline()
+                write(str, file=self.outFile)
+                if isNewline: self.newline()
+                wasNewline = isNewline
+            if not wasNewline:
+                self.newline()
+        
 
     def appendSection(self, section, text):
         "Append a definition to the specified section"
@@ -453,8 +464,6 @@ class ZigOutputGenerator(OutputGenerator):
                 body += noneStr(elem.text) + noneStr(elem.tail)
 
         if body:
-            if '\n' in body[0:-1]:
-                body += '\n'
             self.appendSection(section, body)
 
     def genFuncPointer(self, typeinfo, name, section):
@@ -490,7 +499,7 @@ class ZigOutputGenerator(OutputGenerator):
             for param in params:
                 body += param.typeDecl()
         
-        body += ') ' + returnType + ';\n'
+        body += ') ' + returnType + ';'
         
         self.appendSection(section, body)
     
@@ -523,7 +532,7 @@ class ZigOutputGenerator(OutputGenerator):
             param = self.parseParam(paramText, False, member, allMembers, typeName)
             body += '    ' + param.structDecl() + ',\n'
         
-        body += '};\n'
+        body += '};'
 
         self.appendSection('struct', body)
 
@@ -664,11 +673,11 @@ class ZigOutputGenerator(OutputGenerator):
         if alias:
             # If the group name is aliased, just emit a typedef declaration
             # for the alias.
-            body = 'pub const ' + valueTypeToZigType(groupName) + ' = ' + valueTypeToZigType(alias) + ';\n'
+            body = 'pub const ' + valueTypeToZigType(groupName) + ' = ' + valueTypeToZigType(alias) + ';'
             self.appendSection(section, body)
         else:
             (section, body) = self.buildEnumZigDecl(groupinfo, groupName)
-            self.appendSection(section, "\n" + body)
+            self.appendSection(section, body)
 
     def genEnum(self, enuminfo, name, alias):
         """Generate enumerants.
@@ -743,7 +752,7 @@ class ZigOutputGenerator(OutputGenerator):
         body += aliasBody
 
         # Postfix
-        body += '};\n'
+        body += '};'
 
         return ("bitmask", body)
 
@@ -816,7 +825,7 @@ class ZigOutputGenerator(OutputGenerator):
         OutputGenerator.genCmd(self, cmdinfo, name, alias)
 
         decls = self.makeZigDecls(cmdinfo.elem, name)
-        self.appendSection('command', decls[0] + '\n')
+        self.appendSection('command', decls[0])
         self.appendSection('commandWrapper', decls[1])
 
     def makeZigDecls(self, cmd, name):
@@ -1095,6 +1104,7 @@ class ZigOutputGenerator(OutputGenerator):
                     
                 funcDecl += '}\n'
         
+        if funcDecl and funcDecl[-1] == '\n': funcDecl = funcDecl[:-1]
         return [externFn, funcDecl]
         
     def enumToValue(self, elem, needsNum):

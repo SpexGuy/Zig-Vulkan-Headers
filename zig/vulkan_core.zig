@@ -24,6 +24,7 @@ pub const CString = [*]const u8;
 
 pub const VERSION_1_0 = 1;
 pub fn MAKE_VERSION(major: u32, minor: u32, patch: u32) u32 { return @shlExact(major, 22) | @shlExact(minor, 12) | patch; }
+
 // DEPRECATED: This define has been removed. Specific version defines (e.g. VK_API_VERSION_1_0), or the VK_MAKE_VERSION macro, should be used instead.
 //pub const API_VERSION = MAKE_VERSION(1, 0, 0); // Patch version should always be set to 0
 
@@ -33,6 +34,7 @@ pub const API_VERSION_1_0 = MAKE_VERSION(1, 0, 0);// Patch version should always
 pub fn VERSION_MAJOR(version: u32) u32 { return version >> 22; }
 pub fn VERSION_MINOR(version: u32) u32 { return (version >> 12) & 0x3ff; }
 pub fn VERSION_PATCH(version: u32) u32 { return version & 0xfff; }
+
 // Version of this file
 pub const HEADER_VERSION = 132;
 
@@ -40,6 +42,7 @@ pub const Flags = u32;
 pub const Bool32 = u32;
 pub const DeviceSize = u64;
 pub const SampleMask = u32;
+
 pub const Instance = *@OpaqueType();
 pub const PhysicalDevice = *@OpaqueType();
 pub const Device = *@OpaqueType();
@@ -65,6 +68,7 @@ pub const DescriptorPool = *@OpaqueType();
 pub const DescriptorSet = *@OpaqueType();
 pub const Framebuffer = *@OpaqueType();
 pub const CommandPool = *@OpaqueType();
+
 pub const LOD_CLAMP_NONE = f32(1000.0);
 pub const REMAINING_MIP_LEVELS = (~u32(0));
 pub const REMAINING_ARRAY_LAYERS = (~u32(0));
@@ -1325,6 +1329,7 @@ pub const VendorId = extern enum {
     VSI = 0x10002,
     KAZAN = 0x10003,
 };
+
 pub const InstanceCreateFlags = Flags;
 
 pub const FormatFeatureFlags = Flags;
@@ -1373,7 +1378,6 @@ pub const FormatFeatureFlagBits = struct {
     pub const SAMPLED_IMAGE_FILTER_CUBIC_BIT_EXT = SAMPLED_IMAGE_FILTER_CUBIC_BIT_IMG;
 };
 
-
 pub const ImageUsageFlags = Flags;
 pub const ImageUsageFlagBits = struct {
     pub const TRANSFER_SRC_BIT: ImageUsageFlags = 0x00000001;
@@ -1395,7 +1399,6 @@ pub const ImageUsageFlagBits = struct {
     pub const RESERVED_17_BIT_QCOM: ImageUsageFlags = 0x00020000;
     pub const FRAGMENT_DENSITY_MAP_BIT_EXT: ImageUsageFlags = 0x00000200;
 };
-
 
 pub const ImageCreateFlags = Flags;
 pub const ImageCreateFlagBits = struct {
@@ -1423,7 +1426,6 @@ pub const ImageCreateFlagBits = struct {
     pub const ALIAS_BIT_KHR = ALIAS_BIT;
 };
 
-
 pub const SampleCountFlags = Flags;
 pub const SampleCountFlagBits = struct {
     pub const T_1_BIT: SampleCountFlags = 0x00000001;
@@ -1434,7 +1436,6 @@ pub const SampleCountFlagBits = struct {
     pub const T_32_BIT: SampleCountFlags = 0x00000020;
     pub const T_64_BIT: SampleCountFlags = 0x00000040;
 };
-
 
 pub const QueueFlags = Flags;
 pub const QueueFlagBits = struct {
@@ -1447,7 +1448,6 @@ pub const QueueFlagBits = struct {
     pub const RESERVED_5_BIT_KHR: QueueFlags = 0x00000020;
 };
 
-
 pub const MemoryPropertyFlags = Flags;
 pub const MemoryPropertyFlagBits = struct {
     pub const DEVICE_LOCAL_BIT: MemoryPropertyFlags = 0x00000001;
@@ -1459,7 +1459,6 @@ pub const MemoryPropertyFlagBits = struct {
     pub const DEVICE_COHERENT_BIT_AMD: MemoryPropertyFlags = 0x00000040;
     pub const DEVICE_UNCACHED_BIT_AMD: MemoryPropertyFlags = 0x00000080;
 };
-
 
 pub const MemoryHeapFlags = Flags;
 pub const MemoryHeapFlagBits = struct {
@@ -1476,7 +1475,6 @@ pub const DeviceQueueCreateFlags = Flags;
 pub const DeviceQueueCreateFlagBits = struct {
     pub const PROTECTED_BIT: DeviceQueueCreateFlags = 0x00000001;
 };
-
 
 pub const PipelineStageFlags = Flags;
 pub const PipelineStageFlagBits = struct {
@@ -1531,7 +1529,6 @@ pub const ImageAspectFlagBits = struct {
     pub const PLANE_2_BIT_KHR = PLANE_2_BIT;
 };
 
-
 pub const SparseImageFormatFlags = Flags;
 pub const SparseImageFormatFlagBits = struct {
     pub const SINGLE_MIPTAIL_BIT: SparseImageFormatFlags = 0x00000001;
@@ -1539,12 +1536,10 @@ pub const SparseImageFormatFlagBits = struct {
     pub const NONSTANDARD_BLOCK_SIZE_BIT: SparseImageFormatFlags = 0x00000004;
 };
 
-
 pub const SparseMemoryBindFlags = Flags;
 pub const SparseMemoryBindFlagBits = struct {
     pub const METADATA_BIT: SparseMemoryBindFlags = 0x00000001;
 };
-
 
 pub const FenceCreateFlags = Flags;
 pub const FenceCreateFlagBits = struct {
@@ -1570,7 +1565,6 @@ pub const QueryPipelineStatisticFlagBits = struct {
     pub const COMPUTE_SHADER_INVOCATIONS_BIT: QueryPipelineStatisticFlags = 0x00000400;
 };
 
-
 pub const QueryResultFlags = Flags;
 pub const QueryResultFlagBits = struct {
     pub const T_64_BIT: QueryResultFlags = 0x00000001;
@@ -1578,7 +1572,6 @@ pub const QueryResultFlagBits = struct {
     pub const WITH_AVAILABILITY_BIT: QueryResultFlags = 0x00000004;
     pub const PARTIAL_BIT: QueryResultFlags = 0x00000008;
 };
-
 
 pub const BufferCreateFlags = Flags;
 pub const BufferCreateFlagBits = struct {
@@ -1591,7 +1584,6 @@ pub const BufferCreateFlagBits = struct {
     pub const DEVICE_ADDRESS_CAPTURE_REPLAY_BIT_EXT = DEVICE_ADDRESS_CAPTURE_REPLAY_BIT;
     pub const DEVICE_ADDRESS_CAPTURE_REPLAY_BIT_KHR = DEVICE_ADDRESS_CAPTURE_REPLAY_BIT;
 };
-
 
 pub const BufferUsageFlags = Flags;
 pub const BufferUsageFlagBits = struct {
@@ -1626,7 +1618,6 @@ pub const ImageViewCreateFlagBits = struct {
     pub const FRAGMENT_DENSITY_MAP_DYNAMIC_BIT_EXT: ImageViewCreateFlags = 0x00000001;
 };
 
-
 pub const ShaderModuleCreateFlags = Flags;
 pub const ShaderModuleCreateFlagBits = struct {
     pub const RESERVED_0_BIT_NV: ShaderModuleCreateFlags = 0x00000001;
@@ -1660,7 +1651,6 @@ pub const PipelineCreateFlagBits = struct {
     pub const DISPATCH_BASE_KHR = DISPATCH_BASE;
 };
 
-
 pub const PipelineShaderStageCreateFlags = Flags;
 pub const PipelineShaderStageCreateFlagBits = struct {
     pub const RESERVED_2_BIT_NV: PipelineShaderStageCreateFlags = 0x00000004;
@@ -1668,7 +1658,6 @@ pub const PipelineShaderStageCreateFlagBits = struct {
     pub const REQUIRE_FULL_SUBGROUPS_BIT_EXT: PipelineShaderStageCreateFlags = 0x00000002;
     pub const RESERVED_3_BIT_KHR: PipelineShaderStageCreateFlags = 0x00000008;
 };
-
 
 pub const ShaderStageFlags = Flags;
 pub const ShaderStageFlagBits = struct {
@@ -1725,7 +1714,6 @@ pub const SamplerCreateFlagBits = struct {
     pub const SUBSAMPLED_COARSE_RECONSTRUCTION_BIT_EXT: SamplerCreateFlags = 0x00000002;
 };
 
-
 pub const DescriptorSetLayoutCreateFlags = Flags;
 pub const DescriptorSetLayoutCreateFlagBits = struct {
     pub const UPDATE_AFTER_BIND_POOL_BIT: DescriptorSetLayoutCreateFlags = 0x00000002;
@@ -1733,7 +1721,6 @@ pub const DescriptorSetLayoutCreateFlagBits = struct {
 
     pub const UPDATE_AFTER_BIND_POOL_BIT_EXT = UPDATE_AFTER_BIND_POOL_BIT;
 };
-
 
 pub const DescriptorPoolCreateFlags = Flags;
 pub const DescriptorPoolCreateFlagBits = struct {
@@ -1752,19 +1739,16 @@ pub const FramebufferCreateFlagBits = struct {
     pub const IMAGELESS_BIT_KHR = IMAGELESS_BIT;
 };
 
-
 pub const RenderPassCreateFlags = Flags;
 pub const RenderPassCreateFlagBits = struct {
     pub const RESERVED_0_BIT_KHR: RenderPassCreateFlags = 0x00000001;
     pub const RENDER_PASS_RESERVED_BIT_1_QCOM: RenderPassCreateFlags = 0x00000002;
 };
 
-
 pub const AttachmentDescriptionFlags = Flags;
 pub const AttachmentDescriptionFlagBits = struct {
     pub const MAY_ALIAS_BIT: AttachmentDescriptionFlags = 0x00000001;
 };
-
 
 pub const SubpassDescriptionFlags = Flags;
 pub const SubpassDescriptionFlagBits = struct {
@@ -1773,7 +1757,6 @@ pub const SubpassDescriptionFlagBits = struct {
     pub const RESERVED_2_BIT_QCOM: SubpassDescriptionFlags = 0x00000004;
     pub const RESERVED_3_BIT_QCOM: SubpassDescriptionFlags = 0x00000008;
 };
-
 
 pub const AccessFlags = Flags;
 pub const AccessFlagBits = struct {
@@ -1811,7 +1794,6 @@ pub const AccessFlagBits = struct {
     pub const FRAGMENT_DENSITY_MAP_READ_BIT_EXT: AccessFlags = 0x01000000;
 };
 
-
 pub const DependencyFlags = Flags;
 pub const DependencyFlagBits = struct {
     pub const BY_REGION_BIT: DependencyFlags = 0x00000001;
@@ -1822,7 +1804,6 @@ pub const DependencyFlagBits = struct {
     pub const DEVICE_GROUP_BIT_KHR = DEVICE_GROUP_BIT;
 };
 
-
 pub const CommandPoolCreateFlags = Flags;
 pub const CommandPoolCreateFlagBits = struct {
     pub const TRANSIENT_BIT: CommandPoolCreateFlags = 0x00000001;
@@ -1830,12 +1811,10 @@ pub const CommandPoolCreateFlagBits = struct {
     pub const PROTECTED_BIT: CommandPoolCreateFlags = 0x00000004;
 };
 
-
 pub const CommandPoolResetFlags = Flags;
 pub const CommandPoolResetFlagBits = struct {
     pub const RELEASE_RESOURCES_BIT: CommandPoolResetFlags = 0x00000001;
 };
-
 
 pub const CommandBufferUsageFlags = Flags;
 pub const CommandBufferUsageFlagBits = struct {
@@ -1844,18 +1823,15 @@ pub const CommandBufferUsageFlagBits = struct {
     pub const SIMULTANEOUS_USE_BIT: CommandBufferUsageFlags = 0x00000004;
 };
 
-
 pub const QueryControlFlags = Flags;
 pub const QueryControlFlagBits = struct {
     pub const PRECISE_BIT: QueryControlFlags = 0x00000001;
 };
 
-
 pub const CommandBufferResetFlags = Flags;
 pub const CommandBufferResetFlagBits = struct {
     pub const RELEASE_RESOURCES_BIT: CommandBufferResetFlags = 0x00000001;
 };
-
 
 pub const StencilFaceFlags = Flags;
 pub const StencilFaceFlagBits = struct {
@@ -3102,7 +3078,6 @@ pub extern fn vkQueueSubmit(
 ) Result;
 
 pub extern fn vkQueueWaitIdle(queue: Queue) Result;
-
 pub extern fn vkDeviceWaitIdle(device: Device) Result;
 
 pub extern fn vkAllocateMemory(
@@ -3931,6 +3906,7 @@ pub inline fn CreateInstance(createInfo: InstanceCreateInfo, pAllocator: ?*const
 }
 
 pub const DestroyInstance = vkDestroyInstance;
+
 pub const EnumeratePhysicalDevicesResult = struct {
     result: Result,
     physicalDevices: []PhysicalDevice,
@@ -4018,6 +3994,7 @@ pub inline fn GetPhysicalDeviceMemoryProperties(physicalDevice: PhysicalDevice) 
 
 pub const GetInstanceProcAddr = vkGetInstanceProcAddr;
 pub const GetDeviceProcAddr = vkGetDeviceProcAddr;
+
 pub inline fn CreateDevice(physicalDevice: PhysicalDevice, createInfo: DeviceCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_INITIALIZATION_FAILED,VK_EXTENSION_NOT_PRESENT,VK_FEATURE_NOT_PRESENT,VK_TOO_MANY_OBJECTS,VK_DEVICE_LOST,VK_UNDOCUMENTED_ERROR}!Device {
     var out_device: Device = undefined;
     const result = vkCreateDevice(physicalDevice, &createInfo, pAllocator, &out_device);
@@ -4037,6 +4014,7 @@ pub inline fn CreateDevice(physicalDevice: PhysicalDevice, createInfo: DeviceCre
 }
 
 pub const DestroyDevice = vkDestroyDevice;
+
 pub const EnumerateInstanceExtensionPropertiesResult = struct {
     result: Result,
     properties: []ExtensionProperties,
@@ -4228,6 +4206,7 @@ pub inline fn AllocateMemory(device: Device, allocateInfo: MemoryAllocateInfo, p
 }
 
 pub const FreeMemory = vkFreeMemory;
+
 pub inline fn MapMemory(device: Device, memory: DeviceMemory, offset: DeviceSize, size: DeviceSize, flags: MemoryMapFlags, ppData: ?**c_void) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_MEMORY_MAP_FAILED,VK_UNDOCUMENTED_ERROR}!void {
     const result = vkMapMemory(device, memory, offset, size, flags, ppData);
     if (@bitCast(c_int, result) < 0) {
@@ -4241,6 +4220,7 @@ pub inline fn MapMemory(device: Device, memory: DeviceMemory, offset: DeviceSize
 }
 
 pub const UnmapMemory = vkUnmapMemory;
+
 pub inline fn FlushMappedMemoryRanges(device: Device, memoryRanges: []const MappedMemoryRange) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
     const result = vkFlushMappedMemoryRanges(device, @intCast(u32, memoryRanges.len), memoryRanges.ptr);
     if (@bitCast(c_int, result) < 0) {
@@ -4356,6 +4336,7 @@ pub inline fn CreateFence(device: Device, createInfo: FenceCreateInfo, pAllocato
 }
 
 pub const DestroyFence = vkDestroyFence;
+
 pub inline fn ResetFences(device: Device, fences: []const Fence) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
     const result = vkResetFences(device, @intCast(u32, fences.len), fences.ptr);
     if (@bitCast(c_int, result) < 0) {
@@ -4407,6 +4388,7 @@ pub inline fn CreateSemaphore(device: Device, createInfo: SemaphoreCreateInfo, p
 }
 
 pub const DestroySemaphore = vkDestroySemaphore;
+
 pub inline fn CreateEvent(device: Device, createInfo: EventCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!Event {
     var out_event: Event = undefined;
     const result = vkCreateEvent(device, &createInfo, pAllocator, &out_event);
@@ -4421,6 +4403,7 @@ pub inline fn CreateEvent(device: Device, createInfo: EventCreateInfo, pAllocato
 }
 
 pub const DestroyEvent = vkDestroyEvent;
+
 pub inline fn GetEventStatus(device: Device, event: Event) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_DEVICE_LOST,VK_UNDOCUMENTED_ERROR}!Result {
     const result = vkGetEventStatus(device, event);
     if (@bitCast(c_int, result) < 0) {
@@ -4470,6 +4453,7 @@ pub inline fn CreateQueryPool(device: Device, createInfo: QueryPoolCreateInfo, p
 }
 
 pub const DestroyQueryPool = vkDestroyQueryPool;
+
 pub inline fn GetQueryPoolResults(device: Device, queryPool: QueryPool, firstQuery: u32, queryCount: u32, data: []u8, stride: DeviceSize, flags: QueryResultFlags) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_DEVICE_LOST,VK_UNDOCUMENTED_ERROR}!Result {
     const result = vkGetQueryPoolResults(device, queryPool, firstQuery, queryCount, @intCast(usize, data.len), data.ptr, stride, flags);
     if (@bitCast(c_int, result) < 0) {
@@ -4498,6 +4482,7 @@ pub inline fn CreateBuffer(device: Device, createInfo: BufferCreateInfo, pAlloca
 }
 
 pub const DestroyBuffer = vkDestroyBuffer;
+
 pub inline fn CreateBufferView(device: Device, createInfo: BufferViewCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!BufferView {
     var out_view: BufferView = undefined;
     const result = vkCreateBufferView(device, &createInfo, pAllocator, &out_view);
@@ -4512,6 +4497,7 @@ pub inline fn CreateBufferView(device: Device, createInfo: BufferViewCreateInfo,
 }
 
 pub const DestroyBufferView = vkDestroyBufferView;
+
 pub inline fn CreateImage(device: Device, createInfo: ImageCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!Image {
     var out_image: Image = undefined;
     const result = vkCreateImage(device, &createInfo, pAllocator, &out_image);
@@ -4526,6 +4512,7 @@ pub inline fn CreateImage(device: Device, createInfo: ImageCreateInfo, pAllocato
 }
 
 pub const DestroyImage = vkDestroyImage;
+
 pub inline fn GetImageSubresourceLayout(device: Device, image: Image, subresource: ImageSubresource) SubresourceLayout {
     var out_layout: SubresourceLayout = undefined;
     vkGetImageSubresourceLayout(device, image, &subresource, &out_layout);
@@ -4546,6 +4533,7 @@ pub inline fn CreateImageView(device: Device, createInfo: ImageViewCreateInfo, p
 }
 
 pub const DestroyImageView = vkDestroyImageView;
+
 pub inline fn CreateShaderModule(device: Device, createInfo: ShaderModuleCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_INVALID_SHADER_NV,VK_UNDOCUMENTED_ERROR}!ShaderModule {
     var out_shaderModule: ShaderModule = undefined;
     const result = vkCreateShaderModule(device, &createInfo, pAllocator, &out_shaderModule);
@@ -4561,6 +4549,7 @@ pub inline fn CreateShaderModule(device: Device, createInfo: ShaderModuleCreateI
 }
 
 pub const DestroyShaderModule = vkDestroyShaderModule;
+
 pub inline fn CreatePipelineCache(device: Device, createInfo: PipelineCacheCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!PipelineCache {
     var out_pipelineCache: PipelineCache = undefined;
     const result = vkCreatePipelineCache(device, &createInfo, pAllocator, &out_pipelineCache);
@@ -4575,6 +4564,7 @@ pub inline fn CreatePipelineCache(device: Device, createInfo: PipelineCacheCreat
 }
 
 pub const DestroyPipelineCache = vkDestroyPipelineCache;
+
 pub const GetPipelineCacheDataResult = struct {
     result: Result,
     data: []u8,
@@ -4645,6 +4635,7 @@ pub inline fn CreateComputePipelines(device: Device, pipelineCache: ?PipelineCac
 }
 
 pub const DestroyPipeline = vkDestroyPipeline;
+
 pub inline fn CreatePipelineLayout(device: Device, createInfo: PipelineLayoutCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!PipelineLayout {
     var out_pipelineLayout: PipelineLayout = undefined;
     const result = vkCreatePipelineLayout(device, &createInfo, pAllocator, &out_pipelineLayout);
@@ -4659,6 +4650,7 @@ pub inline fn CreatePipelineLayout(device: Device, createInfo: PipelineLayoutCre
 }
 
 pub const DestroyPipelineLayout = vkDestroyPipelineLayout;
+
 pub inline fn CreateSampler(device: Device, createInfo: SamplerCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_TOO_MANY_OBJECTS,VK_UNDOCUMENTED_ERROR}!Sampler {
     var out_sampler: Sampler = undefined;
     const result = vkCreateSampler(device, &createInfo, pAllocator, &out_sampler);
@@ -4674,6 +4666,7 @@ pub inline fn CreateSampler(device: Device, createInfo: SamplerCreateInfo, pAllo
 }
 
 pub const DestroySampler = vkDestroySampler;
+
 pub inline fn CreateDescriptorSetLayout(device: Device, createInfo: DescriptorSetLayoutCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!DescriptorSetLayout {
     var out_setLayout: DescriptorSetLayout = undefined;
     const result = vkCreateDescriptorSetLayout(device, &createInfo, pAllocator, &out_setLayout);
@@ -4688,6 +4681,7 @@ pub inline fn CreateDescriptorSetLayout(device: Device, createInfo: DescriptorSe
 }
 
 pub const DestroyDescriptorSetLayout = vkDestroyDescriptorSetLayout;
+
 pub inline fn CreateDescriptorPool(device: Device, createInfo: DescriptorPoolCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_FRAGMENTATION,VK_UNDOCUMENTED_ERROR}!DescriptorPool {
     var out_descriptorPool: DescriptorPool = undefined;
     const result = vkCreateDescriptorPool(device, &createInfo, pAllocator, &out_descriptorPool);
@@ -4703,6 +4697,7 @@ pub inline fn CreateDescriptorPool(device: Device, createInfo: DescriptorPoolCre
 }
 
 pub const DestroyDescriptorPool = vkDestroyDescriptorPool;
+
 pub inline fn ResetDescriptorPool(device: Device, descriptorPool: DescriptorPool, flags: DescriptorPoolResetFlags) error{VK_UNDOCUMENTED_ERROR}!void {
     const result = vkResetDescriptorPool(device, descriptorPool, flags);
     if (@bitCast(c_int, result) < 0) {
@@ -4749,6 +4744,7 @@ pub inline fn CreateFramebuffer(device: Device, createInfo: FramebufferCreateInf
 }
 
 pub const DestroyFramebuffer = vkDestroyFramebuffer;
+
 pub inline fn CreateRenderPass(device: Device, createInfo: RenderPassCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!RenderPass {
     var out_renderPass: RenderPass = undefined;
     const result = vkCreateRenderPass(device, &createInfo, pAllocator, &out_renderPass);
@@ -4763,6 +4759,7 @@ pub inline fn CreateRenderPass(device: Device, createInfo: RenderPassCreateInfo,
 }
 
 pub const DestroyRenderPass = vkDestroyRenderPass;
+
 pub inline fn GetRenderAreaGranularity(device: Device, renderPass: RenderPass) Extent2D {
     var out_granularity: Extent2D = undefined;
     vkGetRenderAreaGranularity(device, renderPass, &out_granularity);
@@ -4783,6 +4780,7 @@ pub inline fn CreateCommandPool(device: Device, createInfo: CommandPoolCreateInf
 }
 
 pub const DestroyCommandPool = vkDestroyCommandPool;
+
 pub inline fn ResetCommandPool(device: Device, commandPool: CommandPool, flags: CommandPoolResetFlags) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
     const result = vkResetCommandPool(device, commandPool, flags);
     if (@bitCast(c_int, result) < 0) {
@@ -4844,6 +4842,7 @@ pub inline fn ResetCommandBuffer(commandBuffer: CommandBuffer, flags: CommandBuf
 }
 
 pub const CmdBindPipeline = vkCmdBindPipeline;
+
 pub inline fn CmdSetViewport(commandBuffer: CommandBuffer, firstViewport: u32, viewports: []const Viewport) void {
     vkCmdSetViewport(commandBuffer, firstViewport, @intCast(u32, viewports.len), viewports.ptr);
 }
@@ -4854,6 +4853,7 @@ pub inline fn CmdSetScissor(commandBuffer: CommandBuffer, firstScissor: u32, sci
 
 pub const CmdSetLineWidth = vkCmdSetLineWidth;
 pub const CmdSetDepthBias = vkCmdSetDepthBias;
+
 pub inline fn CmdSetBlendConstants(commandBuffer: CommandBuffer, blendConstants: [4]f32) void {
     vkCmdSetBlendConstants(commandBuffer, &blendConstants);
 }
@@ -4862,11 +4862,13 @@ pub const CmdSetDepthBounds = vkCmdSetDepthBounds;
 pub const CmdSetStencilCompareMask = vkCmdSetStencilCompareMask;
 pub const CmdSetStencilWriteMask = vkCmdSetStencilWriteMask;
 pub const CmdSetStencilReference = vkCmdSetStencilReference;
+
 pub inline fn CmdBindDescriptorSets(commandBuffer: CommandBuffer, pipelineBindPoint: PipelineBindPoint, layout: PipelineLayout, firstSet: u32, descriptorSets: []const DescriptorSet, dynamicOffsets: []const u32) void {
     vkCmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, @intCast(u32, descriptorSets.len), descriptorSets.ptr, @intCast(u32, dynamicOffsets.len), dynamicOffsets.ptr);
 }
 
 pub const CmdBindIndexBuffer = vkCmdBindIndexBuffer;
+
 pub inline fn CmdBindVertexBuffers(commandBuffer: CommandBuffer, firstBinding: u32, buffers: []const Buffer, offsets: []const DeviceSize) void {
     assert(offsets.len >= buffers.len);
     vkCmdBindVertexBuffers(commandBuffer, firstBinding, @intCast(u32, buffers.len), buffers.ptr, offsets.ptr);
@@ -4878,6 +4880,7 @@ pub const CmdDrawIndirect = vkCmdDrawIndirect;
 pub const CmdDrawIndexedIndirect = vkCmdDrawIndexedIndirect;
 pub const CmdDispatch = vkCmdDispatch;
 pub const CmdDispatchIndirect = vkCmdDispatchIndirect;
+
 pub inline fn CmdCopyBuffer(commandBuffer: CommandBuffer, srcBuffer: Buffer, dstBuffer: Buffer, regions: []const BufferCopy) void {
     vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, @intCast(u32, regions.len), regions.ptr);
 }
@@ -4903,6 +4906,7 @@ pub inline fn CmdUpdateBuffer(commandBuffer: CommandBuffer, dstBuffer: Buffer, d
 }
 
 pub const CmdFillBuffer = vkCmdFillBuffer;
+
 pub inline fn CmdClearColorImage(commandBuffer: CommandBuffer, image: Image, imageLayout: ImageLayout, color: ClearColorValue, ranges: []const ImageSubresourceRange) void {
     vkCmdClearColorImage(commandBuffer, image, imageLayout, &color, @intCast(u32, ranges.len), ranges.ptr);
 }
@@ -4921,6 +4925,7 @@ pub inline fn CmdResolveImage(commandBuffer: CommandBuffer, srcImage: Image, src
 
 pub const CmdSetEvent = vkCmdSetEvent;
 pub const CmdResetEvent = vkCmdResetEvent;
+
 pub inline fn CmdWaitEvents(commandBuffer: CommandBuffer, events: []const Event, srcStageMask: PipelineStageFlags, dstStageMask: PipelineStageFlags, memoryBarriers: []const MemoryBarrier, bufferMemoryBarriers: []const BufferMemoryBarrier, imageMemoryBarriers: []const ImageMemoryBarrier) void {
     vkCmdWaitEvents(commandBuffer, @intCast(u32, events.len), events.ptr, srcStageMask, dstStageMask, @intCast(u32, memoryBarriers.len), memoryBarriers.ptr, @intCast(u32, bufferMemoryBarriers.len), bufferMemoryBarriers.ptr, @intCast(u32, imageMemoryBarriers.len), imageMemoryBarriers.ptr);
 }
@@ -4934,6 +4939,7 @@ pub const CmdEndQuery = vkCmdEndQuery;
 pub const CmdResetQueryPool = vkCmdResetQueryPool;
 pub const CmdWriteTimestamp = vkCmdWriteTimestamp;
 pub const CmdCopyQueryPoolResults = vkCmdCopyQueryPoolResults;
+
 pub inline fn CmdPushConstants(commandBuffer: CommandBuffer, layout: PipelineLayout, stageFlags: ShaderStageFlags, offset: u32, values: []const u8) void {
     vkCmdPushConstants(commandBuffer, layout, stageFlags, offset, @intCast(u32, values.len), values.ptr);
 }
@@ -4944,6 +4950,7 @@ pub inline fn CmdBeginRenderPass(commandBuffer: CommandBuffer, renderPassBegin: 
 
 pub const CmdNextSubpass = vkCmdNextSubpass;
 pub const CmdEndRenderPass = vkCmdEndRenderPass;
+
 pub inline fn CmdExecuteCommands(commandBuffer: CommandBuffer, commandBuffers: []const CommandBuffer) void {
     vkCmdExecuteCommands(commandBuffer, @intCast(u32, commandBuffers.len), commandBuffers.ptr);
 }
@@ -4955,6 +4962,7 @@ pub const API_VERSION_1_1 = MAKE_VERSION(1, 1, 0);// Patch version should always
 
 pub const SamplerYcbcrConversion = *@OpaqueType();
 pub const DescriptorUpdateTemplate = *@OpaqueType();
+
 pub const MAX_DEVICE_GROUP_SIZE = 32;
 pub const LUID_SIZE = 8;
 pub const QUEUE_FAMILY_EXTERNAL = (~u32(0)-1);
@@ -5031,7 +5039,6 @@ pub const SubgroupFeatureFlagBits = struct {
     pub const PARTITIONED_BIT_NV: SubgroupFeatureFlags = 0x00000100;
 };
 
-
 pub const PeerMemoryFeatureFlags = Flags;
 pub const PeerMemoryFeatureFlagBits = struct {
     pub const COPY_SRC_BIT: PeerMemoryFeatureFlags = 0x00000001;
@@ -5044,7 +5051,6 @@ pub const PeerMemoryFeatureFlagBits = struct {
     pub const GENERIC_SRC_BIT_KHR = GENERIC_SRC_BIT;
     pub const GENERIC_DST_BIT_KHR = GENERIC_DST_BIT;
 };
-
 
 pub const MemoryAllocateFlags = Flags;
 pub const MemoryAllocateFlagBits = struct {
@@ -5083,7 +5089,6 @@ pub const ExternalMemoryHandleTypeFlagBits = struct {
     pub const D3D12_RESOURCE_BIT_KHR = D3D12_RESOURCE_BIT;
 };
 
-
 pub const ExternalMemoryFeatureFlags = Flags;
 pub const ExternalMemoryFeatureFlagBits = struct {
     pub const DEDICATED_ONLY_BIT: ExternalMemoryFeatureFlags = 0x00000001;
@@ -5094,7 +5099,6 @@ pub const ExternalMemoryFeatureFlagBits = struct {
     pub const EXPORTABLE_BIT_KHR = EXPORTABLE_BIT;
     pub const IMPORTABLE_BIT_KHR = IMPORTABLE_BIT;
 };
-
 
 pub const ExternalFenceHandleTypeFlags = Flags;
 pub const ExternalFenceHandleTypeFlagBits = struct {
@@ -5109,7 +5113,6 @@ pub const ExternalFenceHandleTypeFlagBits = struct {
     pub const SYNC_FD_BIT_KHR = SYNC_FD_BIT;
 };
 
-
 pub const ExternalFenceFeatureFlags = Flags;
 pub const ExternalFenceFeatureFlagBits = struct {
     pub const EXPORTABLE_BIT: ExternalFenceFeatureFlags = 0x00000001;
@@ -5119,7 +5122,6 @@ pub const ExternalFenceFeatureFlagBits = struct {
     pub const IMPORTABLE_BIT_KHR = IMPORTABLE_BIT;
 };
 
-
 pub const FenceImportFlags = Flags;
 pub const FenceImportFlagBits = struct {
     pub const TEMPORARY_BIT: FenceImportFlags = 0x00000001;
@@ -5127,14 +5129,12 @@ pub const FenceImportFlagBits = struct {
     pub const TEMPORARY_BIT_KHR = TEMPORARY_BIT;
 };
 
-
 pub const SemaphoreImportFlags = Flags;
 pub const SemaphoreImportFlagBits = struct {
     pub const TEMPORARY_BIT: SemaphoreImportFlags = 0x00000001;
 
     pub const TEMPORARY_BIT_KHR = TEMPORARY_BIT;
 };
-
 
 pub const ExternalSemaphoreHandleTypeFlags = Flags;
 pub const ExternalSemaphoreHandleTypeFlagBits = struct {
@@ -5150,7 +5150,6 @@ pub const ExternalSemaphoreHandleTypeFlagBits = struct {
     pub const D3D12_FENCE_BIT_KHR = D3D12_FENCE_BIT;
     pub const SYNC_FD_BIT_KHR = SYNC_FD_BIT;
 };
-
 
 pub const ExternalSemaphoreFeatureFlags = Flags;
 pub const ExternalSemaphoreFeatureFlagBits = struct {
@@ -5304,6 +5303,7 @@ pub const MemoryRequirements2 = extern struct {
 };
 
 pub const MemoryRequirements2KHR = MemoryRequirements2;
+
 pub const SparseImageMemoryRequirements2 = extern struct {
     sType: StructureType = .SPARSE_IMAGE_MEMORY_REQUIREMENTS_2,
     pNext: ?*c_void = null,
@@ -5437,6 +5437,7 @@ pub const PhysicalDeviceVariablePointersFeatures = extern struct {
 };
 
 pub const PhysicalDeviceVariablePointerFeatures = PhysicalDeviceVariablePointersFeatures;
+
 pub const PhysicalDeviceProtectedMemoryFeatures = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES,
     pNext: ?*c_void = null,
@@ -5648,6 +5649,7 @@ pub const PhysicalDeviceShaderDrawParametersFeatures = extern struct {
 };
 
 pub const PhysicalDeviceShaderDrawParameterFeatures = PhysicalDeviceShaderDrawParametersFeatures;
+
 pub extern fn vkEnumerateInstanceVersion(pApiVersion: *u32) Result;
 
 pub extern fn vkBindBufferMemory2(
@@ -5859,6 +5861,7 @@ pub inline fn GetDeviceGroupPeerMemoryFeatures(device: Device, heapIndex: u32, l
 
 pub const CmdSetDeviceMask = vkCmdSetDeviceMask;
 pub const CmdDispatchBase = vkCmdDispatchBase;
+
 pub const EnumeratePhysicalDeviceGroupsResult = struct {
     result: Result,
     physicalDeviceGroupProperties: []PhysicalDeviceGroupProperties,
@@ -5983,6 +5986,7 @@ pub inline fn GetPhysicalDeviceSparseImageFormatProperties2Count(physicalDevice:
 }
 
 pub const TrimCommandPool = vkTrimCommandPool;
+
 pub inline fn GetDeviceQueue2(device: Device, queueInfo: DeviceQueueInfo2) Queue {
     var out_queue: Queue = undefined;
     vkGetDeviceQueue2(device, &queueInfo, &out_queue);
@@ -6003,6 +6007,7 @@ pub inline fn CreateSamplerYcbcrConversion(device: Device, createInfo: SamplerYc
 }
 
 pub const DestroySamplerYcbcrConversion = vkDestroySamplerYcbcrConversion;
+
 pub inline fn CreateDescriptorUpdateTemplate(device: Device, createInfo: DescriptorUpdateTemplateCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!DescriptorUpdateTemplate {
     var out_descriptorUpdateTemplate: DescriptorUpdateTemplate = undefined;
     const result = vkCreateDescriptorUpdateTemplate(device, &createInfo, pAllocator, &out_descriptorUpdateTemplate);
@@ -6018,6 +6023,7 @@ pub inline fn CreateDescriptorUpdateTemplate(device: Device, createInfo: Descrip
 
 pub const DestroyDescriptorUpdateTemplate = vkDestroyDescriptorUpdateTemplate;
 pub const UpdateDescriptorSetWithTemplate = vkUpdateDescriptorSetWithTemplate;
+
 pub inline fn GetPhysicalDeviceExternalBufferProperties(physicalDevice: PhysicalDevice, externalBufferInfo: PhysicalDeviceExternalBufferInfo) ExternalBufferProperties {
     var out_externalBufferProperties: ExternalBufferProperties = undefined;
     vkGetPhysicalDeviceExternalBufferProperties(physicalDevice, &externalBufferInfo, &out_externalBufferProperties);
@@ -6048,6 +6054,7 @@ pub const VERSION_1_2 = 1;
 pub const API_VERSION_1_2 = MAKE_VERSION(1, 2, 0);// Patch version should always be set to 0
 
 pub const DeviceAddress = u64;
+
 pub const MAX_DRIVER_NAME_SIZE = 256;
 pub const MAX_DRIVER_INFO_SIZE = 256;
 
@@ -6126,7 +6133,6 @@ pub const ResolveModeFlagBits = struct {
     pub const MAX_BIT_KHR = MAX_BIT;
 };
 
-
 pub const DescriptorBindingFlags = Flags;
 pub const DescriptorBindingFlagBits = struct {
     pub const UPDATE_AFTER_BIND_BIT: DescriptorBindingFlags = 0x00000001;
@@ -6139,7 +6145,6 @@ pub const DescriptorBindingFlagBits = struct {
     pub const PARTIALLY_BOUND_BIT_EXT = PARTIALLY_BOUND_BIT;
     pub const VARIABLE_DESCRIPTOR_COUNT_BIT_EXT = VARIABLE_DESCRIPTOR_COUNT_BIT;
 };
-
 
 pub const SemaphoreWaitFlags = Flags;
 pub const SemaphoreWaitFlagBits = struct {
@@ -6790,6 +6795,7 @@ pub extern fn vkGetDeviceMemoryOpaqueCaptureAddress(
 
 pub const CmdDrawIndirectCount = vkCmdDrawIndirectCount;
 pub const CmdDrawIndexedIndirectCount = vkCmdDrawIndexedIndirectCount;
+
 pub inline fn CreateRenderPass2(device: Device, createInfo: RenderPassCreateInfo2, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!RenderPass {
     var out_renderPass: RenderPass = undefined;
     const result = vkCreateRenderPass2(device, &createInfo, pAllocator, &out_renderPass);
@@ -6816,6 +6822,7 @@ pub inline fn CmdEndRenderPass2(commandBuffer: CommandBuffer, subpassEndInfo: Su
 }
 
 pub const ResetQueryPool = vkResetQueryPool;
+
 pub inline fn GetSemaphoreCounterValue(device: Device, semaphore: Semaphore) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_DEVICE_LOST,VK_UNDOCUMENTED_ERROR}!u64 {
     var out_value: u64 = undefined;
     const result = vkGetSemaphoreCounterValue(device, semaphore, &out_value);
@@ -6872,6 +6879,7 @@ pub inline fn GetDeviceMemoryOpaqueCaptureAddress(device: Device, info: DeviceMe
 
 pub const KHR_surface = 1;
 pub const SurfaceKHR = *@OpaqueType();
+
 pub const KHR_SURFACE_SPEC_VERSION = 25;
 pub const KHR_SURFACE_EXTENSION_NAME = "VK_KHR_surface";
 
@@ -6919,7 +6927,6 @@ pub const SurfaceTransformFlagBitsKHR = struct {
     pub const SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR: SurfaceTransformFlagsKHR = 0x00000080;
     pub const SURFACE_TRANSFORM_INHERIT_BIT_KHR: SurfaceTransformFlagsKHR = 0x00000100;
 };
-
 
 pub const CompositeAlphaFlagsKHR = Flags;
 pub const CompositeAlphaFlagBitsKHR = struct {
@@ -6981,6 +6988,7 @@ pub extern fn vkGetPhysicalDeviceSurfacePresentModesKHR(
 ) Result;
 
 pub const DestroySurfaceKHR = vkDestroySurfaceKHR;
+
 pub inline fn GetPhysicalDeviceSurfaceSupportKHR(physicalDevice: PhysicalDevice, queueFamilyIndex: u32, surface: SurfaceKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_SURFACE_LOST_KHR,VK_UNDOCUMENTED_ERROR}!Bool32 {
     var out_supported: Bool32 = undefined;
     const result = vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamilyIndex, surface, &out_supported);
@@ -7080,6 +7088,7 @@ pub inline fn GetPhysicalDeviceSurfacePresentModesKHRCount(physicalDevice: Physi
 
 pub const KHR_swapchain = 1;
 pub const SwapchainKHR = *@OpaqueType();
+
 pub const KHR_SWAPCHAIN_SPEC_VERSION = 70;
 pub const KHR_SWAPCHAIN_EXTENSION_NAME = "VK_KHR_swapchain";
 
@@ -7089,7 +7098,6 @@ pub const SwapchainCreateFlagBitsKHR = struct {
     pub const SWAPCHAIN_CREATE_PROTECTED_BIT_KHR: SwapchainCreateFlagsKHR = 0x00000002;
     pub const SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR: SwapchainCreateFlagsKHR = 0x00000004;
 };
-
 
 pub const DeviceGroupPresentModeFlagsKHR = Flags;
 pub const DeviceGroupPresentModeFlagBitsKHR = struct {
@@ -7251,6 +7259,7 @@ pub inline fn CreateSwapchainKHR(device: Device, createInfo: SwapchainCreateInfo
 }
 
 pub const DestroySwapchainKHR = vkDestroySwapchainKHR;
+
 pub const GetSwapchainImagesKHRResult = struct {
     result: Result,
     swapchainImages: []Image,
@@ -7406,6 +7415,7 @@ pub inline fn AcquireNextImage2KHR(device: Device, acquireInfo: AcquireNextImage
 pub const KHR_display = 1;
 pub const DisplayKHR = *@OpaqueType();
 pub const DisplayModeKHR = *@OpaqueType();
+
 pub const KHR_DISPLAY_SPEC_VERSION = 23;
 pub const KHR_DISPLAY_EXTENSION_NAME = "VK_KHR_display";
 
@@ -7419,6 +7429,7 @@ pub const DisplayPlaneAlphaFlagBitsKHR = struct {
 
 pub const DisplayModeCreateFlagsKHR = Flags;
 pub const DisplaySurfaceCreateFlagsKHR = Flags;
+
 pub const DisplayPropertiesKHR = extern struct {
     display: DisplayKHR,
     displayName: CString,
@@ -7696,6 +7707,7 @@ pub inline fn CreateDisplayPlaneSurfaceKHR(instance: Instance, createInfo: Displ
 pub const KHR_display_swapchain = 1;
 pub const KHR_DISPLAY_SWAPCHAIN_SPEC_VERSION = 10;
 pub const KHR_DISPLAY_SWAPCHAIN_EXTENSION_NAME = "VK_KHR_display_swapchain";
+
 pub const DisplayPresentInfoKHR = extern struct {
     sType: StructureType = .DISPLAY_PRESENT_INFO_KHR,
     pNext: ?*const c_void = null,
@@ -7732,16 +7744,20 @@ pub const KHR_sampler_mirror_clamp_to_edge = 1;
 pub const KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE_SPEC_VERSION = 3;
 pub const KHR_SAMPLER_MIRROR_CLAMP_TO_EDGE_EXTENSION_NAME = "VK_KHR_sampler_mirror_clamp_to_edge";
 
+
 pub const KHR_multiview = 1;
 pub const KHR_MULTIVIEW_SPEC_VERSION = 1;
 pub const KHR_MULTIVIEW_EXTENSION_NAME = "VK_KHR_multiview";
+
 pub const RenderPassMultiviewCreateInfoKHR = RenderPassMultiviewCreateInfo;
 pub const PhysicalDeviceMultiviewFeaturesKHR = PhysicalDeviceMultiviewFeatures;
 pub const PhysicalDeviceMultiviewPropertiesKHR = PhysicalDeviceMultiviewProperties;
 
+
 pub const KHR_get_physical_device_properties2 = 1;
 pub const KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_SPEC_VERSION = 2;
 pub const KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME = "VK_KHR_get_physical_device_properties2";
+
 pub const PhysicalDeviceFeatures2KHR = PhysicalDeviceFeatures2;
 pub const PhysicalDeviceProperties2KHR = PhysicalDeviceProperties2;
 pub const FormatProperties2KHR = FormatProperties2;
@@ -7751,6 +7767,7 @@ pub const QueueFamilyProperties2KHR = QueueFamilyProperties2;
 pub const PhysicalDeviceMemoryProperties2KHR = PhysicalDeviceMemoryProperties2;
 pub const SparseImageFormatProperties2KHR = SparseImageFormatProperties2;
 pub const PhysicalDeviceSparseImageFormatInfo2KHR = PhysicalDeviceSparseImageFormatInfo2;
+
 pub extern fn vkGetPhysicalDeviceFeatures2KHR(
     physicalDevice: PhysicalDevice,
     pFeatures: *PhysicalDeviceFeatures2,
@@ -7859,9 +7876,9 @@ pub inline fn GetPhysicalDeviceSparseImageFormatProperties2KHRCount(physicalDevi
 pub const KHR_device_group = 1;
 pub const KHR_DEVICE_GROUP_SPEC_VERSION = 4;
 pub const KHR_DEVICE_GROUP_EXTENSION_NAME = "VK_KHR_device_group";
+
 pub const PeerMemoryFeatureFlagsKHR = PeerMemoryFeatureFlags;
 pub const PeerMemoryFeatureFlagBitsKHR = PeerMemoryFeatureFlagBits;
-
 pub const MemoryAllocateFlagsKHR = MemoryAllocateFlags;
 pub const MemoryAllocateFlagBitsKHR = MemoryAllocateFlagBits;
 
@@ -7872,6 +7889,7 @@ pub const DeviceGroupSubmitInfoKHR = DeviceGroupSubmitInfo;
 pub const DeviceGroupBindSparseInfoKHR = DeviceGroupBindSparseInfo;
 pub const BindBufferMemoryDeviceGroupInfoKHR = BindBufferMemoryDeviceGroupInfo;
 pub const BindImageMemoryDeviceGroupInfoKHR = BindImageMemoryDeviceGroupInfo;
+
 pub extern fn vkGetDeviceGroupPeerMemoryFeaturesKHR(
     device: Device,
     heapIndex: u32,
@@ -7904,14 +7922,18 @@ pub inline fn GetDeviceGroupPeerMemoryFeaturesKHR(device: Device, heapIndex: u32
 pub const CmdSetDeviceMaskKHR = vkCmdSetDeviceMaskKHR;
 pub const CmdDispatchBaseKHR = vkCmdDispatchBaseKHR;
 
+
 pub const KHR_shader_draw_parameters = 1;
 pub const KHR_SHADER_DRAW_PARAMETERS_SPEC_VERSION = 1;
 pub const KHR_SHADER_DRAW_PARAMETERS_EXTENSION_NAME = "VK_KHR_shader_draw_parameters";
 
+
 pub const KHR_maintenance1 = 1;
 pub const KHR_MAINTENANCE1_SPEC_VERSION = 2;
 pub const KHR_MAINTENANCE1_EXTENSION_NAME = "VK_KHR_maintenance1";
+
 pub const CommandPoolTrimFlagsKHR = CommandPoolTrimFlags;
+
 pub extern fn vkTrimCommandPoolKHR(
     device: Device,
     commandPool: CommandPool,
@@ -7920,12 +7942,15 @@ pub extern fn vkTrimCommandPoolKHR(
 
 pub const TrimCommandPoolKHR = vkTrimCommandPoolKHR;
 
+
 pub const KHR_device_group_creation = 1;
 pub const KHR_DEVICE_GROUP_CREATION_SPEC_VERSION = 1;
 pub const KHR_DEVICE_GROUP_CREATION_EXTENSION_NAME = "VK_KHR_device_group_creation";
 pub const MAX_DEVICE_GROUP_SIZE_KHR = MAX_DEVICE_GROUP_SIZE;
+
 pub const PhysicalDeviceGroupPropertiesKHR = PhysicalDeviceGroupProperties;
 pub const DeviceGroupDeviceCreateInfoKHR = DeviceGroupDeviceCreateInfo;
+
 pub extern fn vkEnumeratePhysicalDeviceGroupsKHR(
     instance: Instance,
     pPhysicalDeviceGroupCount: *u32,
@@ -7971,9 +7996,9 @@ pub const KHR_external_memory_capabilities = 1;
 pub const KHR_EXTERNAL_MEMORY_CAPABILITIES_SPEC_VERSION = 1;
 pub const KHR_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME = "VK_KHR_external_memory_capabilities";
 pub const LUID_SIZE_KHR = LUID_SIZE;
+
 pub const ExternalMemoryHandleTypeFlagsKHR = ExternalMemoryHandleTypeFlags;
 pub const ExternalMemoryHandleTypeFlagBitsKHR = ExternalMemoryHandleTypeFlagBits;
-
 pub const ExternalMemoryFeatureFlagsKHR = ExternalMemoryFeatureFlags;
 pub const ExternalMemoryFeatureFlagBitsKHR = ExternalMemoryFeatureFlagBits;
 
@@ -7983,6 +8008,7 @@ pub const ExternalImageFormatPropertiesKHR = ExternalImageFormatProperties;
 pub const PhysicalDeviceExternalBufferInfoKHR = PhysicalDeviceExternalBufferInfo;
 pub const ExternalBufferPropertiesKHR = ExternalBufferProperties;
 pub const PhysicalDeviceIDPropertiesKHR = PhysicalDeviceIDProperties;
+
 pub extern fn vkGetPhysicalDeviceExternalBufferPropertiesKHR(
     physicalDevice: PhysicalDevice,
     pExternalBufferInfo: *const PhysicalDeviceExternalBufferInfo,
@@ -8000,13 +8026,16 @@ pub const KHR_external_memory = 1;
 pub const KHR_EXTERNAL_MEMORY_SPEC_VERSION = 1;
 pub const KHR_EXTERNAL_MEMORY_EXTENSION_NAME = "VK_KHR_external_memory";
 pub const QUEUE_FAMILY_EXTERNAL_KHR = QUEUE_FAMILY_EXTERNAL;
+
 pub const ExternalMemoryImageCreateInfoKHR = ExternalMemoryImageCreateInfo;
 pub const ExternalMemoryBufferCreateInfoKHR = ExternalMemoryBufferCreateInfo;
 pub const ExportMemoryAllocateInfoKHR = ExportMemoryAllocateInfo;
 
+
 pub const KHR_external_memory_fd = 1;
 pub const KHR_EXTERNAL_MEMORY_FD_SPEC_VERSION = 1;
 pub const KHR_EXTERNAL_MEMORY_FD_EXTENSION_NAME = "VK_KHR_external_memory_fd";
+
 pub const ImportMemoryFdInfoKHR = extern struct {
     sType: StructureType = .IMPORT_MEMORY_FD_INFO_KHR,
     pNext: ?*const c_void = null,
@@ -8069,14 +8098,15 @@ pub inline fn GetMemoryFdPropertiesKHR(device: Device, handleType: ExternalMemor
 pub const KHR_external_semaphore_capabilities = 1;
 pub const KHR_EXTERNAL_SEMAPHORE_CAPABILITIES_SPEC_VERSION = 1;
 pub const KHR_EXTERNAL_SEMAPHORE_CAPABILITIES_EXTENSION_NAME = "VK_KHR_external_semaphore_capabilities";
+
 pub const ExternalSemaphoreHandleTypeFlagsKHR = ExternalSemaphoreHandleTypeFlags;
 pub const ExternalSemaphoreHandleTypeFlagBitsKHR = ExternalSemaphoreHandleTypeFlagBits;
-
 pub const ExternalSemaphoreFeatureFlagsKHR = ExternalSemaphoreFeatureFlags;
 pub const ExternalSemaphoreFeatureFlagBitsKHR = ExternalSemaphoreFeatureFlagBits;
 
 pub const PhysicalDeviceExternalSemaphoreInfoKHR = PhysicalDeviceExternalSemaphoreInfo;
 pub const ExternalSemaphorePropertiesKHR = ExternalSemaphoreProperties;
+
 pub extern fn vkGetPhysicalDeviceExternalSemaphorePropertiesKHR(
     physicalDevice: PhysicalDevice,
     pExternalSemaphoreInfo: *const PhysicalDeviceExternalSemaphoreInfo,
@@ -8093,14 +8123,17 @@ pub inline fn GetPhysicalDeviceExternalSemaphorePropertiesKHR(physicalDevice: Ph
 pub const KHR_external_semaphore = 1;
 pub const KHR_EXTERNAL_SEMAPHORE_SPEC_VERSION = 1;
 pub const KHR_EXTERNAL_SEMAPHORE_EXTENSION_NAME = "VK_KHR_external_semaphore";
+
 pub const SemaphoreImportFlagsKHR = SemaphoreImportFlags;
 pub const SemaphoreImportFlagBitsKHR = SemaphoreImportFlagBits;
 
 pub const ExportSemaphoreCreateInfoKHR = ExportSemaphoreCreateInfo;
 
+
 pub const KHR_external_semaphore_fd = 1;
 pub const KHR_EXTERNAL_SEMAPHORE_FD_SPEC_VERSION = 1;
 pub const KHR_EXTERNAL_SEMAPHORE_FD_EXTENSION_NAME = "VK_KHR_external_semaphore_fd";
+
 pub const ImportSemaphoreFdInfoKHR = extern struct {
     sType: StructureType = .IMPORT_SEMAPHORE_FD_INFO_KHR,
     pNext: ?*const c_void = null,
@@ -8156,6 +8189,7 @@ pub inline fn GetSemaphoreFdKHR(device: Device, getFdInfo: SemaphoreGetFdInfoKHR
 pub const KHR_push_descriptor = 1;
 pub const KHR_PUSH_DESCRIPTOR_SPEC_VERSION = 2;
 pub const KHR_PUSH_DESCRIPTOR_EXTENSION_NAME = "VK_KHR_push_descriptor";
+
 pub const PhysicalDevicePushDescriptorPropertiesKHR = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES_KHR,
     pNext: ?*c_void = null,
@@ -8185,20 +8219,26 @@ pub inline fn CmdPushDescriptorSetKHR(commandBuffer: CommandBuffer, pipelineBind
 
 pub const CmdPushDescriptorSetWithTemplateKHR = vkCmdPushDescriptorSetWithTemplateKHR;
 
+
 pub const KHR_shader_float16_int8 = 1;
 pub const KHR_SHADER_FLOAT16_INT8_SPEC_VERSION = 1;
 pub const KHR_SHADER_FLOAT16_INT8_EXTENSION_NAME = "VK_KHR_shader_float16_int8";
+
 pub const PhysicalDeviceShaderFloat16Int8FeaturesKHR = PhysicalDeviceShaderFloat16Int8Features;
 pub const PhysicalDeviceFloat16Int8FeaturesKHR = PhysicalDeviceShaderFloat16Int8Features;
+
 
 pub const KHR_16bit_storage = 1;
 pub const KHR_16BIT_STORAGE_SPEC_VERSION = 1;
 pub const KHR_16BIT_STORAGE_EXTENSION_NAME = "VK_KHR_16bit_storage";
+
 pub const PhysicalDevice16BitStorageFeaturesKHR = PhysicalDevice16BitStorageFeatures;
+
 
 pub const KHR_incremental_present = 1;
 pub const KHR_INCREMENTAL_PRESENT_SPEC_VERSION = 1;
 pub const KHR_INCREMENTAL_PRESENT_EXTENSION_NAME = "VK_KHR_incremental_present";
+
 pub const RectLayerKHR = extern struct {
     offset: Offset2D,
     extent: Extent2D,
@@ -8220,13 +8260,17 @@ pub const PresentRegionsKHR = extern struct {
 
 pub const KHR_descriptor_update_template = 1;
 pub const DescriptorUpdateTemplateKHR = DescriptorUpdateTemplate;
+
 pub const KHR_DESCRIPTOR_UPDATE_TEMPLATE_SPEC_VERSION = 1;
 pub const KHR_DESCRIPTOR_UPDATE_TEMPLATE_EXTENSION_NAME = "VK_KHR_descriptor_update_template";
+
 pub const DescriptorUpdateTemplateTypeKHR = DescriptorUpdateTemplateType;
 
 pub const DescriptorUpdateTemplateCreateFlagsKHR = DescriptorUpdateTemplateCreateFlags;
+
 pub const DescriptorUpdateTemplateEntryKHR = DescriptorUpdateTemplateEntry;
 pub const DescriptorUpdateTemplateCreateInfoKHR = DescriptorUpdateTemplateCreateInfo;
+
 pub extern fn vkCreateDescriptorUpdateTemplateKHR(
     device: Device,
     pCreateInfo: *const DescriptorUpdateTemplateCreateInfo,
@@ -8263,17 +8307,21 @@ pub inline fn CreateDescriptorUpdateTemplateKHR(device: Device, createInfo: Desc
 pub const DestroyDescriptorUpdateTemplateKHR = vkDestroyDescriptorUpdateTemplateKHR;
 pub const UpdateDescriptorSetWithTemplateKHR = vkUpdateDescriptorSetWithTemplateKHR;
 
+
 pub const KHR_imageless_framebuffer = 1;
 pub const KHR_IMAGELESS_FRAMEBUFFER_SPEC_VERSION = 1;
 pub const KHR_IMAGELESS_FRAMEBUFFER_EXTENSION_NAME = "VK_KHR_imageless_framebuffer";
+
 pub const PhysicalDeviceImagelessFramebufferFeaturesKHR = PhysicalDeviceImagelessFramebufferFeatures;
 pub const FramebufferAttachmentsCreateInfoKHR = FramebufferAttachmentsCreateInfo;
 pub const FramebufferAttachmentImageInfoKHR = FramebufferAttachmentImageInfo;
 pub const RenderPassAttachmentBeginInfoKHR = RenderPassAttachmentBeginInfo;
 
+
 pub const KHR_create_renderpass2 = 1;
 pub const KHR_CREATE_RENDERPASS_2_SPEC_VERSION = 1;
 pub const KHR_CREATE_RENDERPASS_2_EXTENSION_NAME = "VK_KHR_create_renderpass2";
+
 pub const RenderPassCreateInfo2KHR = RenderPassCreateInfo2;
 pub const AttachmentDescription2KHR = AttachmentDescription2;
 pub const AttachmentReference2KHR = AttachmentReference2;
@@ -8281,6 +8329,7 @@ pub const SubpassDescription2KHR = SubpassDescription2;
 pub const SubpassDependency2KHR = SubpassDependency2;
 pub const SubpassBeginInfoKHR = SubpassBeginInfo;
 pub const SubpassEndInfoKHR = SubpassEndInfo;
+
 pub extern fn vkCreateRenderPass2KHR(
     device: Device,
     pCreateInfo: *const RenderPassCreateInfo2,
@@ -8334,6 +8383,7 @@ pub inline fn CmdEndRenderPass2KHR(commandBuffer: CommandBuffer, subpassEndInfo:
 pub const KHR_shared_presentable_image = 1;
 pub const KHR_SHARED_PRESENTABLE_IMAGE_SPEC_VERSION = 1;
 pub const KHR_SHARED_PRESENTABLE_IMAGE_EXTENSION_NAME = "VK_KHR_shared_presentable_image";
+
 pub const SharedPresentSurfaceCapabilitiesKHR = extern struct {
     sType: StructureType = .SHARED_PRESENT_SURFACE_CAPABILITIES_KHR,
     pNext: ?*c_void = null,
@@ -8365,14 +8415,15 @@ pub inline fn GetSwapchainStatusKHR(device: Device, swapchain: SwapchainKHR) err
 pub const KHR_external_fence_capabilities = 1;
 pub const KHR_EXTERNAL_FENCE_CAPABILITIES_SPEC_VERSION = 1;
 pub const KHR_EXTERNAL_FENCE_CAPABILITIES_EXTENSION_NAME = "VK_KHR_external_fence_capabilities";
+
 pub const ExternalFenceHandleTypeFlagsKHR = ExternalFenceHandleTypeFlags;
 pub const ExternalFenceHandleTypeFlagBitsKHR = ExternalFenceHandleTypeFlagBits;
-
 pub const ExternalFenceFeatureFlagsKHR = ExternalFenceFeatureFlags;
 pub const ExternalFenceFeatureFlagBitsKHR = ExternalFenceFeatureFlagBits;
 
 pub const PhysicalDeviceExternalFenceInfoKHR = PhysicalDeviceExternalFenceInfo;
 pub const ExternalFencePropertiesKHR = ExternalFenceProperties;
+
 pub extern fn vkGetPhysicalDeviceExternalFencePropertiesKHR(
     physicalDevice: PhysicalDevice,
     pExternalFenceInfo: *const PhysicalDeviceExternalFenceInfo,
@@ -8389,14 +8440,17 @@ pub inline fn GetPhysicalDeviceExternalFencePropertiesKHR(physicalDevice: Physic
 pub const KHR_external_fence = 1;
 pub const KHR_EXTERNAL_FENCE_SPEC_VERSION = 1;
 pub const KHR_EXTERNAL_FENCE_EXTENSION_NAME = "VK_KHR_external_fence";
+
 pub const FenceImportFlagsKHR = FenceImportFlags;
 pub const FenceImportFlagBitsKHR = FenceImportFlagBits;
 
 pub const ExportFenceCreateInfoKHR = ExportFenceCreateInfo;
 
+
 pub const KHR_external_fence_fd = 1;
 pub const KHR_EXTERNAL_FENCE_FD_SPEC_VERSION = 1;
 pub const KHR_EXTERNAL_FENCE_FD_EXTENSION_NAME = "VK_KHR_external_fence_fd";
+
 pub const ImportFenceFdInfoKHR = extern struct {
     sType: StructureType = .IMPORT_FENCE_FD_INFO_KHR,
     pNext: ?*const c_void = null,
@@ -8492,7 +8546,6 @@ pub const PerformanceCounterDescriptionFlagBitsKHR = struct {
     pub const PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_KHR: PerformanceCounterDescriptionFlagsKHR = 0x00000001;
     pub const PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_KHR: PerformanceCounterDescriptionFlagsKHR = 0x00000002;
 };
-
 
 pub const AcquireProfilingLockFlagsKHR = Flags;
 pub const AcquireProfilingLockFlagBitsKHR = struct {
@@ -8635,11 +8688,12 @@ pub inline fn AcquireProfilingLockKHR(device: Device, info: AcquireProfilingLock
 
 pub const ReleaseProfilingLockKHR = vkReleaseProfilingLockKHR;
 
+
 pub const KHR_maintenance2 = 1;
 pub const KHR_MAINTENANCE2_SPEC_VERSION = 1;
 pub const KHR_MAINTENANCE2_EXTENSION_NAME = "VK_KHR_maintenance2";
-pub const PointClippingBehaviorKHR = PointClippingBehavior;
 
+pub const PointClippingBehaviorKHR = PointClippingBehavior;
 pub const TessellationDomainOriginKHR = TessellationDomainOrigin;
 
 pub const PhysicalDevicePointClippingPropertiesKHR = PhysicalDevicePointClippingProperties;
@@ -8648,9 +8702,11 @@ pub const InputAttachmentAspectReferenceKHR = InputAttachmentAspectReference;
 pub const ImageViewUsageCreateInfoKHR = ImageViewUsageCreateInfo;
 pub const PipelineTessellationDomainOriginStateCreateInfoKHR = PipelineTessellationDomainOriginStateCreateInfo;
 
+
 pub const KHR_get_surface_capabilities2 = 1;
 pub const KHR_GET_SURFACE_CAPABILITIES_2_SPEC_VERSION = 1;
 pub const KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME = "VK_KHR_get_surface_capabilities2";
+
 pub const PhysicalDeviceSurfaceInfo2KHR = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_SURFACE_INFO_2_KHR,
     pNext: ?*const c_void = null,
@@ -8734,12 +8790,15 @@ pub inline fn GetPhysicalDeviceSurfaceFormats2KHRCount(physicalDevice: PhysicalD
 pub const KHR_variable_pointers = 1;
 pub const KHR_VARIABLE_POINTERS_SPEC_VERSION = 1;
 pub const KHR_VARIABLE_POINTERS_EXTENSION_NAME = "VK_KHR_variable_pointers";
+
 pub const PhysicalDeviceVariablePointerFeaturesKHR = PhysicalDeviceVariablePointersFeatures;
 pub const PhysicalDeviceVariablePointersFeaturesKHR = PhysicalDeviceVariablePointersFeatures;
+
 
 pub const KHR_get_display_properties2 = 1;
 pub const KHR_GET_DISPLAY_PROPERTIES_2_SPEC_VERSION = 1;
 pub const KHR_GET_DISPLAY_PROPERTIES_2_EXTENSION_NAME = "VK_KHR_get_display_properties2";
+
 pub const DisplayProperties2KHR = extern struct {
     sType: StructureType = .DISPLAY_PROPERTIES_2_KHR,
     pNext: ?*c_void = null,
@@ -8909,24 +8968,30 @@ pub inline fn GetDisplayPlaneCapabilities2KHR(physicalDevice: PhysicalDevice, di
 pub const KHR_dedicated_allocation = 1;
 pub const KHR_DEDICATED_ALLOCATION_SPEC_VERSION = 3;
 pub const KHR_DEDICATED_ALLOCATION_EXTENSION_NAME = "VK_KHR_dedicated_allocation";
+
 pub const MemoryDedicatedRequirementsKHR = MemoryDedicatedRequirements;
 pub const MemoryDedicatedAllocateInfoKHR = MemoryDedicatedAllocateInfo;
+
 
 pub const KHR_storage_buffer_storage_class = 1;
 pub const KHR_STORAGE_BUFFER_STORAGE_CLASS_SPEC_VERSION = 1;
 pub const KHR_STORAGE_BUFFER_STORAGE_CLASS_EXTENSION_NAME = "VK_KHR_storage_buffer_storage_class";
 
+
 pub const KHR_relaxed_block_layout = 1;
 pub const KHR_RELAXED_BLOCK_LAYOUT_SPEC_VERSION = 1;
 pub const KHR_RELAXED_BLOCK_LAYOUT_EXTENSION_NAME = "VK_KHR_relaxed_block_layout";
 
+
 pub const KHR_get_memory_requirements2 = 1;
 pub const KHR_GET_MEMORY_REQUIREMENTS_2_SPEC_VERSION = 1;
 pub const KHR_GET_MEMORY_REQUIREMENTS_2_EXTENSION_NAME = "VK_KHR_get_memory_requirements2";
+
 pub const BufferMemoryRequirementsInfo2KHR = BufferMemoryRequirementsInfo2;
 pub const ImageMemoryRequirementsInfo2KHR = ImageMemoryRequirementsInfo2;
 pub const ImageSparseMemoryRequirementsInfo2KHR = ImageSparseMemoryRequirementsInfo2;
 pub const SparseImageMemoryRequirements2KHR = SparseImageMemoryRequirements2;
+
 pub extern fn vkGetImageMemoryRequirements2KHR(
     device: Device,
     pInfo: *const ImageMemoryRequirementsInfo2,
@@ -8975,16 +9040,18 @@ pub inline fn GetImageSparseMemoryRequirements2KHRCount(device: Device, info: Im
 pub const KHR_image_format_list = 1;
 pub const KHR_IMAGE_FORMAT_LIST_SPEC_VERSION = 1;
 pub const KHR_IMAGE_FORMAT_LIST_EXTENSION_NAME = "VK_KHR_image_format_list";
+
 pub const ImageFormatListCreateInfoKHR = ImageFormatListCreateInfo;
+
 
 pub const KHR_sampler_ycbcr_conversion = 1;
 pub const SamplerYcbcrConversionKHR = SamplerYcbcrConversion;
+
 pub const KHR_SAMPLER_YCBCR_CONVERSION_SPEC_VERSION = 14;
 pub const KHR_SAMPLER_YCBCR_CONVERSION_EXTENSION_NAME = "VK_KHR_sampler_ycbcr_conversion";
+
 pub const SamplerYcbcrModelConversionKHR = SamplerYcbcrModelConversion;
-
 pub const SamplerYcbcrRangeKHR = SamplerYcbcrRange;
-
 pub const ChromaLocationKHR = ChromaLocation;
 
 pub const SamplerYcbcrConversionCreateInfoKHR = SamplerYcbcrConversionCreateInfo;
@@ -8993,6 +9060,7 @@ pub const BindImagePlaneMemoryInfoKHR = BindImagePlaneMemoryInfo;
 pub const ImagePlaneMemoryRequirementsInfoKHR = ImagePlaneMemoryRequirementsInfo;
 pub const PhysicalDeviceSamplerYcbcrConversionFeaturesKHR = PhysicalDeviceSamplerYcbcrConversionFeatures;
 pub const SamplerYcbcrConversionImageFormatPropertiesKHR = SamplerYcbcrConversionImageFormatProperties;
+
 pub extern fn vkCreateSamplerYcbcrConversionKHR(
     device: Device,
     pCreateInfo: *const SamplerYcbcrConversionCreateInfo,
@@ -9021,11 +9089,14 @@ pub inline fn CreateSamplerYcbcrConversionKHR(device: Device, createInfo: Sample
 
 pub const DestroySamplerYcbcrConversionKHR = vkDestroySamplerYcbcrConversionKHR;
 
+
 pub const KHR_bind_memory2 = 1;
 pub const KHR_BIND_MEMORY_2_SPEC_VERSION = 1;
 pub const KHR_BIND_MEMORY_2_EXTENSION_NAME = "VK_KHR_bind_memory2";
+
 pub const BindBufferMemoryInfoKHR = BindBufferMemoryInfo;
 pub const BindImageMemoryInfoKHR = BindImageMemoryInfo;
+
 pub extern fn vkBindBufferMemory2KHR(
     device: Device,
     bindInfoCount: u32,
@@ -9065,8 +9136,10 @@ pub inline fn BindImageMemory2KHR(device: Device, bindInfos: []const BindImageMe
 pub const KHR_maintenance3 = 1;
 pub const KHR_MAINTENANCE3_SPEC_VERSION = 1;
 pub const KHR_MAINTENANCE3_EXTENSION_NAME = "VK_KHR_maintenance3";
+
 pub const PhysicalDeviceMaintenance3PropertiesKHR = PhysicalDeviceMaintenance3Properties;
 pub const DescriptorSetLayoutSupportKHR = DescriptorSetLayoutSupport;
+
 pub extern fn vkGetDescriptorSetLayoutSupportKHR(
     device: Device,
     pCreateInfo: *const DescriptorSetLayoutCreateInfo,
@@ -9083,6 +9156,7 @@ pub inline fn GetDescriptorSetLayoutSupportKHR(device: Device, createInfo: Descr
 pub const KHR_draw_indirect_count = 1;
 pub const KHR_DRAW_INDIRECT_COUNT_SPEC_VERSION = 1;
 pub const KHR_DRAW_INDIRECT_COUNT_EXTENSION_NAME = "VK_KHR_draw_indirect_count";
+
 pub extern fn vkCmdDrawIndirectCountKHR(
     commandBuffer: CommandBuffer,
     buffer: Buffer,
@@ -9106,24 +9180,32 @@ pub extern fn vkCmdDrawIndexedIndirectCountKHR(
 pub const CmdDrawIndirectCountKHR = vkCmdDrawIndirectCountKHR;
 pub const CmdDrawIndexedIndirectCountKHR = vkCmdDrawIndexedIndirectCountKHR;
 
+
 pub const KHR_shader_subgroup_extended_types = 1;
 pub const KHR_SHADER_SUBGROUP_EXTENDED_TYPES_SPEC_VERSION = 1;
 pub const KHR_SHADER_SUBGROUP_EXTENDED_TYPES_EXTENSION_NAME = "VK_KHR_shader_subgroup_extended_types";
+
 pub const PhysicalDeviceShaderSubgroupExtendedTypesFeaturesKHR = PhysicalDeviceShaderSubgroupExtendedTypesFeatures;
+
 
 pub const KHR_8bit_storage = 1;
 pub const KHR_8BIT_STORAGE_SPEC_VERSION = 1;
 pub const KHR_8BIT_STORAGE_EXTENSION_NAME = "VK_KHR_8bit_storage";
+
 pub const PhysicalDevice8BitStorageFeaturesKHR = PhysicalDevice8BitStorageFeatures;
+
 
 pub const KHR_shader_atomic_int64 = 1;
 pub const KHR_SHADER_ATOMIC_INT64_SPEC_VERSION = 1;
 pub const KHR_SHADER_ATOMIC_INT64_EXTENSION_NAME = "VK_KHR_shader_atomic_int64";
+
 pub const PhysicalDeviceShaderAtomicInt64FeaturesKHR = PhysicalDeviceShaderAtomicInt64Features;
+
 
 pub const KHR_shader_clock = 1;
 pub const KHR_SHADER_CLOCK_SPEC_VERSION = 1;
 pub const KHR_SHADER_CLOCK_EXTENSION_NAME = "VK_KHR_shader_clock";
+
 pub const PhysicalDeviceShaderClockFeaturesKHR = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_SHADER_CLOCK_FEATURES_KHR,
     pNext: ?*c_void = null,
@@ -9137,45 +9219,54 @@ pub const KHR_DRIVER_PROPERTIES_SPEC_VERSION = 1;
 pub const KHR_DRIVER_PROPERTIES_EXTENSION_NAME = "VK_KHR_driver_properties";
 pub const MAX_DRIVER_NAME_SIZE_KHR = MAX_DRIVER_NAME_SIZE;
 pub const MAX_DRIVER_INFO_SIZE_KHR = MAX_DRIVER_INFO_SIZE;
+
 pub const DriverIdKHR = DriverId;
 
 pub const ConformanceVersionKHR = ConformanceVersion;
 pub const PhysicalDeviceDriverPropertiesKHR = PhysicalDeviceDriverProperties;
 
+
 pub const KHR_shader_float_controls = 1;
 pub const KHR_SHADER_FLOAT_CONTROLS_SPEC_VERSION = 4;
 pub const KHR_SHADER_FLOAT_CONTROLS_EXTENSION_NAME = "VK_KHR_shader_float_controls";
+
 pub const ShaderFloatControlsIndependenceKHR = ShaderFloatControlsIndependence;
 
 pub const PhysicalDeviceFloatControlsPropertiesKHR = PhysicalDeviceFloatControlsProperties;
 
+
 pub const KHR_depth_stencil_resolve = 1;
 pub const KHR_DEPTH_STENCIL_RESOLVE_SPEC_VERSION = 1;
 pub const KHR_DEPTH_STENCIL_RESOLVE_EXTENSION_NAME = "VK_KHR_depth_stencil_resolve";
-pub const ResolveModeFlagBitsKHR = ResolveModeFlagBits;
 
+pub const ResolveModeFlagBitsKHR = ResolveModeFlagBits;
 pub const ResolveModeFlagsKHR = ResolveModeFlags;
+
 pub const SubpassDescriptionDepthStencilResolveKHR = SubpassDescriptionDepthStencilResolve;
 pub const PhysicalDeviceDepthStencilResolvePropertiesKHR = PhysicalDeviceDepthStencilResolveProperties;
+
 
 pub const KHR_swapchain_mutable_format = 1;
 pub const KHR_SWAPCHAIN_MUTABLE_FORMAT_SPEC_VERSION = 1;
 pub const KHR_SWAPCHAIN_MUTABLE_FORMAT_EXTENSION_NAME = "VK_KHR_swapchain_mutable_format";
 
+
 pub const KHR_timeline_semaphore = 1;
 pub const KHR_TIMELINE_SEMAPHORE_SPEC_VERSION = 2;
 pub const KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME = "VK_KHR_timeline_semaphore";
+
 pub const SemaphoreTypeKHR = SemaphoreType;
 
 pub const SemaphoreWaitFlagBitsKHR = SemaphoreWaitFlagBits;
-
 pub const SemaphoreWaitFlagsKHR = SemaphoreWaitFlags;
+
 pub const PhysicalDeviceTimelineSemaphoreFeaturesKHR = PhysicalDeviceTimelineSemaphoreFeatures;
 pub const PhysicalDeviceTimelineSemaphorePropertiesKHR = PhysicalDeviceTimelineSemaphoreProperties;
 pub const SemaphoreTypeCreateInfoKHR = SemaphoreTypeCreateInfo;
 pub const TimelineSemaphoreSubmitInfoKHR = TimelineSemaphoreSubmitInfo;
 pub const SemaphoreWaitInfoKHR = SemaphoreWaitInfo;
 pub const SemaphoreSignalInfoKHR = SemaphoreSignalInfo;
+
 pub extern fn vkGetSemaphoreCounterValueKHR(
     device: Device,
     semaphore: Semaphore,
@@ -9235,15 +9326,19 @@ pub inline fn SignalSemaphoreKHR(device: Device, signalInfo: SemaphoreSignalInfo
 pub const KHR_vulkan_memory_model = 1;
 pub const KHR_VULKAN_MEMORY_MODEL_SPEC_VERSION = 3;
 pub const KHR_VULKAN_MEMORY_MODEL_EXTENSION_NAME = "VK_KHR_vulkan_memory_model";
+
 pub const PhysicalDeviceVulkanMemoryModelFeaturesKHR = PhysicalDeviceVulkanMemoryModelFeatures;
+
 
 pub const KHR_spirv_1_4 = 1;
 pub const KHR_SPIRV_1_4_SPEC_VERSION = 1;
 pub const KHR_SPIRV_1_4_EXTENSION_NAME = "VK_KHR_spirv_1_4";
 
+
 pub const KHR_surface_protected_capabilities = 1;
 pub const KHR_SURFACE_PROTECTED_CAPABILITIES_SPEC_VERSION = 1;
 pub const KHR_SURFACE_PROTECTED_CAPABILITIES_EXTENSION_NAME = "VK_KHR_surface_protected_capabilities";
+
 pub const SurfaceProtectedCapabilitiesKHR = extern struct {
     sType: StructureType = .SURFACE_PROTECTED_CAPABILITIES_KHR,
     pNext: ?*const c_void = null,
@@ -9254,23 +9349,29 @@ pub const SurfaceProtectedCapabilitiesKHR = extern struct {
 pub const KHR_separate_depth_stencil_layouts = 1;
 pub const KHR_SEPARATE_DEPTH_STENCIL_LAYOUTS_SPEC_VERSION = 1;
 pub const KHR_SEPARATE_DEPTH_STENCIL_LAYOUTS_EXTENSION_NAME = "VK_KHR_separate_depth_stencil_layouts";
+
 pub const PhysicalDeviceSeparateDepthStencilLayoutsFeaturesKHR = PhysicalDeviceSeparateDepthStencilLayoutsFeatures;
 pub const AttachmentReferenceStencilLayoutKHR = AttachmentReferenceStencilLayout;
 pub const AttachmentDescriptionStencilLayoutKHR = AttachmentDescriptionStencilLayout;
 
+
 pub const KHR_uniform_buffer_standard_layout = 1;
 pub const KHR_UNIFORM_BUFFER_STANDARD_LAYOUT_SPEC_VERSION = 1;
 pub const KHR_UNIFORM_BUFFER_STANDARD_LAYOUT_EXTENSION_NAME = "VK_KHR_uniform_buffer_standard_layout";
+
 pub const PhysicalDeviceUniformBufferStandardLayoutFeaturesKHR = PhysicalDeviceUniformBufferStandardLayoutFeatures;
+
 
 pub const KHR_buffer_device_address = 1;
 pub const KHR_BUFFER_DEVICE_ADDRESS_SPEC_VERSION = 1;
 pub const KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME = "VK_KHR_buffer_device_address";
+
 pub const PhysicalDeviceBufferDeviceAddressFeaturesKHR = PhysicalDeviceBufferDeviceAddressFeatures;
 pub const BufferDeviceAddressInfoKHR = BufferDeviceAddressInfo;
 pub const BufferOpaqueCaptureAddressCreateInfoKHR = BufferOpaqueCaptureAddressCreateInfo;
 pub const MemoryOpaqueCaptureAddressAllocateInfoKHR = MemoryOpaqueCaptureAddressAllocateInfo;
 pub const DeviceMemoryOpaqueCaptureAddressInfoKHR = DeviceMemoryOpaqueCaptureAddressInfo;
+
 pub extern fn vkGetBufferDeviceAddressKHR(
     device: Device,
     pInfo: *const BufferDeviceAddressInfo,
@@ -9312,6 +9413,7 @@ pub const PipelineExecutableStatisticFormatKHR = extern enum {
     UINT64_KHR = 2,
     FLOAT64_KHR = 3,
 };
+
 pub const PhysicalDevicePipelineExecutablePropertiesFeaturesKHR = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_PIPELINE_EXECUTABLE_PROPERTIES_FEATURES_KHR,
     pNext: ?*c_void = null,
@@ -9486,6 +9588,7 @@ pub inline fn GetPipelineExecutableInternalRepresentationsKHRCount(device: Devic
 
 pub const EXT_debug_report = 1;
 pub const DebugReportCallbackEXT = *@OpaqueType();
+
 pub const EXT_DEBUG_REPORT_SPEC_VERSION = 9;
 pub const EXT_DEBUG_REPORT_EXTENSION_NAME = "VK_EXT_debug_report";
 
@@ -9602,17 +9705,21 @@ pub inline fn CreateDebugReportCallbackEXT(instance: Instance, createInfo: Debug
 pub const DestroyDebugReportCallbackEXT = vkDestroyDebugReportCallbackEXT;
 pub const DebugReportMessageEXT = vkDebugReportMessageEXT;
 
+
 pub const NV_glsl_shader = 1;
 pub const NV_GLSL_SHADER_SPEC_VERSION = 1;
 pub const NV_GLSL_SHADER_EXTENSION_NAME = "VK_NV_glsl_shader";
+
 
 pub const EXT_depth_range_unrestricted = 1;
 pub const EXT_DEPTH_RANGE_UNRESTRICTED_SPEC_VERSION = 1;
 pub const EXT_DEPTH_RANGE_UNRESTRICTED_EXTENSION_NAME = "VK_EXT_depth_range_unrestricted";
 
+
 pub const IMG_filter_cubic = 1;
 pub const IMG_FILTER_CUBIC_SPEC_VERSION = 1;
 pub const IMG_FILTER_CUBIC_EXTENSION_NAME = "VK_IMG_filter_cubic";
+
 
 pub const AMD_rasterization_order = 1;
 pub const AMD_RASTERIZATION_ORDER_SPEC_VERSION = 1;
@@ -9622,6 +9729,7 @@ pub const RasterizationOrderAMD = extern enum {
     STRICT_AMD = 0,
     RELAXED_AMD = 1,
 };
+
 pub const PipelineRasterizationStateRasterizationOrderAMD = extern struct {
     sType: StructureType = .PIPELINE_RASTERIZATION_STATE_RASTERIZATION_ORDER_AMD,
     pNext: ?*const c_void = null,
@@ -9633,13 +9741,16 @@ pub const AMD_shader_trinary_minmax = 1;
 pub const AMD_SHADER_TRINARY_MINMAX_SPEC_VERSION = 1;
 pub const AMD_SHADER_TRINARY_MINMAX_EXTENSION_NAME = "VK_AMD_shader_trinary_minmax";
 
+
 pub const AMD_shader_explicit_vertex_parameter = 1;
 pub const AMD_SHADER_EXPLICIT_VERTEX_PARAMETER_SPEC_VERSION = 1;
 pub const AMD_SHADER_EXPLICIT_VERTEX_PARAMETER_EXTENSION_NAME = "VK_AMD_shader_explicit_vertex_parameter";
 
+
 pub const EXT_debug_marker = 1;
 pub const EXT_DEBUG_MARKER_SPEC_VERSION = 4;
 pub const EXT_DEBUG_MARKER_EXTENSION_NAME = "VK_EXT_debug_marker";
+
 pub const DebugMarkerObjectNameInfoEXT = extern struct {
     sType: StructureType = .DEBUG_MARKER_OBJECT_NAME_INFO_EXT,
     pNext: ?*const c_void = null,
@@ -9714,6 +9825,7 @@ pub inline fn CmdDebugMarkerBeginEXT(commandBuffer: CommandBuffer, markerInfo: D
 }
 
 pub const CmdDebugMarkerEndEXT = vkCmdDebugMarkerEndEXT;
+
 pub inline fn CmdDebugMarkerInsertEXT(commandBuffer: CommandBuffer, markerInfo: DebugMarkerMarkerInfoEXT) void {
     vkCmdDebugMarkerInsertEXT(commandBuffer, &markerInfo);
 }
@@ -9723,9 +9835,11 @@ pub const AMD_gcn_shader = 1;
 pub const AMD_GCN_SHADER_SPEC_VERSION = 1;
 pub const AMD_GCN_SHADER_EXTENSION_NAME = "VK_AMD_gcn_shader";
 
+
 pub const NV_dedicated_allocation = 1;
 pub const NV_DEDICATED_ALLOCATION_SPEC_VERSION = 1;
 pub const NV_DEDICATED_ALLOCATION_EXTENSION_NAME = "VK_NV_dedicated_allocation";
+
 pub const DedicatedAllocationImageCreateInfoNV = extern struct {
     sType: StructureType = .DEDICATED_ALLOCATION_IMAGE_CREATE_INFO_NV,
     pNext: ?*const c_void = null,
@@ -9749,7 +9863,9 @@ pub const DedicatedAllocationMemoryAllocateInfoNV = extern struct {
 pub const EXT_transform_feedback = 1;
 pub const EXT_TRANSFORM_FEEDBACK_SPEC_VERSION = 1;
 pub const EXT_TRANSFORM_FEEDBACK_EXTENSION_NAME = "VK_EXT_transform_feedback";
+
 pub const PipelineRasterizationStateStreamCreateFlagsEXT = Flags;
+
 pub const PhysicalDeviceTransformFeedbackFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_FEATURES_EXT,
     pNext: ?*c_void = null,
@@ -9849,9 +9965,11 @@ pub const CmdBeginQueryIndexedEXT = vkCmdBeginQueryIndexedEXT;
 pub const CmdEndQueryIndexedEXT = vkCmdEndQueryIndexedEXT;
 pub const CmdDrawIndirectByteCountEXT = vkCmdDrawIndirectByteCountEXT;
 
+
 pub const NVX_image_view_handle = 1;
 pub const NVX_IMAGE_VIEW_HANDLE_SPEC_VERSION = 1;
 pub const NVX_IMAGE_VIEW_HANDLE_EXTENSION_NAME = "VK_NVX_image_view_handle";
+
 pub const ImageViewHandleInfoNVX = extern struct {
     sType: StructureType = .IMAGE_VIEW_HANDLE_INFO_NVX,
     pNext: ?*const c_void = null,
@@ -9874,6 +9992,7 @@ pub inline fn GetImageViewHandleNVX(device: Device, info: ImageViewHandleInfoNVX
 pub const AMD_draw_indirect_count = 1;
 pub const AMD_DRAW_INDIRECT_COUNT_SPEC_VERSION = 2;
 pub const AMD_DRAW_INDIRECT_COUNT_EXTENSION_NAME = "VK_AMD_draw_indirect_count";
+
 pub extern fn vkCmdDrawIndirectCountAMD(
     commandBuffer: CommandBuffer,
     buffer: Buffer,
@@ -9897,21 +10016,26 @@ pub extern fn vkCmdDrawIndexedIndirectCountAMD(
 pub const CmdDrawIndirectCountAMD = vkCmdDrawIndirectCountAMD;
 pub const CmdDrawIndexedIndirectCountAMD = vkCmdDrawIndexedIndirectCountAMD;
 
+
 pub const AMD_negative_viewport_height = 1;
 pub const AMD_NEGATIVE_VIEWPORT_HEIGHT_SPEC_VERSION = 1;
 pub const AMD_NEGATIVE_VIEWPORT_HEIGHT_EXTENSION_NAME = "VK_AMD_negative_viewport_height";
+
 
 pub const AMD_gpu_shader_half_float = 1;
 pub const AMD_GPU_SHADER_HALF_FLOAT_SPEC_VERSION = 2;
 pub const AMD_GPU_SHADER_HALF_FLOAT_EXTENSION_NAME = "VK_AMD_gpu_shader_half_float";
 
+
 pub const AMD_shader_ballot = 1;
 pub const AMD_SHADER_BALLOT_SPEC_VERSION = 1;
 pub const AMD_SHADER_BALLOT_EXTENSION_NAME = "VK_AMD_shader_ballot";
 
+
 pub const AMD_texture_gather_bias_lod = 1;
 pub const AMD_TEXTURE_GATHER_BIAS_LOD_SPEC_VERSION = 1;
 pub const AMD_TEXTURE_GATHER_BIAS_LOD_EXTENSION_NAME = "VK_AMD_texture_gather_bias_lod";
+
 pub const TextureLODGatherFormatPropertiesAMD = extern struct {
     sType: StructureType = .TEXTURE_LOD_GATHER_FORMAT_PROPERTIES_AMD,
     pNext: ?*c_void = null,
@@ -9928,6 +10052,7 @@ pub const ShaderInfoTypeAMD = extern enum {
     BINARY_AMD = 1,
     DISASSEMBLY_AMD = 2,
 };
+
 pub const ShaderResourceUsageAMD = extern struct {
     numUsedVgprs: u32,
     numUsedSgprs: u32,
@@ -9992,9 +10117,11 @@ pub const AMD_shader_image_load_store_lod = 1;
 pub const AMD_SHADER_IMAGE_LOAD_STORE_LOD_SPEC_VERSION = 1;
 pub const AMD_SHADER_IMAGE_LOAD_STORE_LOD_EXTENSION_NAME = "VK_AMD_shader_image_load_store_lod";
 
+
 pub const NV_corner_sampled_image = 1;
 pub const NV_CORNER_SAMPLED_IMAGE_SPEC_VERSION = 2;
 pub const NV_CORNER_SAMPLED_IMAGE_EXTENSION_NAME = "VK_NV_corner_sampled_image";
+
 pub const PhysicalDeviceCornerSampledImageFeaturesNV = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_CORNER_SAMPLED_IMAGE_FEATURES_NV,
     pNext: ?*c_void = null,
@@ -10005,6 +10132,7 @@ pub const PhysicalDeviceCornerSampledImageFeaturesNV = extern struct {
 pub const IMG_format_pvrtc = 1;
 pub const IMG_FORMAT_PVRTC_SPEC_VERSION = 1;
 pub const IMG_FORMAT_PVRTC_EXTENSION_NAME = "VK_IMG_format_pvrtc";
+
 
 pub const NV_external_memory_capabilities = 1;
 pub const NV_EXTERNAL_MEMORY_CAPABILITIES_SPEC_VERSION = 1;
@@ -10017,7 +10145,6 @@ pub const ExternalMemoryHandleTypeFlagBitsNV = struct {
     pub const EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_IMAGE_BIT_NV: ExternalMemoryHandleTypeFlagsNV = 0x00000004;
     pub const EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_IMAGE_KMT_BIT_NV: ExternalMemoryHandleTypeFlagsNV = 0x00000008;
 };
-
 
 pub const ExternalMemoryFeatureFlagsNV = Flags;
 pub const ExternalMemoryFeatureFlagBitsNV = struct {
@@ -10062,6 +10189,7 @@ pub inline fn GetPhysicalDeviceExternalImageFormatPropertiesNV(physicalDevice: P
 pub const NV_external_memory = 1;
 pub const NV_EXTERNAL_MEMORY_SPEC_VERSION = 1;
 pub const NV_EXTERNAL_MEMORY_EXTENSION_NAME = "VK_NV_external_memory";
+
 pub const ExternalMemoryImageCreateInfoNV = extern struct {
     sType: StructureType = .EXTERNAL_MEMORY_IMAGE_CREATE_INFO_NV,
     pNext: ?*const c_void = null,
@@ -10083,6 +10211,7 @@ pub const ValidationCheckEXT = extern enum {
     ALL_EXT = 0,
     SHADERS_EXT = 1,
 };
+
 pub const ValidationFlagsEXT = extern struct {
     sType: StructureType = .VALIDATION_FLAGS_EXT,
     pNext: ?*const c_void = null,
@@ -10095,13 +10224,16 @@ pub const EXT_shader_subgroup_ballot = 1;
 pub const EXT_SHADER_SUBGROUP_BALLOT_SPEC_VERSION = 1;
 pub const EXT_SHADER_SUBGROUP_BALLOT_EXTENSION_NAME = "VK_EXT_shader_subgroup_ballot";
 
+
 pub const EXT_shader_subgroup_vote = 1;
 pub const EXT_SHADER_SUBGROUP_VOTE_SPEC_VERSION = 1;
 pub const EXT_SHADER_SUBGROUP_VOTE_EXTENSION_NAME = "VK_EXT_shader_subgroup_vote";
 
+
 pub const EXT_texture_compression_astc_hdr = 1;
 pub const EXT_TEXTURE_COMPRESSION_ASTC_HDR_SPEC_VERSION = 1;
 pub const EXT_TEXTURE_COMPRESSION_ASTC_HDR_EXTENSION_NAME = "VK_EXT_texture_compression_astc_hdr";
+
 pub const PhysicalDeviceTextureCompressionASTCHDRFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_HDR_FEATURES_EXT,
     pNext: ?*c_void = null,
@@ -10112,6 +10244,7 @@ pub const PhysicalDeviceTextureCompressionASTCHDRFeaturesEXT = extern struct {
 pub const EXT_astc_decode_mode = 1;
 pub const EXT_ASTC_DECODE_MODE_SPEC_VERSION = 1;
 pub const EXT_ASTC_DECODE_MODE_EXTENSION_NAME = "VK_EXT_astc_decode_mode";
+
 pub const ImageViewASTCDecodeModeEXT = extern struct {
     sType: StructureType = .IMAGE_VIEW_ASTC_DECODE_MODE_EXT,
     pNext: ?*const c_void = null,
@@ -10168,9 +10301,11 @@ pub inline fn CmdBeginConditionalRenderingEXT(commandBuffer: CommandBuffer, cond
 
 pub const CmdEndConditionalRenderingEXT = vkCmdEndConditionalRenderingEXT;
 
+
 pub const NVX_device_generated_commands = 1;
 pub const ObjectTableNVX = *@OpaqueType();
 pub const IndirectCommandsLayoutNVX = *@OpaqueType();
+
 pub const NVX_DEVICE_GENERATED_COMMANDS_SPEC_VERSION = 3;
 pub const NVX_DEVICE_GENERATED_COMMANDS_EXTENSION_NAME = "VK_NVX_device_generated_commands";
 
@@ -10200,7 +10335,6 @@ pub const IndirectCommandsLayoutUsageFlagBitsNVX = struct {
     pub const INDIRECT_COMMANDS_LAYOUT_USAGE_EMPTY_EXECUTIONS_BIT_NVX: IndirectCommandsLayoutUsageFlagsNVX = 0x00000004;
     pub const INDIRECT_COMMANDS_LAYOUT_USAGE_INDEXED_SEQUENCES_BIT_NVX: IndirectCommandsLayoutUsageFlagsNVX = 0x00000008;
 };
-
 
 pub const ObjectEntryUsageFlagsNVX = Flags;
 pub const ObjectEntryUsageFlagBitsNVX = struct {
@@ -10401,6 +10535,7 @@ pub inline fn CreateIndirectCommandsLayoutNVX(device: Device, createInfo: Indire
 }
 
 pub const DestroyIndirectCommandsLayoutNVX = vkDestroyIndirectCommandsLayoutNVX;
+
 pub inline fn CreateObjectTableNVX(device: Device, createInfo: ObjectTableCreateInfoNVX, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!ObjectTableNVX {
     var out_objectTable: ObjectTableNVX = undefined;
     const result = vkCreateObjectTableNVX(device, &createInfo, pAllocator, &out_objectTable);
@@ -10415,6 +10550,7 @@ pub inline fn CreateObjectTableNVX(device: Device, createInfo: ObjectTableCreate
 }
 
 pub const DestroyObjectTableNVX = vkDestroyObjectTableNVX;
+
 pub inline fn RegisterObjectsNVX(device: Device, objectTable: ObjectTableNVX, pObjectTableEntries: []const*const ObjectTableEntryNVX, objectIndices: []const u32) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
     assert(objectIndices.len >= pObjectTableEntries.len);
     const result = vkRegisterObjectsNVX(device, objectTable, @intCast(u32, pObjectTableEntries.len), pObjectTableEntries.ptr, objectIndices.ptr);
@@ -10453,6 +10589,7 @@ pub inline fn GetPhysicalDeviceGeneratedCommandsPropertiesNVX(physicalDevice: Ph
 pub const NV_clip_space_w_scaling = 1;
 pub const NV_CLIP_SPACE_W_SCALING_SPEC_VERSION = 1;
 pub const NV_CLIP_SPACE_W_SCALING_EXTENSION_NAME = "VK_NV_clip_space_w_scaling";
+
 pub const ViewportWScalingNV = extern struct {
     xcoeff: f32,
     ycoeff: f32,
@@ -10481,6 +10618,7 @@ pub inline fn CmdSetViewportWScalingNV(commandBuffer: CommandBuffer, firstViewpo
 pub const EXT_direct_mode_display = 1;
 pub const EXT_DIRECT_MODE_DISPLAY_SPEC_VERSION = 1;
 pub const EXT_DIRECT_MODE_DISPLAY_EXTENSION_NAME = "VK_EXT_direct_mode_display";
+
 pub extern fn vkReleaseDisplayEXT(
     physicalDevice: PhysicalDevice,
     display: DisplayKHR,
@@ -10557,6 +10695,7 @@ pub const DeviceEventTypeEXT = extern enum {
 pub const DisplayEventTypeEXT = extern enum {
     FIRST_PIXEL_OUT_EXT = 0,
 };
+
 pub const DisplayPowerInfoEXT = extern struct {
     sType: StructureType = .DISPLAY_POWER_INFO_EXT,
     pNext: ?*const c_void = null,
@@ -10651,6 +10790,7 @@ pub inline fn GetSwapchainCounterEXT(device: Device, swapchain: SwapchainKHR, co
 pub const GOOGLE_display_timing = 1;
 pub const GOOGLE_DISPLAY_TIMING_SPEC_VERSION = 1;
 pub const GOOGLE_DISPLAY_TIMING_EXTENSION_NAME = "VK_GOOGLE_display_timing";
+
 pub const RefreshCycleDurationGOOGLE = extern struct {
     refreshDuration: u64,
 };
@@ -10740,17 +10880,21 @@ pub const NV_sample_mask_override_coverage = 1;
 pub const NV_SAMPLE_MASK_OVERRIDE_COVERAGE_SPEC_VERSION = 1;
 pub const NV_SAMPLE_MASK_OVERRIDE_COVERAGE_EXTENSION_NAME = "VK_NV_sample_mask_override_coverage";
 
+
 pub const NV_geometry_shader_passthrough = 1;
 pub const NV_GEOMETRY_SHADER_PASSTHROUGH_SPEC_VERSION = 1;
 pub const NV_GEOMETRY_SHADER_PASSTHROUGH_EXTENSION_NAME = "VK_NV_geometry_shader_passthrough";
+
 
 pub const NV_viewport_array2 = 1;
 pub const NV_VIEWPORT_ARRAY2_SPEC_VERSION = 1;
 pub const NV_VIEWPORT_ARRAY2_EXTENSION_NAME = "VK_NV_viewport_array2";
 
+
 pub const NVX_multiview_per_view_attributes = 1;
 pub const NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES_SPEC_VERSION = 1;
 pub const NVX_MULTIVIEW_PER_VIEW_ATTRIBUTES_EXTENSION_NAME = "VK_NVX_multiview_per_view_attributes";
+
 pub const PhysicalDeviceMultiviewPerViewAttributesPropertiesNVX = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_ATTRIBUTES_PROPERTIES_NVX,
     pNext: ?*c_void = null,
@@ -10772,7 +10916,9 @@ pub const ViewportCoordinateSwizzleNV = extern enum {
     POSITIVE_W_NV = 6,
     NEGATIVE_W_NV = 7,
 };
+
 pub const PipelineViewportSwizzleStateCreateFlagsNV = Flags;
+
 pub const ViewportSwizzleNV = extern struct {
     x: ViewportCoordinateSwizzleNV,
     y: ViewportCoordinateSwizzleNV,
@@ -10797,7 +10943,9 @@ pub const DiscardRectangleModeEXT = extern enum {
     INCLUSIVE_EXT = 0,
     EXCLUSIVE_EXT = 1,
 };
+
 pub const PipelineDiscardRectangleStateCreateFlagsEXT = Flags;
+
 pub const PhysicalDeviceDiscardRectanglePropertiesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT,
     pNext: ?*c_void = null,
@@ -10834,7 +10982,9 @@ pub const ConservativeRasterizationModeEXT = extern enum {
     OVERESTIMATE_EXT = 1,
     UNDERESTIMATE_EXT = 2,
 };
+
 pub const PipelineRasterizationConservativeStateCreateFlagsEXT = Flags;
+
 pub const PhysicalDeviceConservativeRasterizationPropertiesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT,
     pNext: ?*c_void = null,
@@ -10861,7 +11011,9 @@ pub const PipelineRasterizationConservativeStateCreateInfoEXT = extern struct {
 pub const EXT_depth_clip_enable = 1;
 pub const EXT_DEPTH_CLIP_ENABLE_SPEC_VERSION = 1;
 pub const EXT_DEPTH_CLIP_ENABLE_EXTENSION_NAME = "VK_EXT_depth_clip_enable";
+
 pub const PipelineRasterizationDepthClipStateCreateFlagsEXT = Flags;
+
 pub const PhysicalDeviceDepthClipEnableFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_DEPTH_CLIP_ENABLE_FEATURES_EXT,
     pNext: ?*c_void = null,
@@ -10880,9 +11032,11 @@ pub const EXT_swapchain_colorspace = 1;
 pub const EXT_SWAPCHAIN_COLOR_SPACE_SPEC_VERSION = 4;
 pub const EXT_SWAPCHAIN_COLOR_SPACE_EXTENSION_NAME = "VK_EXT_swapchain_colorspace";
 
+
 pub const EXT_hdr_metadata = 1;
 pub const EXT_HDR_METADATA_SPEC_VERSION = 2;
 pub const EXT_HDR_METADATA_EXTENSION_NAME = "VK_EXT_hdr_metadata";
+
 pub const XYColorEXT = extern struct {
     x: f32,
     y: f32,
@@ -10918,15 +11072,19 @@ pub const EXT_external_memory_dma_buf = 1;
 pub const EXT_EXTERNAL_MEMORY_DMA_BUF_SPEC_VERSION = 1;
 pub const EXT_EXTERNAL_MEMORY_DMA_BUF_EXTENSION_NAME = "VK_EXT_external_memory_dma_buf";
 
+
 pub const EXT_queue_family_foreign = 1;
 pub const EXT_QUEUE_FAMILY_FOREIGN_SPEC_VERSION = 1;
 pub const EXT_QUEUE_FAMILY_FOREIGN_EXTENSION_NAME = "VK_EXT_queue_family_foreign";
 pub const QUEUE_FAMILY_FOREIGN_EXT = (~u32(0)-2);
 
+
 pub const EXT_debug_utils = 1;
 pub const DebugUtilsMessengerEXT = *@OpaqueType();
+
 pub const EXT_DEBUG_UTILS_SPEC_VERSION = 1;
 pub const EXT_DEBUG_UTILS_EXTENSION_NAME = "VK_EXT_debug_utils";
+
 pub const DebugUtilsMessengerCallbackDataFlagsEXT = Flags;
 pub const DebugUtilsMessengerCreateFlagsEXT = Flags;
 
@@ -10937,7 +11095,6 @@ pub const DebugUtilsMessageSeverityFlagBitsEXT = struct {
     pub const DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT: DebugUtilsMessageSeverityFlagsEXT = 0x00000100;
     pub const DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT: DebugUtilsMessageSeverityFlagsEXT = 0x00001000;
 };
-
 
 pub const DebugUtilsMessageTypeFlagsEXT = Flags;
 pub const DebugUtilsMessageTypeFlagBitsEXT = struct {
@@ -11084,6 +11241,7 @@ pub inline fn QueueBeginDebugUtilsLabelEXT(queue: Queue, labelInfo: DebugUtilsLa
 }
 
 pub const QueueEndDebugUtilsLabelEXT = vkQueueEndDebugUtilsLabelEXT;
+
 pub inline fn QueueInsertDebugUtilsLabelEXT(queue: Queue, labelInfo: DebugUtilsLabelEXT) void {
     vkQueueInsertDebugUtilsLabelEXT(queue, &labelInfo);
 }
@@ -11093,6 +11251,7 @@ pub inline fn CmdBeginDebugUtilsLabelEXT(commandBuffer: CommandBuffer, labelInfo
 }
 
 pub const CmdEndDebugUtilsLabelEXT = vkCmdEndDebugUtilsLabelEXT;
+
 pub inline fn CmdInsertDebugUtilsLabelEXT(commandBuffer: CommandBuffer, labelInfo: DebugUtilsLabelEXT) void {
     vkCmdInsertDebugUtilsLabelEXT(commandBuffer, &labelInfo);
 }
@@ -11110,6 +11269,7 @@ pub inline fn CreateDebugUtilsMessengerEXT(instance: Instance, createInfo: Debug
 }
 
 pub const DestroyDebugUtilsMessengerEXT = vkDestroyDebugUtilsMessengerEXT;
+
 pub inline fn SubmitDebugUtilsMessageEXT(instance: Instance, messageSeverity: DebugUtilsMessageSeverityFlagsEXT, messageTypes: DebugUtilsMessageTypeFlagsEXT, callbackData: DebugUtilsMessengerCallbackDataEXT) void {
     vkSubmitDebugUtilsMessageEXT(instance, messageSeverity, messageTypes, &callbackData);
 }
@@ -11118,26 +11278,32 @@ pub inline fn SubmitDebugUtilsMessageEXT(instance: Instance, messageSeverity: De
 pub const EXT_sampler_filter_minmax = 1;
 pub const EXT_SAMPLER_FILTER_MINMAX_SPEC_VERSION = 2;
 pub const EXT_SAMPLER_FILTER_MINMAX_EXTENSION_NAME = "VK_EXT_sampler_filter_minmax";
+
 pub const SamplerReductionModeEXT = SamplerReductionMode;
 
 pub const SamplerReductionModeCreateInfoEXT = SamplerReductionModeCreateInfo;
 pub const PhysicalDeviceSamplerFilterMinmaxPropertiesEXT = PhysicalDeviceSamplerFilterMinmaxProperties;
 
+
 pub const AMD_gpu_shader_int16 = 1;
 pub const AMD_GPU_SHADER_INT16_SPEC_VERSION = 2;
 pub const AMD_GPU_SHADER_INT16_EXTENSION_NAME = "VK_AMD_gpu_shader_int16";
+
 
 pub const AMD_mixed_attachment_samples = 1;
 pub const AMD_MIXED_ATTACHMENT_SAMPLES_SPEC_VERSION = 1;
 pub const AMD_MIXED_ATTACHMENT_SAMPLES_EXTENSION_NAME = "VK_AMD_mixed_attachment_samples";
 
+
 pub const AMD_shader_fragment_mask = 1;
 pub const AMD_SHADER_FRAGMENT_MASK_SPEC_VERSION = 1;
 pub const AMD_SHADER_FRAGMENT_MASK_EXTENSION_NAME = "VK_AMD_shader_fragment_mask";
 
+
 pub const EXT_inline_uniform_block = 1;
 pub const EXT_INLINE_UNIFORM_BLOCK_SPEC_VERSION = 1;
 pub const EXT_INLINE_UNIFORM_BLOCK_EXTENSION_NAME = "VK_EXT_inline_uniform_block";
+
 pub const PhysicalDeviceInlineUniformBlockFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_INLINE_UNIFORM_BLOCK_FEATURES_EXT,
     pNext: ?*c_void = null,
@@ -11173,9 +11339,11 @@ pub const EXT_shader_stencil_export = 1;
 pub const EXT_SHADER_STENCIL_EXPORT_SPEC_VERSION = 1;
 pub const EXT_SHADER_STENCIL_EXPORT_EXTENSION_NAME = "VK_EXT_shader_stencil_export";
 
+
 pub const EXT_sample_locations = 1;
 pub const EXT_SAMPLE_LOCATIONS_SPEC_VERSION = 1;
 pub const EXT_SAMPLE_LOCATIONS_EXTENSION_NAME = "VK_EXT_sample_locations";
+
 pub const SampleLocationEXT = extern struct {
     x: f32,
     y: f32,
@@ -11263,6 +11431,7 @@ pub const BlendOverlapEXT = extern enum {
     DISJOINT_EXT = 1,
     CONJOINT_EXT = 2,
 };
+
 pub const PhysicalDeviceBlendOperationAdvancedFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_BLEND_OPERATION_ADVANCED_FEATURES_EXT,
     pNext: ?*c_void = null,
@@ -11292,7 +11461,9 @@ pub const PipelineColorBlendAdvancedStateCreateInfoEXT = extern struct {
 pub const NV_fragment_coverage_to_color = 1;
 pub const NV_FRAGMENT_COVERAGE_TO_COLOR_SPEC_VERSION = 1;
 pub const NV_FRAGMENT_COVERAGE_TO_COLOR_EXTENSION_NAME = "VK_NV_fragment_coverage_to_color";
+
 pub const PipelineCoverageToColorStateCreateFlagsNV = Flags;
+
 pub const PipelineCoverageToColorStateCreateInfoNV = extern struct {
     sType: StructureType = .PIPELINE_COVERAGE_TO_COLOR_STATE_CREATE_INFO_NV,
     pNext: ?*const c_void = null,
@@ -11312,7 +11483,9 @@ pub const CoverageModulationModeNV = extern enum {
     ALPHA_NV = 2,
     RGBA_NV = 3,
 };
+
 pub const PipelineCoverageModulationStateCreateFlagsNV = Flags;
+
 pub const PipelineCoverageModulationStateCreateInfoNV = extern struct {
     sType: StructureType = .PIPELINE_COVERAGE_MODULATION_STATE_CREATE_INFO_NV,
     pNext: ?*const c_void = null,
@@ -11328,9 +11501,11 @@ pub const NV_fill_rectangle = 1;
 pub const NV_FILL_RECTANGLE_SPEC_VERSION = 1;
 pub const NV_FILL_RECTANGLE_EXTENSION_NAME = "VK_NV_fill_rectangle";
 
+
 pub const NV_shader_sm_builtins = 1;
 pub const NV_SHADER_SM_BUILTINS_SPEC_VERSION = 1;
 pub const NV_SHADER_SM_BUILTINS_EXTENSION_NAME = "VK_NV_shader_sm_builtins";
+
 pub const PhysicalDeviceShaderSMBuiltinsPropertiesNV = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_SHADER_SM_BUILTINS_PROPERTIES_NV,
     pNext: ?*c_void = null,
@@ -11349,9 +11524,11 @@ pub const EXT_post_depth_coverage = 1;
 pub const EXT_POST_DEPTH_COVERAGE_SPEC_VERSION = 1;
 pub const EXT_POST_DEPTH_COVERAGE_EXTENSION_NAME = "VK_EXT_post_depth_coverage";
 
+
 pub const EXT_image_drm_format_modifier = 1;
 pub const EXT_IMAGE_DRM_FORMAT_MODIFIER_SPEC_VERSION = 1;
 pub const EXT_IMAGE_DRM_FORMAT_MODIFIER_EXTENSION_NAME = "VK_EXT_image_drm_format_modifier";
+
 pub const DrmFormatModifierPropertiesEXT = extern struct {
     drmFormatModifier: u64,
     drmFormatModifierPlaneCount: u32,
@@ -11413,13 +11590,16 @@ pub inline fn GetImageDrmFormatModifierPropertiesEXT(device: Device, image: Imag
 
 pub const EXT_validation_cache = 1;
 pub const ValidationCacheEXT = *@OpaqueType();
+
 pub const EXT_VALIDATION_CACHE_SPEC_VERSION = 1;
 pub const EXT_VALIDATION_CACHE_EXTENSION_NAME = "VK_EXT_validation_cache";
 
 pub const ValidationCacheHeaderVersionEXT = extern enum {
     ONE_EXT = 1,
 };
+
 pub const ValidationCacheCreateFlagsEXT = Flags;
+
 pub const ValidationCacheCreateInfoEXT = extern struct {
     sType: StructureType = .VALIDATION_CACHE_CREATE_INFO_EXT,
     pNext: ?*const c_void = null,
@@ -11474,6 +11654,7 @@ pub inline fn CreateValidationCacheEXT(device: Device, createInfo: ValidationCac
 }
 
 pub const DestroyValidationCacheEXT = vkDestroyValidationCacheEXT;
+
 pub inline fn MergeValidationCachesEXT(device: Device, dstCache: ValidationCacheEXT, srcCaches: []const ValidationCacheEXT) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
     const result = vkMergeValidationCachesEXT(device, dstCache, @intCast(u32, srcCaches.len), srcCaches.ptr);
     if (@bitCast(c_int, result) < 0) {
@@ -11521,18 +11702,21 @@ pub inline fn GetValidationCacheDataEXTCount(device: Device, validationCache: Va
 pub const EXT_descriptor_indexing = 1;
 pub const EXT_DESCRIPTOR_INDEXING_SPEC_VERSION = 2;
 pub const EXT_DESCRIPTOR_INDEXING_EXTENSION_NAME = "VK_EXT_descriptor_indexing";
-pub const DescriptorBindingFlagBitsEXT = DescriptorBindingFlagBits;
 
+pub const DescriptorBindingFlagBitsEXT = DescriptorBindingFlagBits;
 pub const DescriptorBindingFlagsEXT = DescriptorBindingFlags;
+
 pub const DescriptorSetLayoutBindingFlagsCreateInfoEXT = DescriptorSetLayoutBindingFlagsCreateInfo;
 pub const PhysicalDeviceDescriptorIndexingFeaturesEXT = PhysicalDeviceDescriptorIndexingFeatures;
 pub const PhysicalDeviceDescriptorIndexingPropertiesEXT = PhysicalDeviceDescriptorIndexingProperties;
 pub const DescriptorSetVariableDescriptorCountAllocateInfoEXT = DescriptorSetVariableDescriptorCountAllocateInfo;
 pub const DescriptorSetVariableDescriptorCountLayoutSupportEXT = DescriptorSetVariableDescriptorCountLayoutSupport;
 
+
 pub const EXT_shader_viewport_index_layer = 1;
 pub const EXT_SHADER_VIEWPORT_INDEX_LAYER_SPEC_VERSION = 1;
 pub const EXT_SHADER_VIEWPORT_INDEX_LAYER_EXTENSION_NAME = "VK_EXT_shader_viewport_index_layer";
+
 
 pub const NV_shading_rate_image = 1;
 pub const NV_SHADING_RATE_IMAGE_SPEC_VERSION = 3;
@@ -11559,6 +11743,7 @@ pub const CoarseSampleOrderTypeNV = extern enum {
     PIXEL_MAJOR_NV = 2,
     SAMPLE_MAJOR_NV = 3,
 };
+
 pub const ShadingRatePaletteNV = extern struct {
     shadingRatePaletteEntryCount: u32,
     pShadingRatePaletteEntries: [*]const ShadingRatePaletteEntryNV,
@@ -11629,6 +11814,7 @@ pub extern fn vkCmdSetCoarseSampleOrderNV(
 ) void;
 
 pub const CmdBindShadingRateImageNV = vkCmdBindShadingRateImageNV;
+
 pub inline fn CmdSetViewportShadingRatePaletteNV(commandBuffer: CommandBuffer, firstViewport: u32, shadingRatePalettes: []const ShadingRatePaletteNV) void {
     vkCmdSetViewportShadingRatePaletteNV(commandBuffer, firstViewport, @intCast(u32, shadingRatePalettes.len), shadingRatePalettes.ptr);
 }
@@ -11640,6 +11826,7 @@ pub inline fn CmdSetCoarseSampleOrderNV(commandBuffer: CommandBuffer, sampleOrde
 
 pub const NV_ray_tracing = 1;
 pub const AccelerationStructureNV = *@OpaqueType();
+
 pub const NV_RAY_TRACING_SPEC_VERSION = 3;
 pub const NV_RAY_TRACING_EXTENSION_NAME = "VK_NV_ray_tracing";
 pub const SHADER_UNUSED_NV = (~u32(0));
@@ -11677,7 +11864,6 @@ pub const GeometryFlagBitsNV = struct {
     pub const GEOMETRY_NO_DUPLICATE_ANY_HIT_INVOCATION_BIT_NV: GeometryFlagsNV = 0x00000002;
 };
 
-
 pub const GeometryInstanceFlagsNV = Flags;
 pub const GeometryInstanceFlagBitsNV = struct {
     pub const GEOMETRY_INSTANCE_TRIANGLE_CULL_DISABLE_BIT_NV: GeometryInstanceFlagsNV = 0x00000001;
@@ -11685,7 +11871,6 @@ pub const GeometryInstanceFlagBitsNV = struct {
     pub const GEOMETRY_INSTANCE_FORCE_OPAQUE_BIT_NV: GeometryInstanceFlagsNV = 0x00000004;
     pub const GEOMETRY_INSTANCE_FORCE_NO_OPAQUE_BIT_NV: GeometryInstanceFlagsNV = 0x00000008;
 };
-
 
 pub const BuildAccelerationStructureFlagsNV = Flags;
 pub const BuildAccelerationStructureFlagBitsNV = struct {
@@ -11927,6 +12112,7 @@ pub inline fn CreateAccelerationStructureNV(device: Device, createInfo: Accelera
 }
 
 pub const DestroyAccelerationStructureNV = vkDestroyAccelerationStructureNV;
+
 pub inline fn GetAccelerationStructureMemoryRequirementsNV(device: Device, info: AccelerationStructureMemoryRequirementsInfoNV) MemoryRequirements2KHR {
     var out_memoryRequirements: MemoryRequirements2KHR = undefined;
     vkGetAccelerationStructureMemoryRequirementsNV(device, &info, &out_memoryRequirements);
@@ -11950,6 +12136,7 @@ pub inline fn CmdBuildAccelerationStructureNV(commandBuffer: CommandBuffer, info
 
 pub const CmdCopyAccelerationStructureNV = vkCmdCopyAccelerationStructureNV;
 pub const CmdTraceRaysNV = vkCmdTraceRaysNV;
+
 pub inline fn CreateRayTracingPipelinesNV(device: Device, pipelineCache: ?PipelineCache, createInfos: []const RayTracingPipelineCreateInfoNV, pAllocator: ?*const AllocationCallbacks, pipelines: []Pipeline) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_INVALID_SHADER_NV,VK_UNDOCUMENTED_ERROR}!void {
     assert(pipelines.len >= createInfos.len);
     const result = vkCreateRayTracingPipelinesNV(device, pipelineCache, @intCast(u32, createInfos.len), createInfos.ptr, pAllocator, pipelines.ptr);
@@ -12004,6 +12191,7 @@ pub inline fn CompileDeferredNV(device: Device, pipeline: Pipeline, shader: u32)
 pub const NV_representative_fragment_test = 1;
 pub const NV_REPRESENTATIVE_FRAGMENT_TEST_SPEC_VERSION = 2;
 pub const NV_REPRESENTATIVE_FRAGMENT_TEST_EXTENSION_NAME = "VK_NV_representative_fragment_test";
+
 pub const PhysicalDeviceRepresentativeFragmentTestFeaturesNV = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_REPRESENTATIVE_FRAGMENT_TEST_FEATURES_NV,
     pNext: ?*c_void = null,
@@ -12020,6 +12208,7 @@ pub const PipelineRepresentativeFragmentTestStateCreateInfoNV = extern struct {
 pub const EXT_filter_cubic = 1;
 pub const EXT_FILTER_CUBIC_SPEC_VERSION = 3;
 pub const EXT_FILTER_CUBIC_EXTENSION_NAME = "VK_EXT_filter_cubic";
+
 pub const PhysicalDeviceImageViewImageFormatInfoEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_IMAGE_VIEW_IMAGE_FORMAT_INFO_EXT,
     pNext: ?*c_void = null,
@@ -12044,6 +12233,7 @@ pub const QueueGlobalPriorityEXT = extern enum {
     HIGH_EXT = 512,
     REALTIME_EXT = 1024,
 };
+
 pub const DeviceQueueGlobalPriorityCreateInfoEXT = extern struct {
     sType: StructureType = .DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_EXT,
     pNext: ?*const c_void = null,
@@ -12054,6 +12244,7 @@ pub const DeviceQueueGlobalPriorityCreateInfoEXT = extern struct {
 pub const EXT_external_memory_host = 1;
 pub const EXT_EXTERNAL_MEMORY_HOST_SPEC_VERSION = 1;
 pub const EXT_EXTERNAL_MEMORY_HOST_EXTENSION_NAME = "VK_EXT_external_memory_host";
+
 pub const ImportMemoryHostPointerInfoEXT = extern struct {
     sType: StructureType = .IMPORT_MEMORY_HOST_POINTER_INFO_EXT,
     pNext: ?*const c_void = null,
@@ -12096,6 +12287,7 @@ pub inline fn GetMemoryHostPointerPropertiesEXT(device: Device, handleType: Exte
 pub const AMD_buffer_marker = 1;
 pub const AMD_BUFFER_MARKER_SPEC_VERSION = 1;
 pub const AMD_BUFFER_MARKER_EXTENSION_NAME = "VK_AMD_buffer_marker";
+
 pub extern fn vkCmdWriteBufferMarkerAMD(
     commandBuffer: CommandBuffer,
     pipelineStage: PipelineStageFlags,
@@ -12105,6 +12297,7 @@ pub extern fn vkCmdWriteBufferMarkerAMD(
 ) void;
 
 pub const CmdWriteBufferMarkerAMD = vkCmdWriteBufferMarkerAMD;
+
 
 pub const AMD_pipeline_compiler_control = 1;
 pub const AMD_PIPELINE_COMPILER_CONTROL_SPEC_VERSION = 1;
@@ -12131,6 +12324,7 @@ pub const TimeDomainEXT = extern enum {
     CLOCK_MONOTONIC_RAW_EXT = 2,
     QUERY_PERFORMANCE_COUNTER_EXT = 3,
 };
+
 pub const CalibratedTimestampInfoEXT = extern struct {
     sType: StructureType = .CALIBRATED_TIMESTAMP_INFO_EXT,
     pNext: ?*const c_void = null,
@@ -12201,6 +12395,7 @@ pub inline fn GetCalibratedTimestampsEXT(device: Device, timestampInfos: []const
 pub const AMD_shader_core_properties = 1;
 pub const AMD_SHADER_CORE_PROPERTIES_SPEC_VERSION = 2;
 pub const AMD_SHADER_CORE_PROPERTIES_EXTENSION_NAME = "VK_AMD_shader_core_properties";
+
 pub const PhysicalDeviceShaderCorePropertiesAMD = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_SHADER_CORE_PROPERTIES_AMD,
     pNext: ?*c_void = null,
@@ -12230,6 +12425,7 @@ pub const MemoryOverallocationBehaviorAMD = extern enum {
     ALLOWED_AMD = 1,
     DISALLOWED_AMD = 2,
 };
+
 pub const DeviceMemoryOverallocationCreateInfoAMD = extern struct {
     sType: StructureType = .DEVICE_MEMORY_OVERALLOCATION_CREATE_INFO_AMD,
     pNext: ?*const c_void = null,
@@ -12240,6 +12436,7 @@ pub const DeviceMemoryOverallocationCreateInfoAMD = extern struct {
 pub const EXT_vertex_attribute_divisor = 1;
 pub const EXT_VERTEX_ATTRIBUTE_DIVISOR_SPEC_VERSION = 3;
 pub const EXT_VERTEX_ATTRIBUTE_DIVISOR_EXTENSION_NAME = "VK_EXT_vertex_attribute_divisor";
+
 pub const PhysicalDeviceVertexAttributeDivisorPropertiesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_EXT,
     pNext: ?*c_void = null,
@@ -12295,9 +12492,11 @@ pub const NV_shader_subgroup_partitioned = 1;
 pub const NV_SHADER_SUBGROUP_PARTITIONED_SPEC_VERSION = 1;
 pub const NV_SHADER_SUBGROUP_PARTITIONED_EXTENSION_NAME = "VK_NV_shader_subgroup_partitioned";
 
+
 pub const NV_compute_shader_derivatives = 1;
 pub const NV_COMPUTE_SHADER_DERIVATIVES_SPEC_VERSION = 1;
 pub const NV_COMPUTE_SHADER_DERIVATIVES_EXTENSION_NAME = "VK_NV_compute_shader_derivatives";
+
 pub const PhysicalDeviceComputeShaderDerivativesFeaturesNV = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_COMPUTE_SHADER_DERIVATIVES_FEATURES_NV,
     pNext: ?*c_void = null,
@@ -12309,6 +12508,7 @@ pub const PhysicalDeviceComputeShaderDerivativesFeaturesNV = extern struct {
 pub const NV_mesh_shader = 1;
 pub const NV_MESH_SHADER_SPEC_VERSION = 1;
 pub const NV_MESH_SHADER_EXTENSION_NAME = "VK_NV_mesh_shader";
+
 pub const PhysicalDeviceMeshShaderFeaturesNV = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_MESH_SHADER_FEATURES_NV,
     pNext: ?*c_void = null,
@@ -12367,9 +12567,11 @@ pub const CmdDrawMeshTasksNV = vkCmdDrawMeshTasksNV;
 pub const CmdDrawMeshTasksIndirectNV = vkCmdDrawMeshTasksIndirectNV;
 pub const CmdDrawMeshTasksIndirectCountNV = vkCmdDrawMeshTasksIndirectCountNV;
 
+
 pub const NV_fragment_shader_barycentric = 1;
 pub const NV_FRAGMENT_SHADER_BARYCENTRIC_SPEC_VERSION = 1;
 pub const NV_FRAGMENT_SHADER_BARYCENTRIC_EXTENSION_NAME = "VK_NV_fragment_shader_barycentric";
+
 pub const PhysicalDeviceFragmentShaderBarycentricFeaturesNV = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_FRAGMENT_SHADER_BARYCENTRIC_FEATURES_NV,
     pNext: ?*c_void = null,
@@ -12380,6 +12582,7 @@ pub const PhysicalDeviceFragmentShaderBarycentricFeaturesNV = extern struct {
 pub const NV_shader_image_footprint = 1;
 pub const NV_SHADER_IMAGE_FOOTPRINT_SPEC_VERSION = 2;
 pub const NV_SHADER_IMAGE_FOOTPRINT_EXTENSION_NAME = "VK_NV_shader_image_footprint";
+
 pub const PhysicalDeviceShaderImageFootprintFeaturesNV = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_SHADER_IMAGE_FOOTPRINT_FEATURES_NV,
     pNext: ?*c_void = null,
@@ -12390,6 +12593,7 @@ pub const PhysicalDeviceShaderImageFootprintFeaturesNV = extern struct {
 pub const NV_scissor_exclusive = 1;
 pub const NV_SCISSOR_EXCLUSIVE_SPEC_VERSION = 1;
 pub const NV_SCISSOR_EXCLUSIVE_EXTENSION_NAME = "VK_NV_scissor_exclusive";
+
 pub const PipelineViewportExclusiveScissorStateCreateInfoNV = extern struct {
     sType: StructureType = .PIPELINE_VIEWPORT_EXCLUSIVE_SCISSOR_STATE_CREATE_INFO_NV,
     pNext: ?*const c_void = null,
@@ -12418,6 +12622,7 @@ pub inline fn CmdSetExclusiveScissorNV(commandBuffer: CommandBuffer, firstExclus
 pub const NV_device_diagnostic_checkpoints = 1;
 pub const NV_DEVICE_DIAGNOSTIC_CHECKPOINTS_SPEC_VERSION = 2;
 pub const NV_DEVICE_DIAGNOSTIC_CHECKPOINTS_EXTENSION_NAME = "VK_NV_device_diagnostic_checkpoints";
+
 pub const QueueFamilyCheckpointPropertiesNV = extern struct {
     sType: StructureType = .QUEUE_FAMILY_CHECKPOINT_PROPERTIES_NV,
     pNext: ?*c_void = null,
@@ -12443,6 +12648,7 @@ pub extern fn vkGetQueueCheckpointDataNV(
 ) void;
 
 pub const CmdSetCheckpointNV = vkCmdSetCheckpointNV;
+
 pub inline fn GetQueueCheckpointDataNV(queue: Queue, checkpointData: []CheckpointDataNV) []CheckpointDataNV {
     var out_checkpointData: []CheckpointDataNV = undefined;
     var checkpointDataCount: u32 = @intCast(u32, checkpointData.len);
@@ -12460,6 +12666,7 @@ pub inline fn GetQueueCheckpointDataNVCount(queue: Queue) u32 {
 pub const INTEL_shader_integer_functions2 = 1;
 pub const INTEL_SHADER_INTEGER_FUNCTIONS_2_SPEC_VERSION = 1;
 pub const INTEL_SHADER_INTEGER_FUNCTIONS_2_EXTENSION_NAME = "VK_INTEL_shader_integer_functions2";
+
 pub const PhysicalDeviceShaderIntegerFunctions2FeaturesINTEL = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_SHADER_INTEGER_FUNCTIONS_2_FEATURES_INTEL,
     pNext: ?*c_void = null,
@@ -12469,6 +12676,7 @@ pub const PhysicalDeviceShaderIntegerFunctions2FeaturesINTEL = extern struct {
 
 pub const INTEL_performance_query = 1;
 pub const PerformanceConfigurationINTEL = *@OpaqueType();
+
 pub const INTEL_PERFORMANCE_QUERY_SPEC_VERSION = 1;
 pub const INTEL_PERFORMANCE_QUERY_EXTENSION_NAME = "VK_INTEL_performance_query";
 
@@ -12497,6 +12705,7 @@ pub const PerformanceValueTypeINTEL = extern enum {
     BOOL_INTEL = 3,
     STRING_INTEL = 4,
 };
+
 pub const PerformanceValueDataINTEL = extern union {
     value32: u32,
     value64: u64,
@@ -12604,6 +12813,7 @@ pub inline fn InitializePerformanceApiINTEL(device: Device, initializeInfo: Init
 }
 
 pub const UninitializePerformanceApiINTEL = vkUninitializePerformanceApiINTEL;
+
 pub inline fn CmdSetPerformanceMarkerINTEL(commandBuffer: CommandBuffer, markerInfo: PerformanceMarkerInfoINTEL) error{VK_TOO_MANY_OBJECTS,VK_OUT_OF_HOST_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
     const result = vkCmdSetPerformanceMarkerINTEL(commandBuffer, &markerInfo);
     if (@bitCast(c_int, result) < 0) {
@@ -12689,6 +12899,7 @@ pub inline fn GetPerformanceParameterINTEL(device: Device, parameter: Performanc
 pub const EXT_pci_bus_info = 1;
 pub const EXT_PCI_BUS_INFO_SPEC_VERSION = 2;
 pub const EXT_PCI_BUS_INFO_EXTENSION_NAME = "VK_EXT_pci_bus_info";
+
 pub const PhysicalDevicePCIBusInfoPropertiesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_PCI_BUS_INFO_PROPERTIES_EXT,
     pNext: ?*c_void = null,
@@ -12702,6 +12913,7 @@ pub const PhysicalDevicePCIBusInfoPropertiesEXT = extern struct {
 pub const AMD_display_native_hdr = 1;
 pub const AMD_DISPLAY_NATIVE_HDR_SPEC_VERSION = 1;
 pub const AMD_DISPLAY_NATIVE_HDR_EXTENSION_NAME = "VK_AMD_display_native_hdr";
+
 pub const DisplayNativeHdrSurfaceCapabilitiesAMD = extern struct {
     sType: StructureType = .DISPLAY_NATIVE_HDR_SURFACE_CAPABILITIES_AMD,
     pNext: ?*c_void = null,
@@ -12722,9 +12934,11 @@ pub extern fn vkSetLocalDimmingAMD(
 
 pub const SetLocalDimmingAMD = vkSetLocalDimmingAMD;
 
+
 pub const EXT_fragment_density_map = 1;
 pub const EXT_FRAGMENT_DENSITY_MAP_SPEC_VERSION = 1;
 pub const EXT_FRAGMENT_DENSITY_MAP_EXTENSION_NAME = "VK_EXT_fragment_density_map";
+
 pub const PhysicalDeviceFragmentDensityMapFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_FRAGMENT_DENSITY_MAP_FEATURES_EXT,
     pNext: ?*c_void = null,
@@ -12751,19 +12965,24 @@ pub const RenderPassFragmentDensityMapCreateInfoEXT = extern struct {
 pub const EXT_scalar_block_layout = 1;
 pub const EXT_SCALAR_BLOCK_LAYOUT_SPEC_VERSION = 1;
 pub const EXT_SCALAR_BLOCK_LAYOUT_EXTENSION_NAME = "VK_EXT_scalar_block_layout";
+
 pub const PhysicalDeviceScalarBlockLayoutFeaturesEXT = PhysicalDeviceScalarBlockLayoutFeatures;
+
 
 pub const GOOGLE_hlsl_functionality1 = 1;
 pub const GOOGLE_HLSL_FUNCTIONALITY1_SPEC_VERSION = 1;
 pub const GOOGLE_HLSL_FUNCTIONALITY1_EXTENSION_NAME = "VK_GOOGLE_hlsl_functionality1";
 
+
 pub const GOOGLE_decorate_string = 1;
 pub const GOOGLE_DECORATE_STRING_SPEC_VERSION = 1;
 pub const GOOGLE_DECORATE_STRING_EXTENSION_NAME = "VK_GOOGLE_decorate_string";
 
+
 pub const EXT_subgroup_size_control = 1;
 pub const EXT_SUBGROUP_SIZE_CONTROL_SPEC_VERSION = 2;
 pub const EXT_SUBGROUP_SIZE_CONTROL_EXTENSION_NAME = "VK_EXT_subgroup_size_control";
+
 pub const PhysicalDeviceSubgroupSizeControlFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_SUBGROUP_SIZE_CONTROL_FEATURES_EXT,
     pNext: ?*c_void = null,
@@ -12806,6 +13025,7 @@ pub const PhysicalDeviceShaderCoreProperties2AMD = extern struct {
 pub const AMD_device_coherent_memory = 1;
 pub const AMD_DEVICE_COHERENT_MEMORY_SPEC_VERSION = 1;
 pub const AMD_DEVICE_COHERENT_MEMORY_EXTENSION_NAME = "VK_AMD_device_coherent_memory";
+
 pub const PhysicalDeviceCoherentMemoryFeaturesAMD = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_COHERENT_MEMORY_FEATURES_AMD,
     pNext: ?*c_void = null,
@@ -12816,6 +13036,7 @@ pub const PhysicalDeviceCoherentMemoryFeaturesAMD = extern struct {
 pub const EXT_memory_budget = 1;
 pub const EXT_MEMORY_BUDGET_SPEC_VERSION = 1;
 pub const EXT_MEMORY_BUDGET_EXTENSION_NAME = "VK_EXT_memory_budget";
+
 pub const PhysicalDeviceMemoryBudgetPropertiesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT,
     pNext: ?*c_void = null,
@@ -12827,6 +13048,7 @@ pub const PhysicalDeviceMemoryBudgetPropertiesEXT = extern struct {
 pub const EXT_memory_priority = 1;
 pub const EXT_MEMORY_PRIORITY_SPEC_VERSION = 1;
 pub const EXT_MEMORY_PRIORITY_EXTENSION_NAME = "VK_EXT_memory_priority";
+
 pub const PhysicalDeviceMemoryPriorityFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_MEMORY_PRIORITY_FEATURES_EXT,
     pNext: ?*c_void = null,
@@ -12843,6 +13065,7 @@ pub const MemoryPriorityAllocateInfoEXT = extern struct {
 pub const NV_dedicated_allocation_image_aliasing = 1;
 pub const NV_DEDICATED_ALLOCATION_IMAGE_ALIASING_SPEC_VERSION = 1;
 pub const NV_DEDICATED_ALLOCATION_IMAGE_ALIASING_EXTENSION_NAME = "VK_NV_dedicated_allocation_image_aliasing";
+
 pub const PhysicalDeviceDedicatedAllocationImageAliasingFeaturesNV = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_DEDICATED_ALLOCATION_IMAGE_ALIASING_FEATURES_NV,
     pNext: ?*c_void = null,
@@ -12853,6 +13076,7 @@ pub const PhysicalDeviceDedicatedAllocationImageAliasingFeaturesNV = extern stru
 pub const EXT_buffer_device_address = 1;
 pub const EXT_BUFFER_DEVICE_ADDRESS_SPEC_VERSION = 2;
 pub const EXT_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME = "VK_EXT_buffer_device_address";
+
 pub const PhysicalDeviceBufferDeviceAddressFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES_EXT,
     pNext: ?*c_void = null,
@@ -12863,6 +13087,7 @@ pub const PhysicalDeviceBufferDeviceAddressFeaturesEXT = extern struct {
 
 pub const PhysicalDeviceBufferAddressFeaturesEXT = PhysicalDeviceBufferDeviceAddressFeaturesEXT;
 pub const BufferDeviceAddressInfoEXT = BufferDeviceAddressInfo;
+
 pub const BufferDeviceAddressCreateInfoEXT = extern struct {
     sType: StructureType = .BUFFER_DEVICE_ADDRESS_CREATE_INFO_EXT,
     pNext: ?*const c_void = null,
@@ -12939,7 +13164,9 @@ pub inline fn GetPhysicalDeviceToolPropertiesEXTCount(physicalDevice: PhysicalDe
 pub const EXT_separate_stencil_usage = 1;
 pub const EXT_SEPARATE_STENCIL_USAGE_SPEC_VERSION = 1;
 pub const EXT_SEPARATE_STENCIL_USAGE_EXTENSION_NAME = "VK_EXT_separate_stencil_usage";
+
 pub const ImageStencilUsageCreateInfoEXT = ImageStencilUsageCreateInfo;
+
 
 pub const EXT_validation_features = 1;
 pub const EXT_VALIDATION_FEATURES_SPEC_VERSION = 2;
@@ -12960,6 +13187,7 @@ pub const ValidationFeatureDisableEXT = extern enum {
     CORE_CHECKS_EXT = 5,
     UNIQUE_HANDLES_EXT = 6,
 };
+
 pub const ValidationFeaturesEXT = extern struct {
     sType: StructureType = .VALIDATION_FEATURES_EXT,
     pNext: ?*const c_void = null,
@@ -12994,6 +13222,7 @@ pub const ScopeNV = extern enum {
     SUBGROUP_NV = 3,
     QUEUE_FAMILY_NV = 5,
 };
+
 pub const CooperativeMatrixPropertiesNV = extern struct {
     sType: StructureType = .COOPERATIVE_MATRIX_PROPERTIES_NV,
     pNext: ?*c_void = null,
@@ -13067,7 +13296,9 @@ pub const CoverageReductionModeNV = extern enum {
     MERGE_NV = 0,
     TRUNCATE_NV = 1,
 };
+
 pub const PipelineCoverageReductionStateCreateFlagsNV = Flags;
+
 pub const PhysicalDeviceCoverageReductionModeFeaturesNV = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_COVERAGE_REDUCTION_MODE_FEATURES_NV,
     pNext: ?*c_void = null,
@@ -13132,6 +13363,7 @@ pub inline fn GetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNVCou
 pub const EXT_fragment_shader_interlock = 1;
 pub const EXT_FRAGMENT_SHADER_INTERLOCK_SPEC_VERSION = 1;
 pub const EXT_FRAGMENT_SHADER_INTERLOCK_EXTENSION_NAME = "VK_EXT_fragment_shader_interlock";
+
 pub const PhysicalDeviceFragmentShaderInterlockFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_FRAGMENT_SHADER_INTERLOCK_FEATURES_EXT,
     pNext: ?*c_void = null,
@@ -13144,6 +13376,7 @@ pub const PhysicalDeviceFragmentShaderInterlockFeaturesEXT = extern struct {
 pub const EXT_ycbcr_image_arrays = 1;
 pub const EXT_YCBCR_IMAGE_ARRAYS_SPEC_VERSION = 1;
 pub const EXT_YCBCR_IMAGE_ARRAYS_EXTENSION_NAME = "VK_EXT_ycbcr_image_arrays";
+
 pub const PhysicalDeviceYcbcrImageArraysFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_YCBCR_IMAGE_ARRAYS_FEATURES_EXT,
     pNext: ?*c_void = null,
@@ -13154,7 +13387,9 @@ pub const PhysicalDeviceYcbcrImageArraysFeaturesEXT = extern struct {
 pub const EXT_headless_surface = 1;
 pub const EXT_HEADLESS_SURFACE_SPEC_VERSION = 1;
 pub const EXT_HEADLESS_SURFACE_EXTENSION_NAME = "VK_EXT_headless_surface";
+
 pub const HeadlessSurfaceCreateFlagsEXT = Flags;
+
 pub const HeadlessSurfaceCreateInfoEXT = extern struct {
     sType: StructureType = .HEADLESS_SURFACE_CREATE_INFO_EXT,
     pNext: ?*const c_void = null,
@@ -13192,6 +13427,7 @@ pub const LineRasterizationModeEXT = extern enum {
     BRESENHAM_EXT = 2,
     RECTANGULAR_SMOOTH_EXT = 3,
 };
+
 pub const PhysicalDeviceLineRasterizationFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_EXT,
     pNext: ?*c_void = null,
@@ -13226,10 +13462,13 @@ pub extern fn vkCmdSetLineStippleEXT(
 
 pub const CmdSetLineStippleEXT = vkCmdSetLineStippleEXT;
 
+
 pub const EXT_host_query_reset = 1;
 pub const EXT_HOST_QUERY_RESET_SPEC_VERSION = 1;
 pub const EXT_HOST_QUERY_RESET_EXTENSION_NAME = "VK_EXT_host_query_reset";
+
 pub const PhysicalDeviceHostQueryResetFeaturesEXT = PhysicalDeviceHostQueryResetFeatures;
+
 pub extern fn vkResetQueryPoolEXT(
     device: Device,
     queryPool: QueryPool,
@@ -13239,9 +13478,11 @@ pub extern fn vkResetQueryPoolEXT(
 
 pub const ResetQueryPoolEXT = vkResetQueryPoolEXT;
 
+
 pub const EXT_index_type_uint8 = 1;
 pub const EXT_INDEX_TYPE_UINT8_SPEC_VERSION = 1;
 pub const EXT_INDEX_TYPE_UINT8_EXTENSION_NAME = "VK_EXT_index_type_uint8";
+
 pub const PhysicalDeviceIndexTypeUint8FeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES_EXT,
     pNext: ?*c_void = null,
@@ -13252,6 +13493,7 @@ pub const PhysicalDeviceIndexTypeUint8FeaturesEXT = extern struct {
 pub const EXT_shader_demote_to_helper_invocation = 1;
 pub const EXT_SHADER_DEMOTE_TO_HELPER_INVOCATION_SPEC_VERSION = 1;
 pub const EXT_SHADER_DEMOTE_TO_HELPER_INVOCATION_EXTENSION_NAME = "VK_EXT_shader_demote_to_helper_invocation";
+
 pub const PhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_SHADER_DEMOTE_TO_HELPER_INVOCATION_FEATURES_EXT,
     pNext: ?*c_void = null,
@@ -13262,6 +13504,7 @@ pub const PhysicalDeviceShaderDemoteToHelperInvocationFeaturesEXT = extern struc
 pub const EXT_texel_buffer_alignment = 1;
 pub const EXT_TEXEL_BUFFER_ALIGNMENT_SPEC_VERSION = 1;
 pub const EXT_TEXEL_BUFFER_ALIGNMENT_EXTENSION_NAME = "VK_EXT_texel_buffer_alignment";
+
 pub const PhysicalDeviceTexelBufferAlignmentFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_TEXEL_BUFFER_ALIGNMENT_FEATURES_EXT,
     pNext: ?*c_void = null,
@@ -13281,5 +13524,6 @@ pub const PhysicalDeviceTexelBufferAlignmentPropertiesEXT = extern struct {
 pub const GOOGLE_user_type = 1;
 pub const GOOGLE_USER_TYPE_SPEC_VERSION = 1;
 pub const GOOGLE_USER_TYPE_EXTENSION_NAME = "VK_GOOGLE_user_type";
+
 
 test "Compile All" { _ = @typeInfo(@This()); }
