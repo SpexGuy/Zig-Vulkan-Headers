@@ -6884,7 +6884,7 @@ pub const KHR_SURFACE_SPEC_VERSION = 25;
 pub const KHR_SURFACE_EXTENSION_NAME = c"VK_KHR_surface";
 
 pub const ColorSpaceKHR = extern enum {
-    SRGB_NONLINEAR_KHR = 0,
+    SRGB_NONLINEAR = 0,
     DISPLAY_P3_NONLINEAR_EXT = 1000104001,
     EXTENDED_SRGB_LINEAR_EXT = 1000104002,
     DISPLAY_P3_LINEAR_EXT = 1000104003,
@@ -6902,38 +6902,38 @@ pub const ColorSpaceKHR = extern enum {
     DISPLAY_NATIVE_AMD = 1000213000,
 
     const Self = @This();
-    pub const COLORSPACE_SRGB_NONLINEAR_KHR = Self.SRGB_NONLINEAR_KHR;
+    pub const COLORSPACE_SRGB_NONLINEAR = Self.SRGB_NONLINEAR;
     pub const DCI_P3_LINEAR_EXT = Self.DISPLAY_P3_LINEAR_EXT;
 };
 
 pub const PresentModeKHR = extern enum {
-    IMMEDIATE_KHR = 0,
-    MAILBOX_KHR = 1,
-    FIFO_KHR = 2,
-    FIFO_RELAXED_KHR = 3,
-    SHARED_DEMAND_REFRESH_KHR = 1000111000,
-    SHARED_CONTINUOUS_REFRESH_KHR = 1000111001,
+    IMMEDIATE = 0,
+    MAILBOX = 1,
+    FIFO = 2,
+    FIFO_RELAXED = 3,
+    SHARED_DEMAND_REFRESH = 1000111000,
+    SHARED_CONTINUOUS_REFRESH = 1000111001,
 };
 
 pub const SurfaceTransformFlagsKHR = Flags;
 pub const SurfaceTransformFlagBitsKHR = struct {
-    pub const SURFACE_TRANSFORM_IDENTITY_BIT_KHR: SurfaceTransformFlagsKHR = 0x00000001;
-    pub const SURFACE_TRANSFORM_ROTATE_90_BIT_KHR: SurfaceTransformFlagsKHR = 0x00000002;
-    pub const SURFACE_TRANSFORM_ROTATE_180_BIT_KHR: SurfaceTransformFlagsKHR = 0x00000004;
-    pub const SURFACE_TRANSFORM_ROTATE_270_BIT_KHR: SurfaceTransformFlagsKHR = 0x00000008;
-    pub const SURFACE_TRANSFORM_HORIZONTAL_MIRROR_BIT_KHR: SurfaceTransformFlagsKHR = 0x00000010;
-    pub const SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_90_BIT_KHR: SurfaceTransformFlagsKHR = 0x00000020;
-    pub const SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_180_BIT_KHR: SurfaceTransformFlagsKHR = 0x00000040;
-    pub const SURFACE_TRANSFORM_HORIZONTAL_MIRROR_ROTATE_270_BIT_KHR: SurfaceTransformFlagsKHR = 0x00000080;
-    pub const SURFACE_TRANSFORM_INHERIT_BIT_KHR: SurfaceTransformFlagsKHR = 0x00000100;
+    pub const IDENTITY_BIT: SurfaceTransformFlagsKHR = 0x00000001;
+    pub const ROTATE_90_BIT: SurfaceTransformFlagsKHR = 0x00000002;
+    pub const ROTATE_180_BIT: SurfaceTransformFlagsKHR = 0x00000004;
+    pub const ROTATE_270_BIT: SurfaceTransformFlagsKHR = 0x00000008;
+    pub const HORIZONTAL_MIRROR_BIT: SurfaceTransformFlagsKHR = 0x00000010;
+    pub const HORIZONTAL_MIRROR_ROTATE_90_BIT: SurfaceTransformFlagsKHR = 0x00000020;
+    pub const HORIZONTAL_MIRROR_ROTATE_180_BIT: SurfaceTransformFlagsKHR = 0x00000040;
+    pub const HORIZONTAL_MIRROR_ROTATE_270_BIT: SurfaceTransformFlagsKHR = 0x00000080;
+    pub const INHERIT_BIT: SurfaceTransformFlagsKHR = 0x00000100;
 };
 
 pub const CompositeAlphaFlagsKHR = Flags;
 pub const CompositeAlphaFlagBitsKHR = struct {
-    pub const COMPOSITE_ALPHA_OPAQUE_BIT_KHR: CompositeAlphaFlagsKHR = 0x00000001;
-    pub const COMPOSITE_ALPHA_PRE_MULTIPLIED_BIT_KHR: CompositeAlphaFlagsKHR = 0x00000002;
-    pub const COMPOSITE_ALPHA_POST_MULTIPLIED_BIT_KHR: CompositeAlphaFlagsKHR = 0x00000004;
-    pub const COMPOSITE_ALPHA_INHERIT_BIT_KHR: CompositeAlphaFlagsKHR = 0x00000008;
+    pub const OPAQUE_BIT: CompositeAlphaFlagsKHR = 0x00000001;
+    pub const PRE_MULTIPLIED_BIT: CompositeAlphaFlagsKHR = 0x00000002;
+    pub const POST_MULTIPLIED_BIT: CompositeAlphaFlagsKHR = 0x00000004;
+    pub const INHERIT_BIT: CompositeAlphaFlagsKHR = 0x00000008;
 };
 
 pub const SurfaceCapabilitiesKHR = extern struct {
@@ -7037,7 +7037,7 @@ pub inline fn GetPhysicalDeviceSurfaceFormatsKHR(physicalDevice: PhysicalDevice,
     returnValues.result = result;
     return returnValues;
 }
-pub inline fn GetPhysicalDeviceSurfaceFormatsKHRCount(physicalDevice: PhysicalDevice, surface: SurfaceKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_SURFACE_LOST_KHR,VK_UNDOCUMENTED_ERROR}!u32 {
+pub inline fn GetPhysicalDeviceSurfaceFormatsCountKHR(physicalDevice: PhysicalDevice, surface: SurfaceKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_SURFACE_LOST_KHR,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_surfaceFormatCount: u32 = undefined;
     const result = vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &out_surfaceFormatCount, null);
     if (@bitCast(c_int, result) < 0) {
@@ -7071,7 +7071,7 @@ pub inline fn GetPhysicalDeviceSurfacePresentModesKHR(physicalDevice: PhysicalDe
     returnValues.result = result;
     return returnValues;
 }
-pub inline fn GetPhysicalDeviceSurfacePresentModesKHRCount(physicalDevice: PhysicalDevice, surface: SurfaceKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_SURFACE_LOST_KHR,VK_UNDOCUMENTED_ERROR}!u32 {
+pub inline fn GetPhysicalDeviceSurfacePresentModesCountKHR(physicalDevice: PhysicalDevice, surface: SurfaceKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_SURFACE_LOST_KHR,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_presentModeCount: u32 = undefined;
     const result = vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &out_presentModeCount, null);
     if (@bitCast(c_int, result) < 0) {
@@ -7094,17 +7094,17 @@ pub const KHR_SWAPCHAIN_EXTENSION_NAME = c"VK_KHR_swapchain";
 
 pub const SwapchainCreateFlagsKHR = Flags;
 pub const SwapchainCreateFlagBitsKHR = struct {
-    pub const SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR: SwapchainCreateFlagsKHR = 0x00000001;
-    pub const SWAPCHAIN_CREATE_PROTECTED_BIT_KHR: SwapchainCreateFlagsKHR = 0x00000002;
-    pub const SWAPCHAIN_CREATE_MUTABLE_FORMAT_BIT_KHR: SwapchainCreateFlagsKHR = 0x00000004;
+    pub const SPLIT_INSTANCE_BIND_REGIONS_BIT: SwapchainCreateFlagsKHR = 0x00000001;
+    pub const PROTECTED_BIT: SwapchainCreateFlagsKHR = 0x00000002;
+    pub const MUTABLE_FORMAT_BIT: SwapchainCreateFlagsKHR = 0x00000004;
 };
 
 pub const DeviceGroupPresentModeFlagsKHR = Flags;
 pub const DeviceGroupPresentModeFlagBitsKHR = struct {
-    pub const DEVICE_GROUP_PRESENT_MODE_LOCAL_BIT_KHR: DeviceGroupPresentModeFlagsKHR = 0x00000001;
-    pub const DEVICE_GROUP_PRESENT_MODE_REMOTE_BIT_KHR: DeviceGroupPresentModeFlagsKHR = 0x00000002;
-    pub const DEVICE_GROUP_PRESENT_MODE_SUM_BIT_KHR: DeviceGroupPresentModeFlagsKHR = 0x00000004;
-    pub const DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHR: DeviceGroupPresentModeFlagsKHR = 0x00000008;
+    pub const LOCAL_BIT: DeviceGroupPresentModeFlagsKHR = 0x00000001;
+    pub const REMOTE_BIT: DeviceGroupPresentModeFlagsKHR = 0x00000002;
+    pub const SUM_BIT: DeviceGroupPresentModeFlagsKHR = 0x00000004;
+    pub const LOCAL_MULTI_DEVICE_BIT: DeviceGroupPresentModeFlagsKHR = 0x00000008;
 };
 
 pub const SwapchainCreateInfoKHR = extern struct {
@@ -7279,7 +7279,7 @@ pub inline fn GetSwapchainImagesKHR(device: Device, swapchain: SwapchainKHR, swa
     returnValues.result = result;
     return returnValues;
 }
-pub inline fn GetSwapchainImagesKHRCount(device: Device, swapchain: SwapchainKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
+pub inline fn GetSwapchainImagesCountKHR(device: Device, swapchain: SwapchainKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_swapchainImageCount: u32 = undefined;
     const result = vkGetSwapchainImagesKHR(device, swapchain, &out_swapchainImageCount, null);
     if (@bitCast(c_int, result) < 0) {
@@ -7376,7 +7376,7 @@ pub inline fn GetPhysicalDevicePresentRectanglesKHR(physicalDevice: PhysicalDevi
     returnValues.result = result;
     return returnValues;
 }
-pub inline fn GetPhysicalDevicePresentRectanglesKHRCount(physicalDevice: PhysicalDevice, surface: SurfaceKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
+pub inline fn GetPhysicalDevicePresentRectanglesCountKHR(physicalDevice: PhysicalDevice, surface: SurfaceKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_rectCount: u32 = undefined;
     const result = vkGetPhysicalDevicePresentRectanglesKHR(physicalDevice, surface, &out_rectCount, null);
     if (@bitCast(c_int, result) < 0) {
@@ -7421,10 +7421,10 @@ pub const KHR_DISPLAY_EXTENSION_NAME = c"VK_KHR_display";
 
 pub const DisplayPlaneAlphaFlagsKHR = Flags;
 pub const DisplayPlaneAlphaFlagBitsKHR = struct {
-    pub const DISPLAY_PLANE_ALPHA_OPAQUE_BIT_KHR: DisplayPlaneAlphaFlagsKHR = 0x00000001;
-    pub const DISPLAY_PLANE_ALPHA_GLOBAL_BIT_KHR: DisplayPlaneAlphaFlagsKHR = 0x00000002;
-    pub const DISPLAY_PLANE_ALPHA_PER_PIXEL_BIT_KHR: DisplayPlaneAlphaFlagsKHR = 0x00000004;
-    pub const DISPLAY_PLANE_ALPHA_PER_PIXEL_PREMULTIPLIED_BIT_KHR: DisplayPlaneAlphaFlagsKHR = 0x00000008;
+    pub const OPAQUE_BIT: DisplayPlaneAlphaFlagsKHR = 0x00000001;
+    pub const GLOBAL_BIT: DisplayPlaneAlphaFlagsKHR = 0x00000002;
+    pub const PER_PIXEL_BIT: DisplayPlaneAlphaFlagsKHR = 0x00000004;
+    pub const PER_PIXEL_PREMULTIPLIED_BIT: DisplayPlaneAlphaFlagsKHR = 0x00000008;
 };
 
 pub const DisplayModeCreateFlagsKHR = Flags;
@@ -7554,7 +7554,7 @@ pub inline fn GetPhysicalDeviceDisplayPropertiesKHR(physicalDevice: PhysicalDevi
     returnValues.result = result;
     return returnValues;
 }
-pub inline fn GetPhysicalDeviceDisplayPropertiesKHRCount(physicalDevice: PhysicalDevice) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
+pub inline fn GetPhysicalDeviceDisplayPropertiesCountKHR(physicalDevice: PhysicalDevice) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_propertyCount: u32 = undefined;
     const result = vkGetPhysicalDeviceDisplayPropertiesKHR(physicalDevice, &out_propertyCount, null);
     if (@bitCast(c_int, result) < 0) {
@@ -7586,7 +7586,7 @@ pub inline fn GetPhysicalDeviceDisplayPlanePropertiesKHR(physicalDevice: Physica
     returnValues.result = result;
     return returnValues;
 }
-pub inline fn GetPhysicalDeviceDisplayPlanePropertiesKHRCount(physicalDevice: PhysicalDevice) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
+pub inline fn GetPhysicalDeviceDisplayPlanePropertiesCountKHR(physicalDevice: PhysicalDevice) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_propertyCount: u32 = undefined;
     const result = vkGetPhysicalDeviceDisplayPlanePropertiesKHR(physicalDevice, &out_propertyCount, null);
     if (@bitCast(c_int, result) < 0) {
@@ -7618,7 +7618,7 @@ pub inline fn GetDisplayPlaneSupportedDisplaysKHR(physicalDevice: PhysicalDevice
     returnValues.result = result;
     return returnValues;
 }
-pub inline fn GetDisplayPlaneSupportedDisplaysKHRCount(physicalDevice: PhysicalDevice, planeIndex: u32) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
+pub inline fn GetDisplayPlaneSupportedDisplaysCountKHR(physicalDevice: PhysicalDevice, planeIndex: u32) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_displayCount: u32 = undefined;
     const result = vkGetDisplayPlaneSupportedDisplaysKHR(physicalDevice, planeIndex, &out_displayCount, null);
     if (@bitCast(c_int, result) < 0) {
@@ -7650,7 +7650,7 @@ pub inline fn GetDisplayModePropertiesKHR(physicalDevice: PhysicalDevice, displa
     returnValues.result = result;
     return returnValues;
 }
-pub inline fn GetDisplayModePropertiesKHRCount(physicalDevice: PhysicalDevice, display: DisplayKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
+pub inline fn GetDisplayModePropertiesCountKHR(physicalDevice: PhysicalDevice, display: DisplayKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_propertyCount: u32 = undefined;
     const result = vkGetDisplayModePropertiesKHR(physicalDevice, display, &out_propertyCount, null);
     if (@bitCast(c_int, result) < 0) {
@@ -7847,7 +7847,7 @@ pub inline fn GetPhysicalDeviceQueueFamilyProperties2KHR(physicalDevice: Physica
     out_queueFamilyProperties = queueFamilyProperties[0..queueFamilyPropertyCount];
     return out_queueFamilyProperties;
 }
-pub inline fn GetPhysicalDeviceQueueFamilyProperties2KHRCount(physicalDevice: PhysicalDevice) u32 {
+pub inline fn GetPhysicalDeviceQueueFamilyProperties2CountKHR(physicalDevice: PhysicalDevice) u32 {
     var out_queueFamilyPropertyCount: u32 = undefined;
     vkGetPhysicalDeviceQueueFamilyProperties2KHR(physicalDevice, &out_queueFamilyPropertyCount, null);
     return out_queueFamilyPropertyCount;
@@ -7866,7 +7866,7 @@ pub inline fn GetPhysicalDeviceSparseImageFormatProperties2KHR(physicalDevice: P
     out_properties = properties[0..propertyCount];
     return out_properties;
 }
-pub inline fn GetPhysicalDeviceSparseImageFormatProperties2KHRCount(physicalDevice: PhysicalDevice, formatInfo: PhysicalDeviceSparseImageFormatInfo2) u32 {
+pub inline fn GetPhysicalDeviceSparseImageFormatProperties2CountKHR(physicalDevice: PhysicalDevice, formatInfo: PhysicalDeviceSparseImageFormatInfo2) u32 {
     var out_propertyCount: u32 = undefined;
     vkGetPhysicalDeviceSparseImageFormatProperties2KHR(physicalDevice, &formatInfo, &out_propertyCount, null);
     return out_propertyCount;
@@ -7977,7 +7977,7 @@ pub inline fn EnumeratePhysicalDeviceGroupsKHR(instance: Instance, physicalDevic
     returnValues.result = result;
     return returnValues;
 }
-pub inline fn EnumeratePhysicalDeviceGroupsKHRCount(instance: Instance) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_INITIALIZATION_FAILED,VK_UNDOCUMENTED_ERROR}!u32 {
+pub inline fn EnumeratePhysicalDeviceGroupsCountKHR(instance: Instance) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_INITIALIZATION_FAILED,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_physicalDeviceGroupCount: u32 = undefined;
     const result = vkEnumeratePhysicalDeviceGroupsKHR(instance, &out_physicalDeviceGroupCount, null);
     if (@bitCast(c_int, result) < 0) {
@@ -8508,43 +8508,43 @@ pub const KHR_PERFORMANCE_QUERY_SPEC_VERSION = 1;
 pub const KHR_PERFORMANCE_QUERY_EXTENSION_NAME = c"VK_KHR_performance_query";
 
 pub const PerformanceCounterUnitKHR = extern enum {
-    GENERIC_KHR = 0,
-    PERCENTAGE_KHR = 1,
-    NANOSECONDS_KHR = 2,
-    BYTES_KHR = 3,
-    BYTES_PER_SECOND_KHR = 4,
-    KELVIN_KHR = 5,
-    WATTS_KHR = 6,
-    VOLTS_KHR = 7,
-    AMPS_KHR = 8,
-    HERTZ_KHR = 9,
-    CYCLES_KHR = 10,
+    GENERIC = 0,
+    PERCENTAGE = 1,
+    NANOSECONDS = 2,
+    BYTES = 3,
+    BYTES_PER_SECOND = 4,
+    KELVIN = 5,
+    WATTS = 6,
+    VOLTS = 7,
+    AMPS = 8,
+    HERTZ = 9,
+    CYCLES = 10,
 };
 
 pub const PerformanceCounterScopeKHR = extern enum {
-    COMMAND_BUFFER_KHR = 0,
-    RENDER_PASS_KHR = 1,
-    COMMAND_KHR = 2,
+    COMMAND_BUFFER = 0,
+    RENDER_PASS = 1,
+    COMMAND = 2,
 
     const Self = @This();
-    pub const QUERY_SCOPE_COMMAND_BUFFER_KHR = Self.COMMAND_BUFFER_KHR;
-    pub const QUERY_SCOPE_RENDER_PASS_KHR = Self.RENDER_PASS_KHR;
-    pub const QUERY_SCOPE_COMMAND_KHR = Self.COMMAND_KHR;
+    pub const QUERY_SCOPE_COMMAND_BUFFER = Self.COMMAND_BUFFER;
+    pub const QUERY_SCOPE_RENDER_PASS = Self.RENDER_PASS;
+    pub const QUERY_SCOPE_COMMAND = Self.COMMAND;
 };
 
 pub const PerformanceCounterStorageKHR = extern enum {
-    INT32_KHR = 0,
-    INT64_KHR = 1,
-    UINT32_KHR = 2,
-    UINT64_KHR = 3,
-    FLOAT32_KHR = 4,
-    FLOAT64_KHR = 5,
+    INT32 = 0,
+    INT64 = 1,
+    UINT32 = 2,
+    UINT64 = 3,
+    FLOAT32 = 4,
+    FLOAT64 = 5,
 };
 
 pub const PerformanceCounterDescriptionFlagsKHR = Flags;
 pub const PerformanceCounterDescriptionFlagBitsKHR = struct {
-    pub const PERFORMANCE_COUNTER_DESCRIPTION_PERFORMANCE_IMPACTING_KHR: PerformanceCounterDescriptionFlagsKHR = 0x00000001;
-    pub const PERFORMANCE_COUNTER_DESCRIPTION_CONCURRENTLY_IMPACTED_KHR: PerformanceCounterDescriptionFlagsKHR = 0x00000002;
+    pub const PERFORMANCE_IMPACTING: PerformanceCounterDescriptionFlagsKHR = 0x00000001;
+    pub const CONCURRENTLY_IMPACTED: PerformanceCounterDescriptionFlagsKHR = 0x00000002;
 };
 
 pub const AcquireProfilingLockFlagsKHR = Flags;
@@ -8656,7 +8656,7 @@ pub inline fn EnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(phys
     returnValues.result = result;
     return returnValues;
 }
-pub inline fn EnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHRCount(physicalDevice: PhysicalDevice, queueFamilyIndex: u32) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_INITIALIZATION_FAILED,VK_UNDOCUMENTED_ERROR}!u32 {
+pub inline fn EnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersCountKHR(physicalDevice: PhysicalDevice, queueFamilyIndex: u32) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_INITIALIZATION_FAILED,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_counterCount: u32 = undefined;
     const result = vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(physicalDevice, queueFamilyIndex, &out_counterCount, null, null);
     if (@bitCast(c_int, result) < 0) {
@@ -8772,7 +8772,7 @@ pub inline fn GetPhysicalDeviceSurfaceFormats2KHR(physicalDevice: PhysicalDevice
     returnValues.result = result;
     return returnValues;
 }
-pub inline fn GetPhysicalDeviceSurfaceFormats2KHRCount(physicalDevice: PhysicalDevice, surfaceInfo: PhysicalDeviceSurfaceInfo2KHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_SURFACE_LOST_KHR,VK_UNDOCUMENTED_ERROR}!u32 {
+pub inline fn GetPhysicalDeviceSurfaceFormats2CountKHR(physicalDevice: PhysicalDevice, surfaceInfo: PhysicalDeviceSurfaceInfo2KHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_SURFACE_LOST_KHR,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_surfaceFormatCount: u32 = undefined;
     const result = vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, &surfaceInfo, &out_surfaceFormatCount, null);
     if (@bitCast(c_int, result) < 0) {
@@ -8874,7 +8874,7 @@ pub inline fn GetPhysicalDeviceDisplayProperties2KHR(physicalDevice: PhysicalDev
     returnValues.result = result;
     return returnValues;
 }
-pub inline fn GetPhysicalDeviceDisplayProperties2KHRCount(physicalDevice: PhysicalDevice) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
+pub inline fn GetPhysicalDeviceDisplayProperties2CountKHR(physicalDevice: PhysicalDevice) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_propertyCount: u32 = undefined;
     const result = vkGetPhysicalDeviceDisplayProperties2KHR(physicalDevice, &out_propertyCount, null);
     if (@bitCast(c_int, result) < 0) {
@@ -8906,7 +8906,7 @@ pub inline fn GetPhysicalDeviceDisplayPlaneProperties2KHR(physicalDevice: Physic
     returnValues.result = result;
     return returnValues;
 }
-pub inline fn GetPhysicalDeviceDisplayPlaneProperties2KHRCount(physicalDevice: PhysicalDevice) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
+pub inline fn GetPhysicalDeviceDisplayPlaneProperties2CountKHR(physicalDevice: PhysicalDevice) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_propertyCount: u32 = undefined;
     const result = vkGetPhysicalDeviceDisplayPlaneProperties2KHR(physicalDevice, &out_propertyCount, null);
     if (@bitCast(c_int, result) < 0) {
@@ -8938,7 +8938,7 @@ pub inline fn GetDisplayModeProperties2KHR(physicalDevice: PhysicalDevice, displ
     returnValues.result = result;
     return returnValues;
 }
-pub inline fn GetDisplayModeProperties2KHRCount(physicalDevice: PhysicalDevice, display: DisplayKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
+pub inline fn GetDisplayModeProperties2CountKHR(physicalDevice: PhysicalDevice, display: DisplayKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_propertyCount: u32 = undefined;
     const result = vkGetDisplayModeProperties2KHR(physicalDevice, display, &out_propertyCount, null);
     if (@bitCast(c_int, result) < 0) {
@@ -9030,7 +9030,7 @@ pub inline fn GetImageSparseMemoryRequirements2KHR(device: Device, info: ImageSp
     out_sparseMemoryRequirements = sparseMemoryRequirements[0..sparseMemoryRequirementCount];
     return out_sparseMemoryRequirements;
 }
-pub inline fn GetImageSparseMemoryRequirements2KHRCount(device: Device, info: ImageSparseMemoryRequirementsInfo2) u32 {
+pub inline fn GetImageSparseMemoryRequirements2CountKHR(device: Device, info: ImageSparseMemoryRequirementsInfo2) u32 {
     var out_sparseMemoryRequirementCount: u32 = undefined;
     vkGetImageSparseMemoryRequirements2KHR(device, &info, &out_sparseMemoryRequirementCount, null);
     return out_sparseMemoryRequirementCount;
@@ -9408,10 +9408,10 @@ pub const KHR_PIPELINE_EXECUTABLE_PROPERTIES_SPEC_VERSION = 1;
 pub const KHR_PIPELINE_EXECUTABLE_PROPERTIES_EXTENSION_NAME = c"VK_KHR_pipeline_executable_properties";
 
 pub const PipelineExecutableStatisticFormatKHR = extern enum {
-    BOOL32_KHR = 0,
-    INT64_KHR = 1,
-    UINT64_KHR = 2,
-    FLOAT64_KHR = 3,
+    BOOL32 = 0,
+    INT64 = 1,
+    UINT64 = 2,
+    FLOAT64 = 3,
 };
 
 pub const PhysicalDevicePipelineExecutablePropertiesFeaturesKHR = extern struct {
@@ -9508,7 +9508,7 @@ pub inline fn GetPipelineExecutablePropertiesKHR(device: Device, pipelineInfo: P
     returnValues.result = result;
     return returnValues;
 }
-pub inline fn GetPipelineExecutablePropertiesKHRCount(device: Device, pipelineInfo: PipelineInfoKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
+pub inline fn GetPipelineExecutablePropertiesCountKHR(device: Device, pipelineInfo: PipelineInfoKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_executableCount: u32 = undefined;
     const result = vkGetPipelineExecutablePropertiesKHR(device, &pipelineInfo, &out_executableCount, null);
     if (@bitCast(c_int, result) < 0) {
@@ -9540,7 +9540,7 @@ pub inline fn GetPipelineExecutableStatisticsKHR(device: Device, executableInfo:
     returnValues.result = result;
     return returnValues;
 }
-pub inline fn GetPipelineExecutableStatisticsKHRCount(device: Device, executableInfo: PipelineExecutableInfoKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
+pub inline fn GetPipelineExecutableStatisticsCountKHR(device: Device, executableInfo: PipelineExecutableInfoKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_statisticCount: u32 = undefined;
     const result = vkGetPipelineExecutableStatisticsKHR(device, &executableInfo, &out_statisticCount, null);
     if (@bitCast(c_int, result) < 0) {
@@ -9572,7 +9572,7 @@ pub inline fn GetPipelineExecutableInternalRepresentationsKHR(device: Device, ex
     returnValues.result = result;
     return returnValues;
 }
-pub inline fn GetPipelineExecutableInternalRepresentationsKHRCount(device: Device, executableInfo: PipelineExecutableInfoKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
+pub inline fn GetPipelineExecutableInternalRepresentationsCountKHR(device: Device, executableInfo: PipelineExecutableInfoKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_internalRepresentationCount: u32 = undefined;
     const result = vkGetPipelineExecutableInternalRepresentationsKHR(device, &executableInfo, &out_internalRepresentationCount, null);
     if (@bitCast(c_int, result) < 0) {
@@ -9593,58 +9593,58 @@ pub const EXT_DEBUG_REPORT_SPEC_VERSION = 9;
 pub const EXT_DEBUG_REPORT_EXTENSION_NAME = c"VK_EXT_debug_report";
 
 pub const DebugReportObjectTypeEXT = extern enum {
-    UNKNOWN_EXT = 0,
-    INSTANCE_EXT = 1,
-    PHYSICAL_DEVICE_EXT = 2,
-    DEVICE_EXT = 3,
-    QUEUE_EXT = 4,
-    SEMAPHORE_EXT = 5,
-    COMMAND_BUFFER_EXT = 6,
-    FENCE_EXT = 7,
-    DEVICE_MEMORY_EXT = 8,
-    BUFFER_EXT = 9,
-    IMAGE_EXT = 10,
-    EVENT_EXT = 11,
-    QUERY_POOL_EXT = 12,
-    BUFFER_VIEW_EXT = 13,
-    IMAGE_VIEW_EXT = 14,
-    SHADER_MODULE_EXT = 15,
-    PIPELINE_CACHE_EXT = 16,
-    PIPELINE_LAYOUT_EXT = 17,
-    RENDER_PASS_EXT = 18,
-    PIPELINE_EXT = 19,
-    DESCRIPTOR_SET_LAYOUT_EXT = 20,
-    SAMPLER_EXT = 21,
-    DESCRIPTOR_POOL_EXT = 22,
-    DESCRIPTOR_SET_EXT = 23,
-    FRAMEBUFFER_EXT = 24,
-    COMMAND_POOL_EXT = 25,
-    SURFACE_KHR_EXT = 26,
-    SWAPCHAIN_KHR_EXT = 27,
-    DEBUG_REPORT_CALLBACK_EXT_EXT = 28,
-    DISPLAY_KHR_EXT = 29,
-    DISPLAY_MODE_KHR_EXT = 30,
-    OBJECT_TABLE_NVX_EXT = 31,
-    INDIRECT_COMMANDS_LAYOUT_NVX_EXT = 32,
-    VALIDATION_CACHE_EXT_EXT = 33,
-    SAMPLER_YCBCR_CONVERSION_EXT = 1000156000,
-    DESCRIPTOR_UPDATE_TEMPLATE_EXT = 1000085000,
-    ACCELERATION_STRUCTURE_NV_EXT = 1000165000,
+    UNKNOWN = 0,
+    INSTANCE = 1,
+    PHYSICAL_DEVICE = 2,
+    DEVICE = 3,
+    QUEUE = 4,
+    SEMAPHORE = 5,
+    COMMAND_BUFFER = 6,
+    FENCE = 7,
+    DEVICE_MEMORY = 8,
+    BUFFER = 9,
+    IMAGE = 10,
+    EVENT = 11,
+    QUERY_POOL = 12,
+    BUFFER_VIEW = 13,
+    IMAGE_VIEW = 14,
+    SHADER_MODULE = 15,
+    PIPELINE_CACHE = 16,
+    PIPELINE_LAYOUT = 17,
+    RENDER_PASS = 18,
+    PIPELINE = 19,
+    DESCRIPTOR_SET_LAYOUT = 20,
+    SAMPLER = 21,
+    DESCRIPTOR_POOL = 22,
+    DESCRIPTOR_SET = 23,
+    FRAMEBUFFER = 24,
+    COMMAND_POOL = 25,
+    SURFACE_KHR = 26,
+    SWAPCHAIN_KHR = 27,
+    DEBUG_REPORT_CALLBACK_EXT = 28,
+    DISPLAY_KHR = 29,
+    DISPLAY_MODE_KHR = 30,
+    OBJECT_TABLE_NVX = 31,
+    INDIRECT_COMMANDS_LAYOUT_NVX = 32,
+    VALIDATION_CACHE_EXT = 33,
+    SAMPLER_YCBCR_CONVERSION = 1000156000,
+    DESCRIPTOR_UPDATE_TEMPLATE = 1000085000,
+    ACCELERATION_STRUCTURE_NV = 1000165000,
 
     const Self = @This();
-    pub const DEBUG_REPORT_EXT = Self.DEBUG_REPORT_CALLBACK_EXT_EXT;
-    pub const VALIDATION_CACHE_EXT = Self.VALIDATION_CACHE_EXT_EXT;
-    pub const DESCRIPTOR_UPDATE_TEMPLATE_KHR_EXT = Self.DESCRIPTOR_UPDATE_TEMPLATE_EXT;
-    pub const SAMPLER_YCBCR_CONVERSION_KHR_EXT = Self.SAMPLER_YCBCR_CONVERSION_EXT;
+    pub const DEBUG_REPORT = Self.DEBUG_REPORT_CALLBACK_EXT;
+    pub const VALIDATION_CACHE = Self.VALIDATION_CACHE_EXT;
+    pub const DESCRIPTOR_UPDATE_TEMPLATE_KHR = Self.DESCRIPTOR_UPDATE_TEMPLATE;
+    pub const SAMPLER_YCBCR_CONVERSION_KHR = Self.SAMPLER_YCBCR_CONVERSION;
 };
 
 pub const DebugReportFlagsEXT = Flags;
 pub const DebugReportFlagBitsEXT = struct {
-    pub const DEBUG_REPORT_INFORMATION_BIT_EXT: DebugReportFlagsEXT = 0x00000001;
-    pub const DEBUG_REPORT_WARNING_BIT_EXT: DebugReportFlagsEXT = 0x00000002;
-    pub const DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT: DebugReportFlagsEXT = 0x00000004;
-    pub const DEBUG_REPORT_ERROR_BIT_EXT: DebugReportFlagsEXT = 0x00000008;
-    pub const DEBUG_REPORT_DEBUG_BIT_EXT: DebugReportFlagsEXT = 0x00000010;
+    pub const INFORMATION_BIT: DebugReportFlagsEXT = 0x00000001;
+    pub const WARNING_BIT: DebugReportFlagsEXT = 0x00000002;
+    pub const PERFORMANCE_WARNING_BIT: DebugReportFlagsEXT = 0x00000004;
+    pub const ERROR_BIT: DebugReportFlagsEXT = 0x00000008;
+    pub const DEBUG_BIT: DebugReportFlagsEXT = 0x00000010;
 };
 
 pub const PFN_DebugReportCallbackEXT = extern fn (
@@ -9726,8 +9726,8 @@ pub const AMD_RASTERIZATION_ORDER_SPEC_VERSION = 1;
 pub const AMD_RASTERIZATION_ORDER_EXTENSION_NAME = c"VK_AMD_rasterization_order";
 
 pub const RasterizationOrderAMD = extern enum {
-    STRICT_AMD = 0,
-    RELAXED_AMD = 1,
+    STRICT = 0,
+    RELAXED = 1,
 };
 
 pub const PipelineRasterizationStateRasterizationOrderAMD = extern struct {
@@ -10048,9 +10048,9 @@ pub const AMD_SHADER_INFO_SPEC_VERSION = 1;
 pub const AMD_SHADER_INFO_EXTENSION_NAME = c"VK_AMD_shader_info";
 
 pub const ShaderInfoTypeAMD = extern enum {
-    STATISTICS_AMD = 0,
-    BINARY_AMD = 1,
-    DISASSEMBLY_AMD = 2,
+    STATISTICS = 0,
+    BINARY = 1,
+    DISASSEMBLY = 2,
 };
 
 pub const ShaderResourceUsageAMD = extern struct {
@@ -10099,7 +10099,7 @@ pub inline fn GetShaderInfoAMD(device: Device, pipeline: Pipeline, shaderStage: 
     returnValues.result = result;
     return returnValues;
 }
-pub inline fn GetShaderInfoAMDCount(device: Device, pipeline: Pipeline, shaderStage: ShaderStageFlags, infoType: ShaderInfoTypeAMD) error{VK_FEATURE_NOT_PRESENT,VK_OUT_OF_HOST_MEMORY,VK_UNDOCUMENTED_ERROR}!usize {
+pub inline fn GetShaderInfoCountAMD(device: Device, pipeline: Pipeline, shaderStage: ShaderStageFlags, infoType: ShaderInfoTypeAMD) error{VK_FEATURE_NOT_PRESENT,VK_OUT_OF_HOST_MEMORY,VK_UNDOCUMENTED_ERROR}!usize {
     var out_infoSize: usize = undefined;
     const result = vkGetShaderInfoAMD(device, pipeline, shaderStage, infoType, &out_infoSize, null);
     if (@bitCast(c_int, result) < 0) {
@@ -10140,17 +10140,17 @@ pub const NV_EXTERNAL_MEMORY_CAPABILITIES_EXTENSION_NAME = c"VK_NV_external_memo
 
 pub const ExternalMemoryHandleTypeFlagsNV = Flags;
 pub const ExternalMemoryHandleTypeFlagBitsNV = struct {
-    pub const EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_BIT_NV: ExternalMemoryHandleTypeFlagsNV = 0x00000001;
-    pub const EXTERNAL_MEMORY_HANDLE_TYPE_OPAQUE_WIN32_KMT_BIT_NV: ExternalMemoryHandleTypeFlagsNV = 0x00000002;
-    pub const EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_IMAGE_BIT_NV: ExternalMemoryHandleTypeFlagsNV = 0x00000004;
-    pub const EXTERNAL_MEMORY_HANDLE_TYPE_D3D11_IMAGE_KMT_BIT_NV: ExternalMemoryHandleTypeFlagsNV = 0x00000008;
+    pub const OPAQUE_WIN32_BIT: ExternalMemoryHandleTypeFlagsNV = 0x00000001;
+    pub const OPAQUE_WIN32_KMT_BIT: ExternalMemoryHandleTypeFlagsNV = 0x00000002;
+    pub const D3D11_IMAGE_BIT: ExternalMemoryHandleTypeFlagsNV = 0x00000004;
+    pub const D3D11_IMAGE_KMT_BIT: ExternalMemoryHandleTypeFlagsNV = 0x00000008;
 };
 
 pub const ExternalMemoryFeatureFlagsNV = Flags;
 pub const ExternalMemoryFeatureFlagBitsNV = struct {
-    pub const EXTERNAL_MEMORY_FEATURE_DEDICATED_ONLY_BIT_NV: ExternalMemoryFeatureFlagsNV = 0x00000001;
-    pub const EXTERNAL_MEMORY_FEATURE_EXPORTABLE_BIT_NV: ExternalMemoryFeatureFlagsNV = 0x00000002;
-    pub const EXTERNAL_MEMORY_FEATURE_IMPORTABLE_BIT_NV: ExternalMemoryFeatureFlagsNV = 0x00000004;
+    pub const DEDICATED_ONLY_BIT: ExternalMemoryFeatureFlagsNV = 0x00000001;
+    pub const EXPORTABLE_BIT: ExternalMemoryFeatureFlagsNV = 0x00000002;
+    pub const IMPORTABLE_BIT: ExternalMemoryFeatureFlagsNV = 0x00000004;
 };
 
 pub const ExternalImageFormatPropertiesNV = extern struct {
@@ -10208,8 +10208,8 @@ pub const EXT_VALIDATION_FLAGS_SPEC_VERSION = 2;
 pub const EXT_VALIDATION_FLAGS_EXTENSION_NAME = c"VK_EXT_validation_flags";
 
 pub const ValidationCheckEXT = extern enum {
-    ALL_EXT = 0,
-    SHADERS_EXT = 1,
+    ALL = 0,
+    SHADERS = 1,
 };
 
 pub const ValidationFlagsEXT = extern struct {
@@ -10264,7 +10264,7 @@ pub const EXT_CONDITIONAL_RENDERING_EXTENSION_NAME = c"VK_EXT_conditional_render
 
 pub const ConditionalRenderingFlagsEXT = Flags;
 pub const ConditionalRenderingFlagBitsEXT = struct {
-    pub const CONDITIONAL_RENDERING_INVERTED_BIT_EXT: ConditionalRenderingFlagsEXT = 0x00000001;
+    pub const INVERTED_BIT: ConditionalRenderingFlagsEXT = 0x00000001;
 };
 
 pub const ConditionalRenderingBeginInfoEXT = extern struct {
@@ -10310,36 +10310,36 @@ pub const NVX_DEVICE_GENERATED_COMMANDS_SPEC_VERSION = 3;
 pub const NVX_DEVICE_GENERATED_COMMANDS_EXTENSION_NAME = c"VK_NVX_device_generated_commands";
 
 pub const IndirectCommandsTokenTypeNVX = extern enum {
-    PIPELINE_NVX = 0,
-    DESCRIPTOR_SET_NVX = 1,
-    INDEX_BUFFER_NVX = 2,
-    VERTEX_BUFFER_NVX = 3,
-    PUSH_CONSTANT_NVX = 4,
-    DRAW_INDEXED_NVX = 5,
-    DRAW_NVX = 6,
-    DISPATCH_NVX = 7,
+    PIPELINE = 0,
+    DESCRIPTOR_SET = 1,
+    INDEX_BUFFER = 2,
+    VERTEX_BUFFER = 3,
+    PUSH_CONSTANT = 4,
+    DRAW_INDEXED = 5,
+    DRAW = 6,
+    DISPATCH = 7,
 };
 
 pub const ObjectEntryTypeNVX = extern enum {
-    DESCRIPTOR_SET_NVX = 0,
-    PIPELINE_NVX = 1,
-    INDEX_BUFFER_NVX = 2,
-    VERTEX_BUFFER_NVX = 3,
-    PUSH_CONSTANT_NVX = 4,
+    DESCRIPTOR_SET = 0,
+    PIPELINE = 1,
+    INDEX_BUFFER = 2,
+    VERTEX_BUFFER = 3,
+    PUSH_CONSTANT = 4,
 };
 
 pub const IndirectCommandsLayoutUsageFlagsNVX = Flags;
 pub const IndirectCommandsLayoutUsageFlagBitsNVX = struct {
-    pub const INDIRECT_COMMANDS_LAYOUT_USAGE_UNORDERED_SEQUENCES_BIT_NVX: IndirectCommandsLayoutUsageFlagsNVX = 0x00000001;
-    pub const INDIRECT_COMMANDS_LAYOUT_USAGE_SPARSE_SEQUENCES_BIT_NVX: IndirectCommandsLayoutUsageFlagsNVX = 0x00000002;
-    pub const INDIRECT_COMMANDS_LAYOUT_USAGE_EMPTY_EXECUTIONS_BIT_NVX: IndirectCommandsLayoutUsageFlagsNVX = 0x00000004;
-    pub const INDIRECT_COMMANDS_LAYOUT_USAGE_INDEXED_SEQUENCES_BIT_NVX: IndirectCommandsLayoutUsageFlagsNVX = 0x00000008;
+    pub const UNORDERED_SEQUENCES_BIT: IndirectCommandsLayoutUsageFlagsNVX = 0x00000001;
+    pub const SPARSE_SEQUENCES_BIT: IndirectCommandsLayoutUsageFlagsNVX = 0x00000002;
+    pub const EMPTY_EXECUTIONS_BIT: IndirectCommandsLayoutUsageFlagsNVX = 0x00000004;
+    pub const INDEXED_SEQUENCES_BIT: IndirectCommandsLayoutUsageFlagsNVX = 0x00000008;
 };
 
 pub const ObjectEntryUsageFlagsNVX = Flags;
 pub const ObjectEntryUsageFlagBitsNVX = struct {
-    pub const OBJECT_ENTRY_USAGE_GRAPHICS_BIT_NVX: ObjectEntryUsageFlagsNVX = 0x00000001;
-    pub const OBJECT_ENTRY_USAGE_COMPUTE_BIT_NVX: ObjectEntryUsageFlagsNVX = 0x00000002;
+    pub const GRAPHICS_BIT: ObjectEntryUsageFlagsNVX = 0x00000001;
+    pub const COMPUTE_BIT: ObjectEntryUsageFlagsNVX = 0x00000002;
 };
 
 pub const DeviceGeneratedCommandsFeaturesNVX = extern struct {
@@ -10638,7 +10638,7 @@ pub const EXT_DISPLAY_SURFACE_COUNTER_EXTENSION_NAME = c"VK_EXT_display_surface_
 
 pub const SurfaceCounterFlagsEXT = Flags;
 pub const SurfaceCounterFlagBitsEXT = struct {
-    pub const SURFACE_COUNTER_VBLANK_EXT: SurfaceCounterFlagsEXT = 0x00000001;
+    pub const VBLANK: SurfaceCounterFlagsEXT = 0x00000001;
 };
 
 pub const SurfaceCapabilities2EXT = extern struct {
@@ -10683,17 +10683,17 @@ pub const EXT_DISPLAY_CONTROL_SPEC_VERSION = 1;
 pub const EXT_DISPLAY_CONTROL_EXTENSION_NAME = c"VK_EXT_display_control";
 
 pub const DisplayPowerStateEXT = extern enum {
-    OFF_EXT = 0,
-    SUSPEND_EXT = 1,
-    ON_EXT = 2,
+    OFF = 0,
+    SUSPEND = 1,
+    ON = 2,
 };
 
 pub const DeviceEventTypeEXT = extern enum {
-    DISPLAY_HOTPLUG_EXT = 0,
+    DISPLAY_HOTPLUG = 0,
 };
 
 pub const DisplayEventTypeEXT = extern enum {
-    FIRST_PIXEL_OUT_EXT = 0,
+    FIRST_PIXEL_OUT = 0,
 };
 
 pub const DisplayPowerInfoEXT = extern struct {
@@ -10861,7 +10861,7 @@ pub inline fn GetPastPresentationTimingGOOGLE(device: Device, swapchain: Swapcha
     returnValues.result = result;
     return returnValues;
 }
-pub inline fn GetPastPresentationTimingGOOGLECount(device: Device, swapchain: SwapchainKHR) error{VK_DEVICE_LOST,VK_OUT_OF_DATE_KHR,VK_SURFACE_LOST_KHR,VK_UNDOCUMENTED_ERROR}!u32 {
+pub inline fn GetPastPresentationTimingCountGOOGLE(device: Device, swapchain: SwapchainKHR) error{VK_DEVICE_LOST,VK_OUT_OF_DATE_KHR,VK_SURFACE_LOST_KHR,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_presentationTimingCount: u32 = undefined;
     const result = vkGetPastPresentationTimingGOOGLE(device, swapchain, &out_presentationTimingCount, null);
     if (@bitCast(c_int, result) < 0) {
@@ -10907,14 +10907,14 @@ pub const NV_VIEWPORT_SWIZZLE_SPEC_VERSION = 1;
 pub const NV_VIEWPORT_SWIZZLE_EXTENSION_NAME = c"VK_NV_viewport_swizzle";
 
 pub const ViewportCoordinateSwizzleNV = extern enum {
-    POSITIVE_X_NV = 0,
-    NEGATIVE_X_NV = 1,
-    POSITIVE_Y_NV = 2,
-    NEGATIVE_Y_NV = 3,
-    POSITIVE_Z_NV = 4,
-    NEGATIVE_Z_NV = 5,
-    POSITIVE_W_NV = 6,
-    NEGATIVE_W_NV = 7,
+    POSITIVE_X = 0,
+    NEGATIVE_X = 1,
+    POSITIVE_Y = 2,
+    NEGATIVE_Y = 3,
+    POSITIVE_Z = 4,
+    NEGATIVE_Z = 5,
+    POSITIVE_W = 6,
+    NEGATIVE_W = 7,
 };
 
 pub const PipelineViewportSwizzleStateCreateFlagsNV = Flags;
@@ -10940,8 +10940,8 @@ pub const EXT_DISCARD_RECTANGLES_SPEC_VERSION = 1;
 pub const EXT_DISCARD_RECTANGLES_EXTENSION_NAME = c"VK_EXT_discard_rectangles";
 
 pub const DiscardRectangleModeEXT = extern enum {
-    INCLUSIVE_EXT = 0,
-    EXCLUSIVE_EXT = 1,
+    INCLUSIVE = 0,
+    EXCLUSIVE = 1,
 };
 
 pub const PipelineDiscardRectangleStateCreateFlagsEXT = Flags;
@@ -10978,9 +10978,9 @@ pub const EXT_CONSERVATIVE_RASTERIZATION_SPEC_VERSION = 1;
 pub const EXT_CONSERVATIVE_RASTERIZATION_EXTENSION_NAME = c"VK_EXT_conservative_rasterization";
 
 pub const ConservativeRasterizationModeEXT = extern enum {
-    DISABLED_EXT = 0,
-    OVERESTIMATE_EXT = 1,
-    UNDERESTIMATE_EXT = 2,
+    DISABLED = 0,
+    OVERESTIMATE = 1,
+    UNDERESTIMATE = 2,
 };
 
 pub const PipelineRasterizationConservativeStateCreateFlagsEXT = Flags;
@@ -11090,17 +11090,17 @@ pub const DebugUtilsMessengerCreateFlagsEXT = Flags;
 
 pub const DebugUtilsMessageSeverityFlagsEXT = Flags;
 pub const DebugUtilsMessageSeverityFlagBitsEXT = struct {
-    pub const DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT: DebugUtilsMessageSeverityFlagsEXT = 0x00000001;
-    pub const DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT: DebugUtilsMessageSeverityFlagsEXT = 0x00000010;
-    pub const DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT: DebugUtilsMessageSeverityFlagsEXT = 0x00000100;
-    pub const DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT: DebugUtilsMessageSeverityFlagsEXT = 0x00001000;
+    pub const VERBOSE_BIT: DebugUtilsMessageSeverityFlagsEXT = 0x00000001;
+    pub const INFO_BIT: DebugUtilsMessageSeverityFlagsEXT = 0x00000010;
+    pub const WARNING_BIT: DebugUtilsMessageSeverityFlagsEXT = 0x00000100;
+    pub const ERROR_BIT: DebugUtilsMessageSeverityFlagsEXT = 0x00001000;
 };
 
 pub const DebugUtilsMessageTypeFlagsEXT = Flags;
 pub const DebugUtilsMessageTypeFlagBitsEXT = struct {
-    pub const DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT: DebugUtilsMessageTypeFlagsEXT = 0x00000001;
-    pub const DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT: DebugUtilsMessageTypeFlagsEXT = 0x00000002;
-    pub const DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT: DebugUtilsMessageTypeFlagsEXT = 0x00000004;
+    pub const GENERAL_BIT: DebugUtilsMessageTypeFlagsEXT = 0x00000001;
+    pub const VALIDATION_BIT: DebugUtilsMessageTypeFlagsEXT = 0x00000002;
+    pub const PERFORMANCE_BIT: DebugUtilsMessageTypeFlagsEXT = 0x00000004;
 };
 
 pub const DebugUtilsObjectNameInfoEXT = extern struct {
@@ -11427,9 +11427,9 @@ pub const EXT_BLEND_OPERATION_ADVANCED_SPEC_VERSION = 2;
 pub const EXT_BLEND_OPERATION_ADVANCED_EXTENSION_NAME = c"VK_EXT_blend_operation_advanced";
 
 pub const BlendOverlapEXT = extern enum {
-    UNCORRELATED_EXT = 0,
-    DISJOINT_EXT = 1,
-    CONJOINT_EXT = 2,
+    UNCORRELATED = 0,
+    DISJOINT = 1,
+    CONJOINT = 2,
 };
 
 pub const PhysicalDeviceBlendOperationAdvancedFeaturesEXT = extern struct {
@@ -11478,10 +11478,10 @@ pub const NV_FRAMEBUFFER_MIXED_SAMPLES_SPEC_VERSION = 1;
 pub const NV_FRAMEBUFFER_MIXED_SAMPLES_EXTENSION_NAME = c"VK_NV_framebuffer_mixed_samples";
 
 pub const CoverageModulationModeNV = extern enum {
-    NONE_NV = 0,
-    RGB_NV = 1,
-    ALPHA_NV = 2,
-    RGBA_NV = 3,
+    NONE = 0,
+    RGB = 1,
+    ALPHA = 2,
+    RGBA = 3,
 };
 
 pub const PipelineCoverageModulationStateCreateFlagsNV = Flags;
@@ -11595,7 +11595,7 @@ pub const EXT_VALIDATION_CACHE_SPEC_VERSION = 1;
 pub const EXT_VALIDATION_CACHE_EXTENSION_NAME = c"VK_EXT_validation_cache";
 
 pub const ValidationCacheHeaderVersionEXT = extern enum {
-    ONE_EXT = 1,
+    ONE = 1,
 };
 
 pub const ValidationCacheCreateFlagsEXT = Flags;
@@ -11685,7 +11685,7 @@ pub inline fn GetValidationCacheDataEXT(device: Device, validationCache: Validat
     returnValues.result = result;
     return returnValues;
 }
-pub inline fn GetValidationCacheDataEXTCount(device: Device, validationCache: ValidationCacheEXT) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!usize {
+pub inline fn GetValidationCacheDataCountEXT(device: Device, validationCache: ValidationCacheEXT) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!usize {
     var out_dataSize: usize = undefined;
     const result = vkGetValidationCacheDataEXT(device, validationCache, &out_dataSize, null);
     if (@bitCast(c_int, result) < 0) {
@@ -11723,25 +11723,25 @@ pub const NV_SHADING_RATE_IMAGE_SPEC_VERSION = 3;
 pub const NV_SHADING_RATE_IMAGE_EXTENSION_NAME = c"VK_NV_shading_rate_image";
 
 pub const ShadingRatePaletteEntryNV = extern enum {
-    NO_INVOCATIONS_NV = 0,
-    T_16_INVOCATIONS_PER_PIXEL_NV = 1,
-    T_8_INVOCATIONS_PER_PIXEL_NV = 2,
-    T_4_INVOCATIONS_PER_PIXEL_NV = 3,
-    T_2_INVOCATIONS_PER_PIXEL_NV = 4,
-    T_1_INVOCATION_PER_PIXEL_NV = 5,
-    T_1_INVOCATION_PER_2X1_PIXELS_NV = 6,
-    T_1_INVOCATION_PER_1X2_PIXELS_NV = 7,
-    T_1_INVOCATION_PER_2X2_PIXELS_NV = 8,
-    T_1_INVOCATION_PER_4X2_PIXELS_NV = 9,
-    T_1_INVOCATION_PER_2X4_PIXELS_NV = 10,
-    T_1_INVOCATION_PER_4X4_PIXELS_NV = 11,
+    NO_INVOCATIONS = 0,
+    T_16_INVOCATIONS_PER_PIXEL = 1,
+    T_8_INVOCATIONS_PER_PIXEL = 2,
+    T_4_INVOCATIONS_PER_PIXEL = 3,
+    T_2_INVOCATIONS_PER_PIXEL = 4,
+    T_1_INVOCATION_PER_PIXEL = 5,
+    T_1_INVOCATION_PER_2X1_PIXELS = 6,
+    T_1_INVOCATION_PER_1X2_PIXELS = 7,
+    T_1_INVOCATION_PER_2X2_PIXELS = 8,
+    T_1_INVOCATION_PER_4X2_PIXELS = 9,
+    T_1_INVOCATION_PER_2X4_PIXELS = 10,
+    T_1_INVOCATION_PER_4X4_PIXELS = 11,
 };
 
 pub const CoarseSampleOrderTypeNV = extern enum {
-    DEFAULT_NV = 0,
-    CUSTOM_NV = 1,
-    PIXEL_MAJOR_NV = 2,
-    SAMPLE_MAJOR_NV = 3,
+    DEFAULT = 0,
+    CUSTOM = 1,
+    PIXEL_MAJOR = 2,
+    SAMPLE_MAJOR = 3,
 };
 
 pub const ShadingRatePaletteNV = extern struct {
@@ -11832,53 +11832,53 @@ pub const NV_RAY_TRACING_EXTENSION_NAME = c"VK_NV_ray_tracing";
 pub const SHADER_UNUSED_NV = (~u32(0));
 
 pub const AccelerationStructureTypeNV = extern enum {
-    TOP_LEVEL_NV = 0,
-    BOTTOM_LEVEL_NV = 1,
+    TOP_LEVEL = 0,
+    BOTTOM_LEVEL = 1,
 };
 
 pub const RayTracingShaderGroupTypeNV = extern enum {
-    GENERAL_NV = 0,
-    TRIANGLES_HIT_GROUP_NV = 1,
-    PROCEDURAL_HIT_GROUP_NV = 2,
+    GENERAL = 0,
+    TRIANGLES_HIT_GROUP = 1,
+    PROCEDURAL_HIT_GROUP = 2,
 };
 
 pub const GeometryTypeNV = extern enum {
-    TRIANGLES_NV = 0,
-    AABBS_NV = 1,
+    TRIANGLES = 0,
+    AABBS = 1,
 };
 
 pub const CopyAccelerationStructureModeNV = extern enum {
-    CLONE_NV = 0,
-    COMPACT_NV = 1,
+    CLONE = 0,
+    COMPACT = 1,
 };
 
 pub const AccelerationStructureMemoryRequirementsTypeNV = extern enum {
-    OBJECT_NV = 0,
-    BUILD_SCRATCH_NV = 1,
-    UPDATE_SCRATCH_NV = 2,
+    OBJECT = 0,
+    BUILD_SCRATCH = 1,
+    UPDATE_SCRATCH = 2,
 };
 
 pub const GeometryFlagsNV = Flags;
 pub const GeometryFlagBitsNV = struct {
-    pub const GEOMETRY_OPAQUE_BIT_NV: GeometryFlagsNV = 0x00000001;
-    pub const GEOMETRY_NO_DUPLICATE_ANY_HIT_INVOCATION_BIT_NV: GeometryFlagsNV = 0x00000002;
+    pub const OPAQUE_BIT: GeometryFlagsNV = 0x00000001;
+    pub const NO_DUPLICATE_ANY_HIT_INVOCATION_BIT: GeometryFlagsNV = 0x00000002;
 };
 
 pub const GeometryInstanceFlagsNV = Flags;
 pub const GeometryInstanceFlagBitsNV = struct {
-    pub const GEOMETRY_INSTANCE_TRIANGLE_CULL_DISABLE_BIT_NV: GeometryInstanceFlagsNV = 0x00000001;
-    pub const GEOMETRY_INSTANCE_TRIANGLE_FRONT_COUNTERCLOCKWISE_BIT_NV: GeometryInstanceFlagsNV = 0x00000002;
-    pub const GEOMETRY_INSTANCE_FORCE_OPAQUE_BIT_NV: GeometryInstanceFlagsNV = 0x00000004;
-    pub const GEOMETRY_INSTANCE_FORCE_NO_OPAQUE_BIT_NV: GeometryInstanceFlagsNV = 0x00000008;
+    pub const TRIANGLE_CULL_DISABLE_BIT: GeometryInstanceFlagsNV = 0x00000001;
+    pub const TRIANGLE_FRONT_COUNTERCLOCKWISE_BIT: GeometryInstanceFlagsNV = 0x00000002;
+    pub const FORCE_OPAQUE_BIT: GeometryInstanceFlagsNV = 0x00000004;
+    pub const FORCE_NO_OPAQUE_BIT: GeometryInstanceFlagsNV = 0x00000008;
 };
 
 pub const BuildAccelerationStructureFlagsNV = Flags;
 pub const BuildAccelerationStructureFlagBitsNV = struct {
-    pub const BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_NV: BuildAccelerationStructureFlagsNV = 0x00000001;
-    pub const BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_NV: BuildAccelerationStructureFlagsNV = 0x00000002;
-    pub const BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_NV: BuildAccelerationStructureFlagsNV = 0x00000004;
-    pub const BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_BUILD_BIT_NV: BuildAccelerationStructureFlagsNV = 0x00000008;
-    pub const BUILD_ACCELERATION_STRUCTURE_LOW_MEMORY_BIT_NV: BuildAccelerationStructureFlagsNV = 0x00000010;
+    pub const ALLOW_UPDATE_BIT: BuildAccelerationStructureFlagsNV = 0x00000001;
+    pub const ALLOW_COMPACTION_BIT: BuildAccelerationStructureFlagsNV = 0x00000002;
+    pub const PREFER_FAST_TRACE_BIT: BuildAccelerationStructureFlagsNV = 0x00000004;
+    pub const PREFER_FAST_BUILD_BIT: BuildAccelerationStructureFlagsNV = 0x00000008;
+    pub const LOW_MEMORY_BIT: BuildAccelerationStructureFlagsNV = 0x00000010;
 };
 
 pub const RayTracingShaderGroupCreateInfoNV = extern struct {
@@ -12228,10 +12228,10 @@ pub const EXT_GLOBAL_PRIORITY_SPEC_VERSION = 2;
 pub const EXT_GLOBAL_PRIORITY_EXTENSION_NAME = c"VK_EXT_global_priority";
 
 pub const QueueGlobalPriorityEXT = extern enum {
-    LOW_EXT = 128,
-    MEDIUM_EXT = 256,
-    HIGH_EXT = 512,
-    REALTIME_EXT = 1024,
+    LOW = 128,
+    MEDIUM = 256,
+    HIGH = 512,
+    REALTIME = 1024,
 };
 
 pub const DeviceQueueGlobalPriorityCreateInfoEXT = extern struct {
@@ -12319,10 +12319,10 @@ pub const EXT_CALIBRATED_TIMESTAMPS_SPEC_VERSION = 1;
 pub const EXT_CALIBRATED_TIMESTAMPS_EXTENSION_NAME = c"VK_EXT_calibrated_timestamps";
 
 pub const TimeDomainEXT = extern enum {
-    DEVICE_EXT = 0,
-    CLOCK_MONOTONIC_EXT = 1,
-    CLOCK_MONOTONIC_RAW_EXT = 2,
-    QUERY_PERFORMANCE_COUNTER_EXT = 3,
+    DEVICE = 0,
+    CLOCK_MONOTONIC = 1,
+    CLOCK_MONOTONIC_RAW = 2,
+    QUERY_PERFORMANCE_COUNTER = 3,
 };
 
 pub const CalibratedTimestampInfoEXT = extern struct {
@@ -12364,7 +12364,7 @@ pub inline fn GetPhysicalDeviceCalibrateableTimeDomainsEXT(physicalDevice: Physi
     returnValues.result = result;
     return returnValues;
 }
-pub inline fn GetPhysicalDeviceCalibrateableTimeDomainsEXTCount(physicalDevice: PhysicalDevice) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
+pub inline fn GetPhysicalDeviceCalibrateableTimeDomainsCountEXT(physicalDevice: PhysicalDevice) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_timeDomainCount: u32 = undefined;
     const result = vkGetPhysicalDeviceCalibrateableTimeDomainsEXT(physicalDevice, &out_timeDomainCount, null);
     if (@bitCast(c_int, result) < 0) {
@@ -12421,9 +12421,9 @@ pub const AMD_MEMORY_OVERALLOCATION_BEHAVIOR_SPEC_VERSION = 1;
 pub const AMD_MEMORY_OVERALLOCATION_BEHAVIOR_EXTENSION_NAME = c"VK_AMD_memory_overallocation_behavior";
 
 pub const MemoryOverallocationBehaviorAMD = extern enum {
-    DEFAULT_AMD = 0,
-    ALLOWED_AMD = 1,
-    DISALLOWED_AMD = 2,
+    DEFAULT = 0,
+    ALLOWED = 1,
+    DISALLOWED = 2,
 };
 
 pub const DeviceMemoryOverallocationCreateInfoAMD = extern struct {
@@ -12469,9 +12469,9 @@ pub const EXT_PIPELINE_CREATION_FEEDBACK_EXTENSION_NAME = c"VK_EXT_pipeline_crea
 
 pub const PipelineCreationFeedbackFlagsEXT = Flags;
 pub const PipelineCreationFeedbackFlagBitsEXT = struct {
-    pub const PIPELINE_CREATION_FEEDBACK_VALID_BIT_EXT: PipelineCreationFeedbackFlagsEXT = 0x00000001;
-    pub const PIPELINE_CREATION_FEEDBACK_APPLICATION_PIPELINE_CACHE_HIT_BIT_EXT: PipelineCreationFeedbackFlagsEXT = 0x00000002;
-    pub const PIPELINE_CREATION_FEEDBACK_BASE_PIPELINE_ACCELERATION_BIT_EXT: PipelineCreationFeedbackFlagsEXT = 0x00000004;
+    pub const VALID_BIT: PipelineCreationFeedbackFlagsEXT = 0x00000001;
+    pub const APPLICATION_PIPELINE_CACHE_HIT_BIT: PipelineCreationFeedbackFlagsEXT = 0x00000002;
+    pub const BASE_PIPELINE_ACCELERATION_BIT: PipelineCreationFeedbackFlagsEXT = 0x00000004;
 };
 
 pub const PipelineCreationFeedbackEXT = extern struct {
@@ -12656,7 +12656,7 @@ pub inline fn GetQueueCheckpointDataNV(queue: Queue, checkpointData: []Checkpoin
     out_checkpointData = checkpointData[0..checkpointDataCount];
     return out_checkpointData;
 }
-pub inline fn GetQueueCheckpointDataNVCount(queue: Queue) u32 {
+pub inline fn GetQueueCheckpointDataCountNV(queue: Queue) u32 {
     var out_checkpointDataCount: u32 = undefined;
     vkGetQueueCheckpointDataNV(queue, &out_checkpointDataCount, null);
     return out_checkpointDataCount;
@@ -12681,29 +12681,29 @@ pub const INTEL_PERFORMANCE_QUERY_SPEC_VERSION = 1;
 pub const INTEL_PERFORMANCE_QUERY_EXTENSION_NAME = c"VK_INTEL_performance_query";
 
 pub const PerformanceConfigurationTypeINTEL = extern enum {
-    COMMAND_QUEUE_METRICS_DISCOVERY_ACTIVATED_INTEL = 0,
+    COMMAND_QUEUE_METRICS_DISCOVERY_ACTIVATED = 0,
 };
 
 pub const QueryPoolSamplingModeINTEL = extern enum {
-    MANUAL_INTEL = 0,
+    MANUAL = 0,
 };
 
 pub const PerformanceOverrideTypeINTEL = extern enum {
-    NULL_HARDWARE_INTEL = 0,
-    FLUSH_GPU_CACHES_INTEL = 1,
+    NULL_HARDWARE = 0,
+    FLUSH_GPU_CACHES = 1,
 };
 
 pub const PerformanceParameterTypeINTEL = extern enum {
-    HW_COUNTERS_SUPPORTED_INTEL = 0,
-    STREAM_MARKER_VALID_BITS_INTEL = 1,
+    HW_COUNTERS_SUPPORTED = 0,
+    STREAM_MARKER_VALID_BITS = 1,
 };
 
 pub const PerformanceValueTypeINTEL = extern enum {
-    UINT32_INTEL = 0,
-    UINT64_INTEL = 1,
-    FLOAT_INTEL = 2,
-    BOOL_INTEL = 3,
-    STRING_INTEL = 4,
+    UINT32 = 0,
+    UINT64 = 1,
+    FLOAT = 2,
+    BOOL = 3,
+    STRING = 4,
 };
 
 pub const PerformanceValueDataINTEL = extern union {
@@ -13111,13 +13111,13 @@ pub const EXT_TOOLING_INFO_EXTENSION_NAME = c"VK_EXT_tooling_info";
 
 pub const ToolPurposeFlagsEXT = Flags;
 pub const ToolPurposeFlagBitsEXT = struct {
-    pub const TOOL_PURPOSE_VALIDATION_BIT_EXT: ToolPurposeFlagsEXT = 0x00000001;
-    pub const TOOL_PURPOSE_PROFILING_BIT_EXT: ToolPurposeFlagsEXT = 0x00000002;
-    pub const TOOL_PURPOSE_TRACING_BIT_EXT: ToolPurposeFlagsEXT = 0x00000004;
-    pub const TOOL_PURPOSE_ADDITIONAL_FEATURES_BIT_EXT: ToolPurposeFlagsEXT = 0x00000008;
-    pub const TOOL_PURPOSE_MODIFYING_FEATURES_BIT_EXT: ToolPurposeFlagsEXT = 0x00000010;
-    pub const TOOL_PURPOSE_DEBUG_REPORTING_BIT_EXT: ToolPurposeFlagsEXT = 0x00000020;
-    pub const TOOL_PURPOSE_DEBUG_MARKERS_BIT_EXT: ToolPurposeFlagsEXT = 0x00000040;
+    pub const VALIDATION_BIT: ToolPurposeFlagsEXT = 0x00000001;
+    pub const PROFILING_BIT: ToolPurposeFlagsEXT = 0x00000002;
+    pub const TRACING_BIT: ToolPurposeFlagsEXT = 0x00000004;
+    pub const ADDITIONAL_FEATURES_BIT: ToolPurposeFlagsEXT = 0x00000008;
+    pub const MODIFYING_FEATURES_BIT: ToolPurposeFlagsEXT = 0x00000010;
+    pub const DEBUG_REPORTING_BIT: ToolPurposeFlagsEXT = 0x00000020;
+    pub const DEBUG_MARKERS_BIT: ToolPurposeFlagsEXT = 0x00000040;
 };
 
 pub const PhysicalDeviceToolPropertiesEXT = extern struct {
@@ -13151,7 +13151,7 @@ pub inline fn GetPhysicalDeviceToolPropertiesEXT(physicalDevice: PhysicalDevice,
     returnValues.result = result;
     return returnValues;
 }
-pub inline fn GetPhysicalDeviceToolPropertiesEXTCount(physicalDevice: PhysicalDevice) error{VK_UNDOCUMENTED_ERROR}!u32 {
+pub inline fn GetPhysicalDeviceToolPropertiesCountEXT(physicalDevice: PhysicalDevice) error{VK_UNDOCUMENTED_ERROR}!u32 {
     var out_toolCount: u32 = undefined;
     const result = vkGetPhysicalDeviceToolPropertiesEXT(physicalDevice, &out_toolCount, null);
     if (@bitCast(c_int, result) < 0) {
@@ -13173,19 +13173,19 @@ pub const EXT_VALIDATION_FEATURES_SPEC_VERSION = 2;
 pub const EXT_VALIDATION_FEATURES_EXTENSION_NAME = c"VK_EXT_validation_features";
 
 pub const ValidationFeatureEnableEXT = extern enum {
-    GPU_ASSISTED_EXT = 0,
-    GPU_ASSISTED_RESERVE_BINDING_SLOT_EXT = 1,
-    BEST_PRACTICES_EXT = 2,
+    GPU_ASSISTED = 0,
+    GPU_ASSISTED_RESERVE_BINDING_SLOT = 1,
+    BEST_PRACTICES = 2,
 };
 
 pub const ValidationFeatureDisableEXT = extern enum {
-    ALL_EXT = 0,
-    SHADERS_EXT = 1,
-    THREAD_SAFETY_EXT = 2,
-    API_PARAMETERS_EXT = 3,
-    OBJECT_LIFETIMES_EXT = 4,
-    CORE_CHECKS_EXT = 5,
-    UNIQUE_HANDLES_EXT = 6,
+    ALL = 0,
+    SHADERS = 1,
+    THREAD_SAFETY = 2,
+    API_PARAMETERS = 3,
+    OBJECT_LIFETIMES = 4,
+    CORE_CHECKS = 5,
+    UNIQUE_HANDLES = 6,
 };
 
 pub const ValidationFeaturesEXT = extern struct {
@@ -13203,24 +13203,24 @@ pub const NV_COOPERATIVE_MATRIX_SPEC_VERSION = 1;
 pub const NV_COOPERATIVE_MATRIX_EXTENSION_NAME = c"VK_NV_cooperative_matrix";
 
 pub const ComponentTypeNV = extern enum {
-    FLOAT16_NV = 0,
-    FLOAT32_NV = 1,
-    FLOAT64_NV = 2,
-    SINT8_NV = 3,
-    SINT16_NV = 4,
-    SINT32_NV = 5,
-    SINT64_NV = 6,
-    UINT8_NV = 7,
-    UINT16_NV = 8,
-    UINT32_NV = 9,
-    UINT64_NV = 10,
+    FLOAT16 = 0,
+    FLOAT32 = 1,
+    FLOAT64 = 2,
+    SINT8 = 3,
+    SINT16 = 4,
+    SINT32 = 5,
+    SINT64 = 6,
+    UINT8 = 7,
+    UINT16 = 8,
+    UINT32 = 9,
+    UINT64 = 10,
 };
 
 pub const ScopeNV = extern enum {
-    DEVICE_NV = 1,
-    WORKGROUP_NV = 2,
-    SUBGROUP_NV = 3,
-    QUEUE_FAMILY_NV = 5,
+    DEVICE = 1,
+    WORKGROUP = 2,
+    SUBGROUP = 3,
+    QUEUE_FAMILY = 5,
 };
 
 pub const CooperativeMatrixPropertiesNV = extern struct {
@@ -13274,7 +13274,7 @@ pub inline fn GetPhysicalDeviceCooperativeMatrixPropertiesNV(physicalDevice: Phy
     returnValues.result = result;
     return returnValues;
 }
-pub inline fn GetPhysicalDeviceCooperativeMatrixPropertiesNVCount(physicalDevice: PhysicalDevice) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
+pub inline fn GetPhysicalDeviceCooperativeMatrixPropertiesCountNV(physicalDevice: PhysicalDevice) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_propertyCount: u32 = undefined;
     const result = vkGetPhysicalDeviceCooperativeMatrixPropertiesNV(physicalDevice, &out_propertyCount, null);
     if (@bitCast(c_int, result) < 0) {
@@ -13293,8 +13293,8 @@ pub const NV_COVERAGE_REDUCTION_MODE_SPEC_VERSION = 1;
 pub const NV_COVERAGE_REDUCTION_MODE_EXTENSION_NAME = c"VK_NV_coverage_reduction_mode";
 
 pub const CoverageReductionModeNV = extern enum {
-    MERGE_NV = 0,
-    TRUNCATE_NV = 1,
+    MERGE = 0,
+    TRUNCATE = 1,
 };
 
 pub const PipelineCoverageReductionStateCreateFlagsNV = Flags;
@@ -13346,7 +13346,7 @@ pub inline fn GetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV(ph
     returnValues.result = result;
     return returnValues;
 }
-pub inline fn GetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNVCount(physicalDevice: PhysicalDevice) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
+pub inline fn GetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsCountNV(physicalDevice: PhysicalDevice) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_combinationCount: u32 = undefined;
     const result = vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV(physicalDevice, &out_combinationCount, null);
     if (@bitCast(c_int, result) < 0) {
@@ -13422,10 +13422,10 @@ pub const EXT_LINE_RASTERIZATION_SPEC_VERSION = 1;
 pub const EXT_LINE_RASTERIZATION_EXTENSION_NAME = c"VK_EXT_line_rasterization";
 
 pub const LineRasterizationModeEXT = extern enum {
-    DEFAULT_EXT = 0,
-    RECTANGULAR_EXT = 1,
-    BRESENHAM_EXT = 2,
-    RECTANGULAR_SMOOTH_EXT = 3,
+    DEFAULT = 0,
+    RECTANGULAR = 1,
+    BRESENHAM = 2,
+    RECTANGULAR_SMOOTH = 3,
 };
 
 pub const PhysicalDeviceLineRasterizationFeaturesEXT = extern struct {

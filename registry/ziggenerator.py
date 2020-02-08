@@ -54,11 +54,22 @@ def valueTypeToZigType(typeName, fixFlagType=False):
     print('Warning: Cant convert type name: ' + typeName)
     return typeName
 
-def enumNameToZigName(enumName, enumTypeExpanded):
-    name = enumName.replace(enumTypeExpanded, '')
-    if name.startswith('VK_'): name = name[3:]
+def enumNameToZigName(name, enumTypeExpanded, expandedSuffix):
+    if name.startswith(enumTypeExpanded): name = name[len(enumTypeExpanded):]
+    elif name.startswith('VK_'): name = name[3:]
+    if name.endswith(expandedSuffix): name = name[:-len(expandedSuffix)] 
     if name[0].isdecimal(): name = 'T_' + name
     return name
+
+def splitTypeName(name):
+    """ Split the vendor from the name.  splitTypeName('FooTypeEXT') => ('FooType', 'EXT'). """ 
+    suffixMatch = re.search(r'[A-Z][A-Z]+$', name)
+    prefix = name
+    suffix = ''
+    if suffixMatch:
+        suffix = suffixMatch.group()
+        prefix = name[:-len(suffix)]
+    return (prefix, suffix)
 
 class ZigValueType:
     def __init__(self, cValueType, declValueType, isPointer, isOptional):
@@ -717,7 +728,11 @@ class ZigOutputGenerator(OutputGenerator):
         flagBitsName = groupinfo.elem.get('name')
         flagTypeName = flagBitsName.replace('FlagBits', 'Flags')
         rootName = flagBitsName.replace('FlagBits', '')
-        expandName = re.sub(r'([0-9a-z_])([A-Z0-9])', r'\1_\2', rootName).upper() + '_'
+
+        (prefix, suffix) = splitTypeName(rootName)
+        expandPrefix = re.sub(r'([0-9a-z_])([A-Z0-9])', r'\1_\2', prefix).upper() + '_'
+        expandSuffix = '_' + suffix
+
         zigFlagTypeName = valueTypeToZigType(flagTypeName)
 
         # Prefix
@@ -734,7 +749,7 @@ class ZigOutputGenerator(OutputGenerator):
             # Values of form -(number) are accepted but nothing more complex.
             # Should catch exceptions here for more complex constructs. Not yet.
             (numVal, strVal) = self.enumToValue(elem, True)
-            name = enumNameToZigName(elem.get('name'), expandName)
+            name = enumNameToZigName(elem.get('name'), expandPrefix, expandSuffix)
             # some enums incorrectly have duplicated names :(
             if name in usedNames: continue
             usedNames[name] = True
@@ -743,7 +758,7 @@ class ZigOutputGenerator(OutputGenerator):
                 declBody += "    pub const {}: {} = {};\n".format(name, zigFlagTypeName, strVal)
             else:
                 # this is an alias
-                strVal = enumNameToZigName(strVal, expandName)
+                strVal = enumNameToZigName(strVal, expandPrefix, expandSuffix)
                 aliasBody += '    pub const {} = {};\n'.format(name, strVal)
 
         body += declBody
@@ -761,16 +776,9 @@ class ZigOutputGenerator(OutputGenerator):
         groupElem = groupinfo.elem
 
         # Break the group name into prefix and suffix portions for range
-        # enum generation
-        expandName = re.sub(r'([0-9a-z_])([A-Z0-9])', r'\1_\2', groupName).upper()
-        expandPrefix = expandName
-        expandSuffix = ''
-        expandSuffixMatch = re.search(r'[A-Z][A-Z]+$', groupName)
-        if expandSuffixMatch:
-            expandSuffix = '_' + expandSuffixMatch.group()
-            # Strip off the suffix from the prefix
-            expandPrefix = expandName.rsplit(expandSuffix, 1)[0]
-        expandPrefix = expandPrefix + '_'
+        (prefix, suffix) = splitTypeName(groupName)
+        expandPrefix = re.sub(r'([0-9a-z_])([A-Z0-9])', r'\1_\2', prefix).upper() + '_'
+        expandSuffix = '_' + suffix
 
         # Prefix
         body = ["pub const %s = extern enum {" % valueTypeToZigType(groupName)]
@@ -792,7 +800,7 @@ class ZigOutputGenerator(OutputGenerator):
             # Values of form -(number) are accepted but nothing more complex.
             # Should catch exceptions here for more complex constructs. Not yet.
             (numVal, strVal) = self.enumToValue(elem, True)
-            name = enumNameToZigName(elem.get('name'), expandPrefix)
+            name = enumNameToZigName(elem.get('name'), expandPrefix, expandSuffix)
             # some enums incorrectly have duplicated names :(
             if name in usedNames: continue
             usedNames[name] = True
@@ -805,7 +813,7 @@ class ZigOutputGenerator(OutputGenerator):
                 else:
                     if groupName == 'VkResult':
                         self.resultAliases[elem.get('name')] = strVal
-                    strVal = enumNameToZigName(strVal, expandPrefix)
+                    strVal = enumNameToZigName(strVal, expandPrefix, expandSuffix)
                     decl = "    pub const {} = Self.{};".format(name, strVal)
                     aliasText.append(decl)
 
@@ -1078,8 +1086,9 @@ class ZigOutputGenerator(OutputGenerator):
                     
                 if returnErrors:
                     wrapperReturnType = 'error{' + ','.join(returnErrors) + '}!' + wrapperReturnType
-                    
-                funcDecl += 'pub inline fn '+name[2:]+variant+'('
+                
+                (prefix, suffix) = splitTypeName(name[2:])
+                funcDecl += 'pub inline fn '+prefix+variant+suffix+'('
                 funcDecl += ', '.join(p.paramDecl() for p in userParams)
                 funcDecl += ') ' + wrapperReturnType + ' {\n'
                 for local in locals:
