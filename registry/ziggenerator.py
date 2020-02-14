@@ -174,7 +174,7 @@ class ZigParam:
                         other.buffers.append(param)
                         break
     
-    def typeDecl(self):
+    def typeDecl(self, workaround3325):
         parenDepth = 0
         decl = ''
         for indirect in self.indirections:
@@ -185,7 +185,7 @@ class ZigParam:
             elif indirect.type == ZigIndirect.TYPE_POINTER:
                 isVoid = self.valueType.cValueType == 'void'
                 isArray = indirect.cLength != '1'
-                isOptional = indirect.isOptional
+                isOptional = indirect.isOptional or (workaround3325 and isArray)
                 if isOptional:
                     if len(decl) > 0:
                         decl += '('
@@ -196,11 +196,7 @@ class ZigParam:
                 else:
                     decl += '*'
             elif indirect.type == ZigIndirect.TYPE_SLICE:
-                if indirect.isOptional:
-                    if len(decl) > 0:
-                        decl += '('
-                        parenDepth += 1
-                    decl += '?'
+                assert(not indirect.isOptional)
                 decl += '[]'
             
             if indirect.isConst:
@@ -221,17 +217,17 @@ class ZigParam:
             
         return decl
     
-    def structDecl(self):
-        decl = self.name + ': ' + self.typeDecl()
+    def structDecl(self, workaround3325):
+        decl = self.name + ': ' + self.typeDecl(workaround3325)
         if self.defaultValue:
             decl += ' = ' + self.defaultValue
         return decl
     
-    def paramDecl(self):
-        return self.name + ': ' + self.typeDecl()
+    def paramDecl(self, workaround3325):
+        return self.name + ': ' + self.typeDecl(workaround3325)
         
-    def varDecl(self):
-        decl = 'var ' + self.name + ': ' + self.typeDecl()
+    def varDecl(self, workaround3325):
+        decl = 'var ' + self.name + ': ' + self.typeDecl(workaround3325)
         if self.defaultValue:
             decl += ' = ' + self.defaultValue
         else:
@@ -250,6 +246,7 @@ class ZigGeneratorOptions(GeneratorOptions):
                  indentFuncProto=True,
                  indentFuncPointer=False,
                  coreFile=None,
+                 workaround3325 = False,
                  **kwargs
                  ):
         """Constructor.
@@ -272,6 +269,9 @@ class ZigGeneratorOptions(GeneratorOptions):
         self.indentFuncPointer = indentFuncPointer
         """True if typedefed function pointers should put each parameter on a separate line"""
         
+        self.workaround3325 = workaround3325
+        """True if the generator should work around Zig-3325 by making all pointers nullable"""
+
         if coreFile == self.filename: coreFile = None
         self.coreFile = coreFile
         """Set to the file name that this file should include for core, or None if this is the core"""
@@ -493,7 +493,7 @@ class ZigOutputGenerator(OutputGenerator):
         if returnText == 'void':
             returnType = 'void'
         else:
-            returnType = self.parseParam(returnText + ' retVal', True).typeDecl()
+            returnType = self.parseParam(returnText + ' retVal', True).typeDecl(self.genOpts.workaround3325)
         
         # parse out the parameter list
         paramStart = text.rindex('(')
@@ -505,10 +505,10 @@ class ZigOutputGenerator(OutputGenerator):
         if len(params) > 1:
             body += '\n'
             for param in params:
-                body += '    ' + param.typeDecl() + ',\n'
+                body += '    ' + param.typeDecl(self.genOpts.workaround3325) + ',\n'
         else:
             for param in params:
-                body += param.typeDecl()
+                body += param.typeDecl(self.genOpts.workaround3325)
         
         body += ') ' + returnType + ';'
         
@@ -541,7 +541,7 @@ class ZigOutputGenerator(OutputGenerator):
                 if elem.tail: paramText += ' ' + elem.tail
 
             param = self.parseParam(paramText, False, member, allMembers, typeName)
-            body += '    ' + param.structDecl() + ',\n'
+            body += '    ' + param.structDecl(self.genOpts.workaround3325) + ',\n'
         
         body += '};'
 
@@ -887,12 +887,12 @@ class ZigOutputGenerator(OutputGenerator):
         if len(params) > 1:
             externFn += '(\n'
             for p in params:
-                externFn += '    ' + p.paramDecl() + ',\n'
+                externFn += '    ' + p.paramDecl(self.genOpts.workaround3325) + ',\n'
             externFn += ')'
         else:
             externFn += '('
             for p in params:
-                externFn += p.paramDecl()
+                externFn += p.paramDecl(self.genOpts.workaround3325)
             externFn += ')'
             
         externFn += ' ' + zigReturnType + ';'
@@ -1061,7 +1061,7 @@ class ZigOutputGenerator(OutputGenerator):
                     if forwardReturn:
                         funcDecl += '    result: '+zigReturnType+',\n'
                     for param in returnParams:
-                        funcDecl += '    ' + param.structDecl() + ',\n'
+                        funcDecl += '    ' + param.structDecl(self.genOpts.workaround3325) + ',\n'
                     funcDecl += '};\n'
                     locals.insert(0, ZigParam('returnValues', ZigValueType('', wrapperReturnType, False, False), [], 'undefined', False)) 
                     if len(successCodes) > 1:
@@ -1075,7 +1075,7 @@ class ZigOutputGenerator(OutputGenerator):
                     returnVal = returnParams[0]
                     returnVal.name = 'out_' + returnVal.name
                     locals.insert(0, returnVal)
-                    wrapperReturnType = returnVal.typeDecl()
+                    wrapperReturnType = returnVal.typeDecl(self.genOpts.workaround3325)
                     returnStatement = 'return '+returnVal.name+';'
 
                     apiParams = [x.replace('returnValues.', 'out_') for x in apiParams]
@@ -1089,10 +1089,10 @@ class ZigOutputGenerator(OutputGenerator):
                 
                 (prefix, suffix) = splitTypeName(name[2:])
                 funcDecl += 'pub inline fn '+prefix+variant+suffix+'('
-                funcDecl += ', '.join(p.paramDecl() for p in userParams)
+                funcDecl += ', '.join(p.paramDecl(self.genOpts.workaround3325) for p in userParams)
                 funcDecl += ') ' + wrapperReturnType + ' {\n'
                 for local in locals:
-                    funcDecl += '    ' + local.varDecl() + ';\n'
+                    funcDecl += '    ' + local.varDecl(self.genOpts.workaround3325) + ';\n'
 
                 for cond in asserts:
                     funcDecl += '    assert(' + cond + ');\n'

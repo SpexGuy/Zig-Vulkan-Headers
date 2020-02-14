@@ -92,6 +92,10 @@ def makeGenOpts(args):
     # Output target directory
     directory = args.directory
 
+    # True/False make all top-level pointers optional to work around
+    # https://github.com/ziglang/zig/issues/3325, which could cause UB
+    workaroundZig3325 = args.zigAvoidUB
+
     # Descriptive names for various regexp patterns used to select
     # versions and extensions
     allFeatures = allExtensions = r'.*'
@@ -337,6 +341,7 @@ def makeGenOpts(args):
             removeExtensions  = None,
             emitExtensions    = emitPlatformExtensionsRE,
             prefixText        = prefixStrings + vkPrefixStrings,
+            workaround3325    = workaroundZig3325,
             lineEndings       = '\n',
             coreFile          = 'vulkan_core.zig')
 
@@ -396,6 +401,7 @@ def makeGenOpts(args):
             removeExtensions  = removeExtensionsPat,
             emitExtensions    = emitExtensionsPat,
             prefixText        = prefixStrings + vkPrefixStrings,
+            workaround3325    = workaroundZig3325,
             lineEndings       = '\n')
         ]
 
@@ -551,6 +557,8 @@ if __name__ == '__main__':
                         help='Suppress script output during normal execution.')
     parser.add_argument('-verbose', action='store_false', dest='quiet', default=True,
                         help='Enable script output during normal execution.')
+    parser.add_argument('-zigAvoidUB', action='store_true', default=False,
+                        help='Work around Zig issue 3325, which can cause unchecked UB.')
 
     args = parser.parse_args()
 
