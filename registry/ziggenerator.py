@@ -817,6 +817,9 @@ class ZigOutputGenerator(OutputGenerator):
                     decl = "    pub const {} = Self.{};".format(name, strVal)
                     aliasText.append(decl)
 
+        # Make the enum extensible
+        body.append('    _,')
+
         # Now append the non-numeric enumerant values
         if aliasText:
             body.append('')
