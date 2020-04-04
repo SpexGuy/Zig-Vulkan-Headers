@@ -60,6 +60,23 @@ def enumNameToZigName(name, enumTypeExpanded, expandedSuffix):
     if name.endswith(expandedSuffix): name = name[:-len(expandedSuffix)] 
     if name[0].isdecimal(): name = 'T_' + name
     return name
+    
+def flagNameToZigName(name, enumTypeExpanded, expandedSuffix):
+    name = enumNameToZigName(name, enumTypeExpanded, expandedSuffix)
+    try:
+        bitPos = name.rindex("_BIT");
+        mainName = name[:bitPos]
+        vendor = name[bitPos+4:]
+        if vendor and vendor[0] == '_':
+            vendor = vendor[1:]
+    except:
+        mainName = name
+        vendor = ''
+    # inefficient convert ALL_CAPS_EXT to allCapsExt
+    # TODO don't convert the vendor tag
+    name = mainName.replace('_', ' ').title().replace(' ', '')
+    name = name[0].lower() + name[1:] + vendor
+    return name
 
 def splitTypeName(name):
     """ Split the vendor from the name.  splitTypeName('FooTypeEXT') => ('FooType', 'EXT'). """ 
@@ -70,6 +87,14 @@ def splitTypeName(name):
         suffix = suffixMatch.group()
         prefix = name[:-len(suffix)]
     return (prefix, suffix)
+    
+def bitIndex(flag):
+    low = (flag & -flag)
+    lowBit = -1
+    while (low):
+        low >>= 1
+        lowBit += 1
+    return lowBit
 
 class ZigValueType:
     def __init__(self, cValueType, declValueType, isPointer, isOptional):
@@ -207,9 +232,13 @@ class ZigParam:
                 decl += '('
                 parenDepth += 1
             decl += '?'
-
+            
         if len(decl) > 0 and decl[-1].isalpha():
             decl += ' '
+
+        if decl and 'Flags' in self.valueType.declValueType:
+            decl += 'align(4) '
+
         decl += self.valueType.declValueType
         
         for _ in range(parenDepth):
@@ -219,6 +248,8 @@ class ZigParam:
     
     def structDecl(self, workaround3325):
         decl = self.name + ': ' + self.typeDecl(workaround3325)
+        if not self.indirections and not self.valueType.isOptional and 'Flags' in self.valueType.declValueType:
+            decl += ' align(4)'
         if self.defaultValue:
             decl += ' = ' + self.defaultValue
         return decl
@@ -228,6 +259,8 @@ class ZigParam:
         
     def varDecl(self, workaround3325):
         decl = 'var ' + self.name + ': ' + self.typeDecl(workaround3325)
+        if not self.indirections and not self.valueType.isOptional and 'Flags' in self.valueType.declValueType:
+            decl += ' align(4)'
         if self.defaultValue:
             decl += ' = ' + self.defaultValue
         else:
@@ -319,6 +352,35 @@ class ZigOutputGenerator(OutputGenerator):
             write('usingnamespace @import("' + genOpts.coreFile + '");', file=self.outFile)
         else:
             write('pub const CString = [*]const u8;', file=self.outFile)
+            write("""pub fn FlagsMixin(comptime FlagType: type) type {
+	comptime assert(@sizeOf(FlagType) == 4);
+	return struct {
+		pub fn toInt(self: FlagType) Flags {
+			return @bitCast(Flags, self);
+		}
+		pub fn fromInt(value: Flags) FlagType {
+			return @bitCast(FlagType, value);
+		}
+		pub fn with(a: FlagType, b: FlagType) FlagType {
+			return fromInt(toInt(a) | toInt(b));
+		}
+		pub fn only(a: FlagType, b: FlagType) FlagType {
+			return fromInt(toInt(a) & toInt(b));
+		}
+		pub fn without(a: FlagType, b: FlagType) FlagType {
+			return fromInt(toInt(a) & ~toInt(b));
+		}
+		pub fn hasAllSet(a: FlagType, b: FlagType) bool {
+			return (toInt(a) & toInt(b)) == toInt(b);
+		}
+		pub fn hasAnySet(a: FlagType, b: FlagType) bool {
+			return (toInt(a) & toInt(b)) != 0;
+		}
+		pub fn isEmpty(a: FlagType) bool {
+			return toInt(a) == 0;
+		}
+	};
+}""", file=self.outFile)
 
     def endFile(self):
         write('\ntest "Compile All" { _ = @typeInfo(@This()); }', file=self.outFile)
@@ -641,7 +703,7 @@ class ZigOutputGenerator(OutputGenerator):
 
         defaultValue = None
         if isParamOptional:
-            defaultValue = 'null' if isPointer else '0'
+            defaultValue = 'null' if isPointer else '.{}' if 'Flags' in declValueType else '0'
         elif name == 'pNext' and cValueType == 'void':
             defaultValue = 'null'
         elif allParams and len(lengths) >= 1:
@@ -682,6 +744,8 @@ class ZigOutputGenerator(OutputGenerator):
             section = 'group'
 
         if alias:
+            if 'FlagBits' in alias:
+                return # don't generate FlagBits aliases since we don't need those types in Zig
             # If the group name is aliased, just emit a typedef declaration
             # for the alias.
             body = 'pub const ' + valueTypeToZigType(groupName) + ' = ' + valueTypeToZigType(alias) + ';'
@@ -736,12 +800,12 @@ class ZigOutputGenerator(OutputGenerator):
         zigFlagTypeName = valueTypeToZigType(flagTypeName)
 
         # Prefix
-        body = "pub const " + zigFlagTypeName + " = Flags;\n"
-        body += "pub const " + valueTypeToZigType(flagBitsName) + " = struct {\n"
+        body = "pub const " + zigFlagTypeName + " = packed struct {\n"
 
-        declBody = ''
+        declValues = [None for _ in range(32)];
         aliasBody = ''
         usedNames = {}
+        needSelf = False
 
         # Loop over the nested 'enum' tags.
         for elem in groupElem.findall('enum'):
@@ -749,22 +813,49 @@ class ZigOutputGenerator(OutputGenerator):
             # Values of form -(number) are accepted but nothing more complex.
             # Should catch exceptions here for more complex constructs. Not yet.
             (numVal, strVal) = self.enumToValue(elem, True)
-            name = enumNameToZigName(elem.get('name'), expandPrefix, expandSuffix)
+            name = flagNameToZigName(elem.get('name'), expandPrefix, expandSuffix)
             # some enums incorrectly have duplicated names :(
             if name in usedNames: continue
             usedNames[name] = True
 
             if numVal is not None:
-                declBody += "    pub const {}: {} = {};\n".format(name, zigFlagTypeName, strVal)
+                if numVal != 0 and (numVal & (numVal-1)) == 0:
+                    index = bitIndex(numVal);
+                    if declValues[index]:
+                        # this bit is already in use, make this an alias
+                        aliasBody += "    pub const %s = fromInt(%s);\n" % (name, strVal)
+                    else:
+                        declValues[index] = name;
+                else:
+                    aliasBody += "    pub const %s = fromInt(%s);\n" % (name, strVal)
             else:
                 # this is an alias
-                strVal = enumNameToZigName(strVal, expandPrefix, expandSuffix)
-                aliasBody += '    pub const {} = {};\n'.format(name, strVal)
+                strVal = flagNameToZigName(strVal, expandPrefix, expandSuffix)
+                aliasBody += '    pub const %s = Self{ .%s = true };\n' % (name, strVal)
+                needSelf = True
 
-        body += declBody
-        if declBody and aliasBody:
+        declBody = '';
+        for index, flag in enumerate(declValues):
+            if flag:
+                declBody += '    ' + flag + ': bool = false,\n'
+            else:
+                declBody += '    __reserved_bit_%02d: bool = false,\n' % index
+
+        if declBody:
+            body += declBody
             body += '\n'
-        body += aliasBody
+
+        if needSelf:
+            body += '    const Self = @This();\n'
+
+        if aliasBody:
+            body += aliasBody
+            body += '\n'
+        
+        if needSelf:
+            body += '    pub usingnamespace FlagsMixin(Self);\n'
+        else:
+            body += '    pub usingnamespace FlagsMixin(@This());\n'
 
         # Postfix
         body += '};'
