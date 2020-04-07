@@ -385,7 +385,7 @@ class ZigOutputGenerator(OutputGenerator):
 }""", file=self.outFile)
 
     def endFile(self):
-        write('\ntest "Compile All" { _ = @typeInfo(@This()); }', file=self.outFile)
+        # write('\ntest "Compile All" { _ = @import("std").meta.declarations(@This()); }', file=self.outFile)
         OutputGenerator.endFile(self)
 
     def beginFeature(self, interface, emit):
@@ -874,7 +874,7 @@ class ZigOutputGenerator(OutputGenerator):
         expandSuffix = '_' + suffix
 
         # Prefix
-        body = ["pub const %s = extern enum {" % valueTypeToZigType(groupName)]
+        body = ["pub const %s = extern enum(i32) {" % valueTypeToZigType(groupName)]
 
         # Get a list of nested 'enum' tags.
         enums = groupElem.findall('enum')
@@ -1241,9 +1241,9 @@ class ZigOutputGenerator(OutputGenerator):
         if 'value' in elem.keys():
             value = elem.get('value')
             if value[0] != '"':
-                value = value.replace("0ULL", "u64(0)").replace("0U", "u32(0)")
+                value = value.replace("0ULL", "@as(u64, 0)").replace("0U", "@as(u32, 0)")
                 if value[-1] == 'f':
-                    value = 'f32(' + value[:-1] + ')'
+                    value = '@as(f32, ' + value[:-1] + ')'
                 # print('About to translate value =', value, 'type =', type(value))
                 if needsNum:
                     numVal = int(value, 0)

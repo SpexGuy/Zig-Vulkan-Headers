@@ -98,15 +98,15 @@ pub const DescriptorSet = *@OpaqueType();
 pub const Framebuffer = *@OpaqueType();
 pub const CommandPool = *@OpaqueType();
 
-pub const LOD_CLAMP_NONE = f32(1000.0);
-pub const REMAINING_MIP_LEVELS = (~u32(0));
-pub const REMAINING_ARRAY_LAYERS = (~u32(0));
-pub const WHOLE_SIZE = (~u64(0));
-pub const ATTACHMENT_UNUSED = (~u32(0));
+pub const LOD_CLAMP_NONE = @as(f32, 1000.0);
+pub const REMAINING_MIP_LEVELS = (~@as(u32, 0));
+pub const REMAINING_ARRAY_LAYERS = (~@as(u32, 0));
+pub const WHOLE_SIZE = (~@as(u64, 0));
+pub const ATTACHMENT_UNUSED = (~@as(u32, 0));
 pub const TRUE = 1;
 pub const FALSE = 0;
-pub const QUEUE_FAMILY_IGNORED = (~u32(0));
-pub const SUBPASS_EXTERNAL = (~u32(0));
+pub const QUEUE_FAMILY_IGNORED = (~@as(u32, 0));
+pub const SUBPASS_EXTERNAL = (~@as(u32, 0));
 pub const MAX_PHYSICAL_DEVICE_NAME_SIZE = 256;
 pub const UUID_SIZE = 16;
 pub const MAX_MEMORY_TYPES = 32;
@@ -114,12 +114,12 @@ pub const MAX_MEMORY_HEAPS = 16;
 pub const MAX_EXTENSION_NAME_SIZE = 256;
 pub const MAX_DESCRIPTION_SIZE = 256;
 
-pub const PipelineCacheHeaderVersion = extern enum {
+pub const PipelineCacheHeaderVersion = extern enum(i32) {
     ONE = 1,
     _,
 };
 
-pub const Result = extern enum {
+pub const Result = extern enum(i32) {
     SUCCESS = 0,
     NOT_READY = 1,
     TIMEOUT = 2,
@@ -163,7 +163,7 @@ pub const Result = extern enum {
     pub const ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR = Self.ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS;
 };
 
-pub const StructureType = extern enum {
+pub const StructureType = extern enum(i32) {
     APPLICATION_INFO = 0,
     INSTANCE_CREATE_INFO = 1,
     DEVICE_QUEUE_CREATE_INFO = 2,
@@ -682,7 +682,7 @@ pub const StructureType = extern enum {
     pub const PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES_EXT = Self.PHYSICAL_DEVICE_HOST_QUERY_RESET_FEATURES;
 };
 
-pub const SystemAllocationScope = extern enum {
+pub const SystemAllocationScope = extern enum(i32) {
     COMMAND = 0,
     OBJECT = 1,
     CACHE = 2,
@@ -691,12 +691,12 @@ pub const SystemAllocationScope = extern enum {
     _,
 };
 
-pub const InternalAllocationType = extern enum {
+pub const InternalAllocationType = extern enum(i32) {
     EXECUTABLE = 0,
     _,
 };
 
-pub const Format = extern enum {
+pub const Format = extern enum(i32) {
     UNDEFINED = 0,
     R4G4_UNORM_PACK8 = 1,
     R4G4B4A4_UNORM_PACK16 = 2,
@@ -977,21 +977,21 @@ pub const Format = extern enum {
     pub const G16_B16_R16_3PLANE_444_UNORM_KHR = Self.G16_B16_R16_3PLANE_444_UNORM;
 };
 
-pub const ImageType = extern enum {
+pub const ImageType = extern enum(i32) {
     T_1D = 0,
     T_2D = 1,
     T_3D = 2,
     _,
 };
 
-pub const ImageTiling = extern enum {
+pub const ImageTiling = extern enum(i32) {
     OPTIMAL = 0,
     LINEAR = 1,
     DRM_FORMAT_MODIFIER_EXT = 1000158000,
     _,
 };
 
-pub const PhysicalDeviceType = extern enum {
+pub const PhysicalDeviceType = extern enum(i32) {
     OTHER = 0,
     INTEGRATED_GPU = 1,
     DISCRETE_GPU = 2,
@@ -1000,7 +1000,7 @@ pub const PhysicalDeviceType = extern enum {
     _,
 };
 
-pub const QueryType = extern enum {
+pub const QueryType = extern enum(i32) {
     OCCLUSION = 0,
     PIPELINE_STATISTICS = 1,
     TIMESTAMP = 2,
@@ -1011,13 +1011,13 @@ pub const QueryType = extern enum {
     _,
 };
 
-pub const SharingMode = extern enum {
+pub const SharingMode = extern enum(i32) {
     EXCLUSIVE = 0,
     CONCURRENT = 1,
     _,
 };
 
-pub const ImageLayout = extern enum {
+pub const ImageLayout = extern enum(i32) {
     UNDEFINED = 0,
     GENERAL = 1,
     COLOR_ATTACHMENT_OPTIMAL = 2,
@@ -1048,7 +1048,7 @@ pub const ImageLayout = extern enum {
     pub const STENCIL_READ_ONLY_OPTIMAL_KHR = Self.STENCIL_READ_ONLY_OPTIMAL;
 };
 
-pub const ImageViewType = extern enum {
+pub const ImageViewType = extern enum(i32) {
     T_1D = 0,
     T_2D = 1,
     T_3D = 2,
@@ -1059,7 +1059,7 @@ pub const ImageViewType = extern enum {
     _,
 };
 
-pub const ComponentSwizzle = extern enum {
+pub const ComponentSwizzle = extern enum(i32) {
     IDENTITY = 0,
     ZERO = 1,
     ONE = 2,
@@ -1070,13 +1070,13 @@ pub const ComponentSwizzle = extern enum {
     _,
 };
 
-pub const VertexInputRate = extern enum {
+pub const VertexInputRate = extern enum(i32) {
     VERTEX = 0,
     INSTANCE = 1,
     _,
 };
 
-pub const PrimitiveTopology = extern enum {
+pub const PrimitiveTopology = extern enum(i32) {
     POINT_LIST = 0,
     LINE_LIST = 1,
     LINE_STRIP = 2,
@@ -1091,7 +1091,7 @@ pub const PrimitiveTopology = extern enum {
     _,
 };
 
-pub const PolygonMode = extern enum {
+pub const PolygonMode = extern enum(i32) {
     FILL = 0,
     LINE = 1,
     POINT = 2,
@@ -1099,13 +1099,13 @@ pub const PolygonMode = extern enum {
     _,
 };
 
-pub const FrontFace = extern enum {
+pub const FrontFace = extern enum(i32) {
     COUNTER_CLOCKWISE = 0,
     CLOCKWISE = 1,
     _,
 };
 
-pub const CompareOp = extern enum {
+pub const CompareOp = extern enum(i32) {
     NEVER = 0,
     LESS = 1,
     EQUAL = 2,
@@ -1117,7 +1117,7 @@ pub const CompareOp = extern enum {
     _,
 };
 
-pub const StencilOp = extern enum {
+pub const StencilOp = extern enum(i32) {
     KEEP = 0,
     ZERO = 1,
     REPLACE = 2,
@@ -1129,7 +1129,7 @@ pub const StencilOp = extern enum {
     _,
 };
 
-pub const LogicOp = extern enum {
+pub const LogicOp = extern enum(i32) {
     CLEAR = 0,
     AND = 1,
     AND_REVERSE = 2,
@@ -1149,7 +1149,7 @@ pub const LogicOp = extern enum {
     _,
 };
 
-pub const BlendFactor = extern enum {
+pub const BlendFactor = extern enum(i32) {
     ZERO = 0,
     ONE = 1,
     SRC_COLOR = 2,
@@ -1172,7 +1172,7 @@ pub const BlendFactor = extern enum {
     _,
 };
 
-pub const BlendOp = extern enum {
+pub const BlendOp = extern enum(i32) {
     ADD = 0,
     SUBTRACT = 1,
     REVERSE_SUBTRACT = 2,
@@ -1227,7 +1227,7 @@ pub const BlendOp = extern enum {
     _,
 };
 
-pub const DynamicState = extern enum {
+pub const DynamicState = extern enum(i32) {
     VIEWPORT = 0,
     SCISSOR = 1,
     LINE_WIDTH = 2,
@@ -1247,7 +1247,7 @@ pub const DynamicState = extern enum {
     _,
 };
 
-pub const Filter = extern enum {
+pub const Filter = extern enum(i32) {
     NEAREST = 0,
     LINEAR = 1,
     CUBIC_IMG = 1000015000,
@@ -1257,13 +1257,13 @@ pub const Filter = extern enum {
     pub const CUBIC_EXT = Self.CUBIC_IMG;
 };
 
-pub const SamplerMipmapMode = extern enum {
+pub const SamplerMipmapMode = extern enum(i32) {
     NEAREST = 0,
     LINEAR = 1,
     _,
 };
 
-pub const SamplerAddressMode = extern enum {
+pub const SamplerAddressMode = extern enum(i32) {
     REPEAT = 0,
     MIRRORED_REPEAT = 1,
     CLAMP_TO_EDGE = 2,
@@ -1275,7 +1275,7 @@ pub const SamplerAddressMode = extern enum {
     pub const MIRROR_CLAMP_TO_EDGE_KHR = Self.MIRROR_CLAMP_TO_EDGE;
 };
 
-pub const BorderColor = extern enum {
+pub const BorderColor = extern enum(i32) {
     FLOAT_TRANSPARENT_BLACK = 0,
     INT_TRANSPARENT_BLACK = 1,
     FLOAT_OPAQUE_BLACK = 2,
@@ -1285,7 +1285,7 @@ pub const BorderColor = extern enum {
     _,
 };
 
-pub const DescriptorType = extern enum {
+pub const DescriptorType = extern enum(i32) {
     SAMPLER = 0,
     COMBINED_IMAGE_SAMPLER = 1,
     SAMPLED_IMAGE = 2,
@@ -1302,33 +1302,33 @@ pub const DescriptorType = extern enum {
     _,
 };
 
-pub const AttachmentLoadOp = extern enum {
+pub const AttachmentLoadOp = extern enum(i32) {
     LOAD = 0,
     CLEAR = 1,
     DONT_CARE = 2,
     _,
 };
 
-pub const AttachmentStoreOp = extern enum {
+pub const AttachmentStoreOp = extern enum(i32) {
     STORE = 0,
     DONT_CARE = 1,
     _,
 };
 
-pub const PipelineBindPoint = extern enum {
+pub const PipelineBindPoint = extern enum(i32) {
     GRAPHICS = 0,
     COMPUTE = 1,
     RAY_TRACING_NV = 1000165000,
     _,
 };
 
-pub const CommandBufferLevel = extern enum {
+pub const CommandBufferLevel = extern enum(i32) {
     PRIMARY = 0,
     SECONDARY = 1,
     _,
 };
 
-pub const IndexType = extern enum {
+pub const IndexType = extern enum(i32) {
     UINT16 = 0,
     UINT32 = 1,
     NONE_NV = 1000165000,
@@ -1336,13 +1336,13 @@ pub const IndexType = extern enum {
     _,
 };
 
-pub const SubpassContents = extern enum {
+pub const SubpassContents = extern enum(i32) {
     INLINE = 0,
     SECONDARY_COMMAND_BUFFERS = 1,
     _,
 };
 
-pub const ObjectType = extern enum {
+pub const ObjectType = extern enum(i32) {
     UNKNOWN = 0,
     INSTANCE = 1,
     PHYSICAL_DEVICE = 2,
@@ -1389,7 +1389,7 @@ pub const ObjectType = extern enum {
     pub const SAMPLER_YCBCR_CONVERSION_KHR = Self.SAMPLER_YCBCR_CONVERSION;
 };
 
-pub const VendorId = extern enum {
+pub const VendorId = extern enum(i32) {
     VIV = 0x10001,
     VSI = 0x10002,
     KAZAN = 0x10003,
@@ -6055,9 +6055,9 @@ pub const DescriptorUpdateTemplate = *@OpaqueType();
 
 pub const MAX_DEVICE_GROUP_SIZE = 32;
 pub const LUID_SIZE = 8;
-pub const QUEUE_FAMILY_EXTERNAL = (~u32(0)-1);
+pub const QUEUE_FAMILY_EXTERNAL = (~@as(u32, 0)-1);
 
-pub const PointClippingBehavior = extern enum {
+pub const PointClippingBehavior = extern enum(i32) {
     ALL_CLIP_PLANES = 0,
     USER_CLIP_PLANES_ONLY = 1,
     _,
@@ -6067,7 +6067,7 @@ pub const PointClippingBehavior = extern enum {
     pub const USER_CLIP_PLANES_ONLY_KHR = Self.USER_CLIP_PLANES_ONLY;
 };
 
-pub const TessellationDomainOrigin = extern enum {
+pub const TessellationDomainOrigin = extern enum(i32) {
     UPPER_LEFT = 0,
     LOWER_LEFT = 1,
     _,
@@ -6077,7 +6077,7 @@ pub const TessellationDomainOrigin = extern enum {
     pub const LOWER_LEFT_KHR = Self.LOWER_LEFT;
 };
 
-pub const SamplerYcbcrModelConversion = extern enum {
+pub const SamplerYcbcrModelConversion = extern enum(i32) {
     RGB_IDENTITY = 0,
     YCBCR_IDENTITY = 1,
     YCBCR_709 = 2,
@@ -6093,7 +6093,7 @@ pub const SamplerYcbcrModelConversion = extern enum {
     pub const YCBCR_2020_KHR = Self.YCBCR_2020;
 };
 
-pub const SamplerYcbcrRange = extern enum {
+pub const SamplerYcbcrRange = extern enum(i32) {
     ITU_FULL = 0,
     ITU_NARROW = 1,
     _,
@@ -6103,7 +6103,7 @@ pub const SamplerYcbcrRange = extern enum {
     pub const ITU_NARROW_KHR = Self.ITU_NARROW;
 };
 
-pub const ChromaLocation = extern enum {
+pub const ChromaLocation = extern enum(i32) {
     COSITED_EVEN = 0,
     MIDPOINT = 1,
     _,
@@ -6113,7 +6113,7 @@ pub const ChromaLocation = extern enum {
     pub const MIDPOINT_KHR = Self.MIDPOINT;
 };
 
-pub const DescriptorUpdateTemplateType = extern enum {
+pub const DescriptorUpdateTemplateType = extern enum(i32) {
     DESCRIPTOR_SET = 0,
     PUSH_DESCRIPTORS_KHR = 1,
     _,
@@ -7482,7 +7482,7 @@ pub const DeviceAddress = u64;
 pub const MAX_DRIVER_NAME_SIZE = 256;
 pub const MAX_DRIVER_INFO_SIZE = 256;
 
-pub const DriverId = extern enum {
+pub const DriverId = extern enum(i32) {
     AMD_PROPRIETARY = 1,
     AMD_OPEN_SOURCE = 2,
     MESA_RADV = 3,
@@ -7512,7 +7512,7 @@ pub const DriverId = extern enum {
     pub const BROADCOM_PROPRIETARY_KHR = Self.BROADCOM_PROPRIETARY;
 };
 
-pub const ShaderFloatControlsIndependence = extern enum {
+pub const ShaderFloatControlsIndependence = extern enum(i32) {
     T_32_BIT_ONLY = 0,
     ALL = 1,
     NONE = 2,
@@ -7524,7 +7524,7 @@ pub const ShaderFloatControlsIndependence = extern enum {
     pub const NONE_KHR = Self.NONE;
 };
 
-pub const SamplerReductionMode = extern enum {
+pub const SamplerReductionMode = extern enum(i32) {
     WEIGHTED_AVERAGE = 0,
     MIN = 1,
     MAX = 2,
@@ -7536,7 +7536,7 @@ pub const SamplerReductionMode = extern enum {
     pub const MAX_EXT = Self.MAX;
 };
 
-pub const SemaphoreType = extern enum {
+pub const SemaphoreType = extern enum(i32) {
     BINARY = 0,
     TIMELINE = 1,
     _,
@@ -8404,7 +8404,7 @@ pub const SurfaceKHR = *@OpaqueType();
 pub const KHR_SURFACE_SPEC_VERSION = 25;
 pub const KHR_SURFACE_EXTENSION_NAME = "VK_KHR_surface";
 
-pub const ColorSpaceKHR = extern enum {
+pub const ColorSpaceKHR = extern enum(i32) {
     SRGB_NONLINEAR = 0,
     DISPLAY_P3_NONLINEAR_EXT = 1000104001,
     EXTENDED_SRGB_LINEAR_EXT = 1000104002,
@@ -8428,7 +8428,7 @@ pub const ColorSpaceKHR = extern enum {
     pub const DCI_P3_LINEAR_EXT = Self.DISPLAY_P3_LINEAR_EXT;
 };
 
-pub const PresentModeKHR = extern enum {
+pub const PresentModeKHR = extern enum(i32) {
     IMMEDIATE = 0,
     MAILBOX = 1,
     FIFO = 2,
@@ -10161,7 +10161,7 @@ pub const KHR_performance_query = 1;
 pub const KHR_PERFORMANCE_QUERY_SPEC_VERSION = 1;
 pub const KHR_PERFORMANCE_QUERY_EXTENSION_NAME = "VK_KHR_performance_query";
 
-pub const PerformanceCounterUnitKHR = extern enum {
+pub const PerformanceCounterUnitKHR = extern enum(i32) {
     GENERIC = 0,
     PERCENTAGE = 1,
     NANOSECONDS = 2,
@@ -10176,7 +10176,7 @@ pub const PerformanceCounterUnitKHR = extern enum {
     _,
 };
 
-pub const PerformanceCounterScopeKHR = extern enum {
+pub const PerformanceCounterScopeKHR = extern enum(i32) {
     COMMAND_BUFFER = 0,
     RENDER_PASS = 1,
     COMMAND = 2,
@@ -10188,7 +10188,7 @@ pub const PerformanceCounterScopeKHR = extern enum {
     pub const QUERY_SCOPE_COMMAND = Self.COMMAND;
 };
 
-pub const PerformanceCounterStorageKHR = extern enum {
+pub const PerformanceCounterStorageKHR = extern enum(i32) {
     INT32 = 0,
     INT64 = 1,
     UINT32 = 2,
@@ -11126,7 +11126,7 @@ pub const KHR_pipeline_executable_properties = 1;
 pub const KHR_PIPELINE_EXECUTABLE_PROPERTIES_SPEC_VERSION = 1;
 pub const KHR_PIPELINE_EXECUTABLE_PROPERTIES_EXTENSION_NAME = "VK_KHR_pipeline_executable_properties";
 
-pub const PipelineExecutableStatisticFormatKHR = extern enum {
+pub const PipelineExecutableStatisticFormatKHR = extern enum(i32) {
     BOOL32 = 0,
     INT64 = 1,
     UINT64 = 2,
@@ -11312,7 +11312,7 @@ pub const DebugReportCallbackEXT = *@OpaqueType();
 pub const EXT_DEBUG_REPORT_SPEC_VERSION = 9;
 pub const EXT_DEBUG_REPORT_EXTENSION_NAME = "VK_EXT_debug_report";
 
-pub const DebugReportObjectTypeEXT = extern enum {
+pub const DebugReportObjectTypeEXT = extern enum(i32) {
     UNKNOWN = 0,
     INSTANCE = 1,
     PHYSICAL_DEVICE = 2,
@@ -11474,7 +11474,7 @@ pub const AMD_rasterization_order = 1;
 pub const AMD_RASTERIZATION_ORDER_SPEC_VERSION = 1;
 pub const AMD_RASTERIZATION_ORDER_EXTENSION_NAME = "VK_AMD_rasterization_order";
 
-pub const RasterizationOrderAMD = extern enum {
+pub const RasterizationOrderAMD = extern enum(i32) {
     STRICT = 0,
     RELAXED = 1,
     _,
@@ -11797,7 +11797,7 @@ pub const AMD_shader_info = 1;
 pub const AMD_SHADER_INFO_SPEC_VERSION = 1;
 pub const AMD_SHADER_INFO_EXTENSION_NAME = "VK_AMD_shader_info";
 
-pub const ShaderInfoTypeAMD = extern enum {
+pub const ShaderInfoTypeAMD = extern enum(i32) {
     STATISTICS = 0,
     BINARY = 1,
     DISASSEMBLY = 2,
@@ -12017,7 +12017,7 @@ pub const EXT_validation_flags = 1;
 pub const EXT_VALIDATION_FLAGS_SPEC_VERSION = 2;
 pub const EXT_VALIDATION_FLAGS_EXTENSION_NAME = "VK_EXT_validation_flags";
 
-pub const ValidationCheckEXT = extern enum {
+pub const ValidationCheckEXT = extern enum(i32) {
     ALL = 0,
     SHADERS = 1,
     _,
@@ -12152,7 +12152,7 @@ pub const IndirectCommandsLayoutNVX = *@OpaqueType();
 pub const NVX_DEVICE_GENERATED_COMMANDS_SPEC_VERSION = 3;
 pub const NVX_DEVICE_GENERATED_COMMANDS_EXTENSION_NAME = "VK_NVX_device_generated_commands";
 
-pub const IndirectCommandsTokenTypeNVX = extern enum {
+pub const IndirectCommandsTokenTypeNVX = extern enum(i32) {
     PIPELINE = 0,
     DESCRIPTOR_SET = 1,
     INDEX_BUFFER = 2,
@@ -12164,7 +12164,7 @@ pub const IndirectCommandsTokenTypeNVX = extern enum {
     _,
 };
 
-pub const ObjectEntryTypeNVX = extern enum {
+pub const ObjectEntryTypeNVX = extern enum(i32) {
     DESCRIPTOR_SET = 0,
     PIPELINE = 1,
     INDEX_BUFFER = 2,
@@ -12619,19 +12619,19 @@ pub const EXT_display_control = 1;
 pub const EXT_DISPLAY_CONTROL_SPEC_VERSION = 1;
 pub const EXT_DISPLAY_CONTROL_EXTENSION_NAME = "VK_EXT_display_control";
 
-pub const DisplayPowerStateEXT = extern enum {
+pub const DisplayPowerStateEXT = extern enum(i32) {
     OFF = 0,
     SUSPEND = 1,
     ON = 2,
     _,
 };
 
-pub const DeviceEventTypeEXT = extern enum {
+pub const DeviceEventTypeEXT = extern enum(i32) {
     DISPLAY_HOTPLUG = 0,
     _,
 };
 
-pub const DisplayEventTypeEXT = extern enum {
+pub const DisplayEventTypeEXT = extern enum(i32) {
     FIRST_PIXEL_OUT = 0,
     _,
 };
@@ -12846,7 +12846,7 @@ pub const NV_viewport_swizzle = 1;
 pub const NV_VIEWPORT_SWIZZLE_SPEC_VERSION = 1;
 pub const NV_VIEWPORT_SWIZZLE_EXTENSION_NAME = "VK_NV_viewport_swizzle";
 
-pub const ViewportCoordinateSwizzleNV = extern enum {
+pub const ViewportCoordinateSwizzleNV = extern enum(i32) {
     POSITIVE_X = 0,
     NEGATIVE_X = 1,
     POSITIVE_Y = 2,
@@ -12880,7 +12880,7 @@ pub const EXT_discard_rectangles = 1;
 pub const EXT_DISCARD_RECTANGLES_SPEC_VERSION = 1;
 pub const EXT_DISCARD_RECTANGLES_EXTENSION_NAME = "VK_EXT_discard_rectangles";
 
-pub const DiscardRectangleModeEXT = extern enum {
+pub const DiscardRectangleModeEXT = extern enum(i32) {
     INCLUSIVE = 0,
     EXCLUSIVE = 1,
     _,
@@ -12919,7 +12919,7 @@ pub const EXT_conservative_rasterization = 1;
 pub const EXT_CONSERVATIVE_RASTERIZATION_SPEC_VERSION = 1;
 pub const EXT_CONSERVATIVE_RASTERIZATION_EXTENSION_NAME = "VK_EXT_conservative_rasterization";
 
-pub const ConservativeRasterizationModeEXT = extern enum {
+pub const ConservativeRasterizationModeEXT = extern enum(i32) {
     DISABLED = 0,
     OVERESTIMATE = 1,
     UNDERESTIMATE = 2,
@@ -13019,7 +13019,7 @@ pub const EXT_EXTERNAL_MEMORY_DMA_BUF_EXTENSION_NAME = "VK_EXT_external_memory_d
 pub const EXT_queue_family_foreign = 1;
 pub const EXT_QUEUE_FAMILY_FOREIGN_SPEC_VERSION = 1;
 pub const EXT_QUEUE_FAMILY_FOREIGN_EXTENSION_NAME = "VK_EXT_queue_family_foreign";
-pub const QUEUE_FAMILY_FOREIGN_EXT = (~u32(0)-2);
+pub const QUEUE_FAMILY_FOREIGN_EXT = (~@as(u32, 0)-2);
 
 
 pub const EXT_debug_utils = 1;
@@ -13428,7 +13428,7 @@ pub const EXT_blend_operation_advanced = 1;
 pub const EXT_BLEND_OPERATION_ADVANCED_SPEC_VERSION = 2;
 pub const EXT_BLEND_OPERATION_ADVANCED_EXTENSION_NAME = "VK_EXT_blend_operation_advanced";
 
-pub const BlendOverlapEXT = extern enum {
+pub const BlendOverlapEXT = extern enum(i32) {
     UNCORRELATED = 0,
     DISJOINT = 1,
     CONJOINT = 2,
@@ -13480,7 +13480,7 @@ pub const NV_framebuffer_mixed_samples = 1;
 pub const NV_FRAMEBUFFER_MIXED_SAMPLES_SPEC_VERSION = 1;
 pub const NV_FRAMEBUFFER_MIXED_SAMPLES_EXTENSION_NAME = "VK_NV_framebuffer_mixed_samples";
 
-pub const CoverageModulationModeNV = extern enum {
+pub const CoverageModulationModeNV = extern enum(i32) {
     NONE = 0,
     RGB = 1,
     ALPHA = 2,
@@ -13598,7 +13598,7 @@ pub const ValidationCacheEXT = *@OpaqueType();
 pub const EXT_VALIDATION_CACHE_SPEC_VERSION = 1;
 pub const EXT_VALIDATION_CACHE_EXTENSION_NAME = "VK_EXT_validation_cache";
 
-pub const ValidationCacheHeaderVersionEXT = extern enum {
+pub const ValidationCacheHeaderVersionEXT = extern enum(i32) {
     ONE = 1,
     _,
 };
@@ -13726,7 +13726,7 @@ pub const NV_shading_rate_image = 1;
 pub const NV_SHADING_RATE_IMAGE_SPEC_VERSION = 3;
 pub const NV_SHADING_RATE_IMAGE_EXTENSION_NAME = "VK_NV_shading_rate_image";
 
-pub const ShadingRatePaletteEntryNV = extern enum {
+pub const ShadingRatePaletteEntryNV = extern enum(i32) {
     NO_INVOCATIONS = 0,
     T_16_INVOCATIONS_PER_PIXEL = 1,
     T_8_INVOCATIONS_PER_PIXEL = 2,
@@ -13742,7 +13742,7 @@ pub const ShadingRatePaletteEntryNV = extern enum {
     _,
 };
 
-pub const CoarseSampleOrderTypeNV = extern enum {
+pub const CoarseSampleOrderTypeNV = extern enum(i32) {
     DEFAULT = 0,
     CUSTOM = 1,
     PIXEL_MAJOR = 2,
@@ -13835,34 +13835,34 @@ pub const AccelerationStructureNV = *@OpaqueType();
 
 pub const NV_RAY_TRACING_SPEC_VERSION = 3;
 pub const NV_RAY_TRACING_EXTENSION_NAME = "VK_NV_ray_tracing";
-pub const SHADER_UNUSED_NV = (~u32(0));
+pub const SHADER_UNUSED_NV = (~@as(u32, 0));
 
-pub const AccelerationStructureTypeNV = extern enum {
+pub const AccelerationStructureTypeNV = extern enum(i32) {
     TOP_LEVEL = 0,
     BOTTOM_LEVEL = 1,
     _,
 };
 
-pub const RayTracingShaderGroupTypeNV = extern enum {
+pub const RayTracingShaderGroupTypeNV = extern enum(i32) {
     GENERAL = 0,
     TRIANGLES_HIT_GROUP = 1,
     PROCEDURAL_HIT_GROUP = 2,
     _,
 };
 
-pub const GeometryTypeNV = extern enum {
+pub const GeometryTypeNV = extern enum(i32) {
     TRIANGLES = 0,
     AABBS = 1,
     _,
 };
 
-pub const CopyAccelerationStructureModeNV = extern enum {
+pub const CopyAccelerationStructureModeNV = extern enum(i32) {
     CLONE = 0,
     COMPACT = 1,
     _,
 };
 
-pub const AccelerationStructureMemoryRequirementsTypeNV = extern enum {
+pub const AccelerationStructureMemoryRequirementsTypeNV = extern enum(i32) {
     OBJECT = 0,
     BUILD_SCRATCH = 1,
     UPDATE_SCRATCH = 2,
@@ -14326,7 +14326,7 @@ pub const EXT_global_priority = 1;
 pub const EXT_GLOBAL_PRIORITY_SPEC_VERSION = 2;
 pub const EXT_GLOBAL_PRIORITY_EXTENSION_NAME = "VK_EXT_global_priority";
 
-pub const QueueGlobalPriorityEXT = extern enum {
+pub const QueueGlobalPriorityEXT = extern enum(i32) {
     LOW = 128,
     MEDIUM = 256,
     HIGH = 512,
@@ -14451,7 +14451,7 @@ pub const EXT_calibrated_timestamps = 1;
 pub const EXT_CALIBRATED_TIMESTAMPS_SPEC_VERSION = 1;
 pub const EXT_CALIBRATED_TIMESTAMPS_EXTENSION_NAME = "VK_EXT_calibrated_timestamps";
 
-pub const TimeDomainEXT = extern enum {
+pub const TimeDomainEXT = extern enum(i32) {
     DEVICE = 0,
     CLOCK_MONOTONIC = 1,
     CLOCK_MONOTONIC_RAW = 2,
@@ -14554,7 +14554,7 @@ pub const AMD_memory_overallocation_behavior = 1;
 pub const AMD_MEMORY_OVERALLOCATION_BEHAVIOR_SPEC_VERSION = 1;
 pub const AMD_MEMORY_OVERALLOCATION_BEHAVIOR_EXTENSION_NAME = "VK_AMD_memory_overallocation_behavior";
 
-pub const MemoryOverallocationBehaviorAMD = extern enum {
+pub const MemoryOverallocationBehaviorAMD = extern enum(i32) {
     DEFAULT = 0,
     ALLOWED = 1,
     DISALLOWED = 2,
@@ -14845,29 +14845,29 @@ pub const PerformanceConfigurationINTEL = *@OpaqueType();
 pub const INTEL_PERFORMANCE_QUERY_SPEC_VERSION = 1;
 pub const INTEL_PERFORMANCE_QUERY_EXTENSION_NAME = "VK_INTEL_performance_query";
 
-pub const PerformanceConfigurationTypeINTEL = extern enum {
+pub const PerformanceConfigurationTypeINTEL = extern enum(i32) {
     COMMAND_QUEUE_METRICS_DISCOVERY_ACTIVATED = 0,
     _,
 };
 
-pub const QueryPoolSamplingModeINTEL = extern enum {
+pub const QueryPoolSamplingModeINTEL = extern enum(i32) {
     MANUAL = 0,
     _,
 };
 
-pub const PerformanceOverrideTypeINTEL = extern enum {
+pub const PerformanceOverrideTypeINTEL = extern enum(i32) {
     NULL_HARDWARE = 0,
     FLUSH_GPU_CACHES = 1,
     _,
 };
 
-pub const PerformanceParameterTypeINTEL = extern enum {
+pub const PerformanceParameterTypeINTEL = extern enum(i32) {
     HW_COUNTERS_SUPPORTED = 0,
     STREAM_MARKER_VALID_BITS = 1,
     _,
 };
 
-pub const PerformanceValueTypeINTEL = extern enum {
+pub const PerformanceValueTypeINTEL = extern enum(i32) {
     UINT32 = 0,
     UINT64 = 1,
     FLOAT = 2,
@@ -15401,14 +15401,14 @@ pub const EXT_validation_features = 1;
 pub const EXT_VALIDATION_FEATURES_SPEC_VERSION = 2;
 pub const EXT_VALIDATION_FEATURES_EXTENSION_NAME = "VK_EXT_validation_features";
 
-pub const ValidationFeatureEnableEXT = extern enum {
+pub const ValidationFeatureEnableEXT = extern enum(i32) {
     GPU_ASSISTED = 0,
     GPU_ASSISTED_RESERVE_BINDING_SLOT = 1,
     BEST_PRACTICES = 2,
     _,
 };
 
-pub const ValidationFeatureDisableEXT = extern enum {
+pub const ValidationFeatureDisableEXT = extern enum(i32) {
     ALL = 0,
     SHADERS = 1,
     THREAD_SAFETY = 2,
@@ -15433,7 +15433,7 @@ pub const NV_cooperative_matrix = 1;
 pub const NV_COOPERATIVE_MATRIX_SPEC_VERSION = 1;
 pub const NV_COOPERATIVE_MATRIX_EXTENSION_NAME = "VK_NV_cooperative_matrix";
 
-pub const ComponentTypeNV = extern enum {
+pub const ComponentTypeNV = extern enum(i32) {
     FLOAT16 = 0,
     FLOAT32 = 1,
     FLOAT64 = 2,
@@ -15448,7 +15448,7 @@ pub const ComponentTypeNV = extern enum {
     _,
 };
 
-pub const ScopeNV = extern enum {
+pub const ScopeNV = extern enum(i32) {
     DEVICE = 1,
     WORKGROUP = 2,
     SUBGROUP = 3,
@@ -15525,7 +15525,7 @@ pub const NV_coverage_reduction_mode = 1;
 pub const NV_COVERAGE_REDUCTION_MODE_SPEC_VERSION = 1;
 pub const NV_COVERAGE_REDUCTION_MODE_EXTENSION_NAME = "VK_NV_coverage_reduction_mode";
 
-pub const CoverageReductionModeNV = extern enum {
+pub const CoverageReductionModeNV = extern enum(i32) {
     MERGE = 0,
     TRUNCATE = 1,
     _,
@@ -15655,7 +15655,7 @@ pub const EXT_line_rasterization = 1;
 pub const EXT_LINE_RASTERIZATION_SPEC_VERSION = 1;
 pub const EXT_LINE_RASTERIZATION_EXTENSION_NAME = "VK_EXT_line_rasterization";
 
-pub const LineRasterizationModeEXT = extern enum {
+pub const LineRasterizationModeEXT = extern enum(i32) {
     DEFAULT = 0,
     RECTANGULAR = 1,
     BRESENHAM = 2,
@@ -15760,5 +15760,3 @@ pub const GOOGLE_user_type = 1;
 pub const GOOGLE_USER_TYPE_SPEC_VERSION = 1;
 pub const GOOGLE_USER_TYPE_EXTENSION_NAME = "VK_GOOGLE_user_type";
 
-
-test "Compile All" { _ = @typeInfo(@This()); }
