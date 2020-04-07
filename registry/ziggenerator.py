@@ -37,6 +37,14 @@ typeReplacements = {
     'int8_t': 'i8',
 }
 
+nullTerminatedSizes = [
+    'VK_MAX_PHYSICAL_DEVICE_NAME_SIZE',
+    'VK_MAX_EXTENSION_NAME_SIZE',
+    'VK_MAX_DESCRIPTION_SIZE',
+    'VK_MAX_DRIVER_NAME_SIZE',
+    'VK_MAX_DRIVER_INFO_SIZE',
+]
+
 def valueTypeToZigType(typeName, fixFlagType=False):
     if typeName.startswith('Vk'):
         zigName = typeName[2:]
@@ -110,11 +118,12 @@ class ZigIndirect:
     TYPE_POINTER = 2
     TYPE_SLICE = 3
 
-    def __init__(self, type, cLength, isOptional, isConst):
+    def __init__(self, type, cLength, isOptional, isConst, isNullTerminated=False):
         self.type = type
         self.cLength = cLength
         self.isOptional = isOptional
         self.isConst = isConst
+        self.isNullTerminated = isNullTerminated
         
         self.lenParam = None
         """ After linking, pointer to the ZigParam with the length of this pointer """
@@ -208,7 +217,10 @@ class ZigParam:
             if indirect.type == ZigIndirect.TYPE_BUFFER:
                 zigLen = indirect.cLength
                 if zigLen.startswith('VK_'): zigLen = zigLen[3:]
-                decl += '[' + zigLen + ']'
+                decl += '[' + zigLen
+                if indirect.isNullTerminated:
+                    decl += '-1:0'
+                decl += ']'
             elif indirect.type == ZigIndirect.TYPE_POINTER:
                 isVoid = self.valueType.cValueType == 'void'
                 isArray = indirect.cLength != '1'
@@ -219,12 +231,18 @@ class ZigParam:
                         parenDepth += 1
                     decl += '?'
                 if isArray and not isVoid:
-                    decl += '[*]'
+                    if indirect.isNullTerminated:
+                        decl += '[*:0]'
+                    else:
+                        decl += '[*]'
                 else:
                     decl += '*'
             elif indirect.type == ZigIndirect.TYPE_SLICE:
                 assert(not indirect.isOptional)
-                decl += '[]'
+                if indirect.isNullTerminated:
+                    decl += '[:0]'
+                else:
+                    decl += '[]'
             
             if indirect.isConst:
                 decl += 'const'
@@ -629,7 +647,8 @@ class ZigOutputGenerator(OutputGenerator):
                 length = parts.pop()
                 parts.pop()
 
-            indirects.append(ZigIndirect(ZigIndirect.TYPE_BUFFER, length, False, False))
+            isNullTerminated = length in nullTerminatedSizes
+            indirects.append(ZigIndirect(ZigIndirect.TYPE_BUFFER, length, False, False, isNullTerminated))
         
         if parts[0] == 'const':
             parts[0] = parts[1]

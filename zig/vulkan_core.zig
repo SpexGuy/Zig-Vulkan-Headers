@@ -3263,7 +3263,7 @@ pub const PhysicalDeviceProperties = extern struct {
     vendorID: u32,
     deviceID: u32,
     deviceType: PhysicalDeviceType,
-    deviceName: [MAX_PHYSICAL_DEVICE_NAME_SIZE]u8,
+    deviceName: [MAX_PHYSICAL_DEVICE_NAME_SIZE-1:0]u8,
     pipelineCacheUUID: [UUID_SIZE]u8,
     limits: PhysicalDeviceLimits,
     sparseProperties: PhysicalDeviceSparseProperties,
@@ -3318,15 +3318,15 @@ pub const DeviceCreateInfo = extern struct {
 };
 
 pub const ExtensionProperties = extern struct {
-    extensionName: [MAX_EXTENSION_NAME_SIZE]u8,
+    extensionName: [MAX_EXTENSION_NAME_SIZE-1:0]u8,
     specVersion: u32,
 };
 
 pub const LayerProperties = extern struct {
-    layerName: [MAX_EXTENSION_NAME_SIZE]u8,
+    layerName: [MAX_EXTENSION_NAME_SIZE-1:0]u8,
     specVersion: u32,
     implementationVersion: u32,
-    description: [MAX_DESCRIPTION_SIZE]u8,
+    description: [MAX_DESCRIPTION_SIZE-1:0]u8,
 };
 
 pub const SubmitInfo = extern struct {
@@ -7847,8 +7847,8 @@ pub const PhysicalDeviceVulkan12Properties = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_VULKAN_1_2_PROPERTIES,
     pNext: ?*c_void = null,
     driverID: DriverId,
-    driverName: [MAX_DRIVER_NAME_SIZE]u8,
-    driverInfo: [MAX_DRIVER_INFO_SIZE]u8,
+    driverName: [MAX_DRIVER_NAME_SIZE-1:0]u8,
+    driverInfo: [MAX_DRIVER_INFO_SIZE-1:0]u8,
     conformanceVersion: ConformanceVersion,
     denormBehaviorIndependence: ShaderFloatControlsIndependence,
     roundingModeIndependence: ShaderFloatControlsIndependence,
@@ -7995,8 +7995,8 @@ pub const PhysicalDeviceDriverProperties = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_DRIVER_PROPERTIES,
     pNext: ?*c_void = null,
     driverID: DriverId,
-    driverName: [MAX_DRIVER_NAME_SIZE]u8,
-    driverInfo: [MAX_DRIVER_INFO_SIZE]u8,
+    driverName: [MAX_DRIVER_NAME_SIZE-1:0]u8,
+    driverInfo: [MAX_DRIVER_INFO_SIZE-1:0]u8,
     conformanceVersion: ConformanceVersion,
 };
 
@@ -10378,9 +10378,9 @@ pub const PerformanceCounterDescriptionKHR = extern struct {
     sType: StructureType = .PERFORMANCE_COUNTER_DESCRIPTION_KHR,
     pNext: ?*const c_void = null,
     flags: PerformanceCounterDescriptionFlagsKHR align(4) = .{},
-    name: [MAX_DESCRIPTION_SIZE]u8,
-    category: [MAX_DESCRIPTION_SIZE]u8,
-    description: [MAX_DESCRIPTION_SIZE]u8,
+    name: [MAX_DESCRIPTION_SIZE-1:0]u8,
+    category: [MAX_DESCRIPTION_SIZE-1:0]u8,
+    description: [MAX_DESCRIPTION_SIZE-1:0]u8,
 };
 
 pub const QueryPoolPerformanceCreateInfoKHR = extern struct {
@@ -11230,8 +11230,8 @@ pub const PipelineExecutablePropertiesKHR = extern struct {
     sType: StructureType = .PIPELINE_EXECUTABLE_PROPERTIES_KHR,
     pNext: ?*c_void = null,
     stages: ShaderStageFlags align(4),
-    name: [MAX_DESCRIPTION_SIZE]u8,
-    description: [MAX_DESCRIPTION_SIZE]u8,
+    name: [MAX_DESCRIPTION_SIZE-1:0]u8,
+    description: [MAX_DESCRIPTION_SIZE-1:0]u8,
     subgroupSize: u32,
 };
 
@@ -11252,8 +11252,8 @@ pub const PipelineExecutableStatisticValueKHR = extern union {
 pub const PipelineExecutableStatisticKHR = extern struct {
     sType: StructureType = .PIPELINE_EXECUTABLE_STATISTIC_KHR,
     pNext: ?*c_void = null,
-    name: [MAX_DESCRIPTION_SIZE]u8,
-    description: [MAX_DESCRIPTION_SIZE]u8,
+    name: [MAX_DESCRIPTION_SIZE-1:0]u8,
+    description: [MAX_DESCRIPTION_SIZE-1:0]u8,
     format: PipelineExecutableStatisticFormatKHR,
     value: PipelineExecutableStatisticValueKHR,
 };
@@ -11261,8 +11261,8 @@ pub const PipelineExecutableStatisticKHR = extern struct {
 pub const PipelineExecutableInternalRepresentationKHR = extern struct {
     sType: StructureType = .PIPELINE_EXECUTABLE_INTERNAL_REPRESENTATION_KHR,
     pNext: ?*c_void = null,
-    name: [MAX_DESCRIPTION_SIZE]u8,
-    description: [MAX_DESCRIPTION_SIZE]u8,
+    name: [MAX_DESCRIPTION_SIZE-1:0]u8,
+    description: [MAX_DESCRIPTION_SIZE-1:0]u8,
     isText: Bool32,
     dataSize: usize = 0,
     pData: ?*c_void = null,
@@ -15463,11 +15463,11 @@ pub const ToolPurposeFlagsEXT = packed struct {
 pub const PhysicalDeviceToolPropertiesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_TOOL_PROPERTIES_EXT,
     pNext: ?*c_void = null,
-    name: [MAX_EXTENSION_NAME_SIZE]u8,
-    version: [MAX_EXTENSION_NAME_SIZE]u8,
+    name: [MAX_EXTENSION_NAME_SIZE-1:0]u8,
+    version: [MAX_EXTENSION_NAME_SIZE-1:0]u8,
     purposes: ToolPurposeFlagsEXT align(4),
-    description: [MAX_DESCRIPTION_SIZE]u8,
-    layer: [MAX_EXTENSION_NAME_SIZE]u8,
+    description: [MAX_DESCRIPTION_SIZE-1:0]u8,
+    layer: [MAX_EXTENSION_NAME_SIZE-1:0]u8,
 };
 
 pub extern fn vkGetPhysicalDeviceToolPropertiesEXT(
