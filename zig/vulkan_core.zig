@@ -1396,7 +1396,10 @@ pub const VendorId = extern enum(i32) {
     _,
 };
 
-pub const InstanceCreateFlags = Flags;
+pub const InstanceCreateFlags = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
 
 pub const FormatFeatureFlags = packed struct {
     sampledImage: bool = false,
@@ -1681,7 +1684,10 @@ pub const MemoryHeapFlags = packed struct {
     pub usingnamespace FlagsMixin(Self);
 };
 
-pub const DeviceCreateFlags = Flags;
+pub const DeviceCreateFlags = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
 
 pub const DeviceQueueCreateFlags = packed struct {
     protected: bool = false,
@@ -1757,7 +1763,10 @@ pub const PipelineStageFlags = packed struct {
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const MemoryMapFlags = Flags;
+pub const MemoryMapFlags = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
 
 pub const ImageAspectFlags = packed struct {
     color: bool = false,
@@ -1912,9 +1921,20 @@ pub const FenceCreateFlags = packed struct {
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const SemaphoreCreateFlags = Flags;
-pub const EventCreateFlags = Flags;
-pub const QueryPoolCreateFlags = Flags;
+pub const SemaphoreCreateFlags = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
+
+pub const EventCreateFlags = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
+
+pub const QueryPoolCreateFlags = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
 
 pub const QueryPipelineStatisticFlags = packed struct {
     inputAssemblyVertices: bool = false,
@@ -2072,7 +2092,10 @@ pub const BufferUsageFlags = packed struct {
     pub usingnamespace FlagsMixin(Self);
 };
 
-pub const BufferViewCreateFlags = Flags;
+pub const BufferViewCreateFlags = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
 
 pub const ImageViewCreateFlags = packed struct {
     fragmentDensityMapDynamicEXT: bool = false,
@@ -2148,7 +2171,10 @@ pub const ShaderModuleCreateFlags = packed struct {
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const PipelineCacheCreateFlags = Flags;
+pub const PipelineCacheCreateFlags = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
 
 pub const PipelineCreateFlags = packed struct {
     disableOptimization: bool = false,
@@ -2268,11 +2294,30 @@ pub const ShaderStageFlags = packed struct {
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const PipelineVertexInputStateCreateFlags = Flags;
-pub const PipelineInputAssemblyStateCreateFlags = Flags;
-pub const PipelineTessellationStateCreateFlags = Flags;
-pub const PipelineViewportStateCreateFlags = Flags;
-pub const PipelineRasterizationStateCreateFlags = Flags;
+pub const PipelineVertexInputStateCreateFlags = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
+
+pub const PipelineInputAssemblyStateCreateFlags = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
+
+pub const PipelineTessellationStateCreateFlags = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
+
+pub const PipelineViewportStateCreateFlags = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
+
+pub const PipelineRasterizationStateCreateFlags = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
 
 pub const CullModeFlags = packed struct {
     front: bool = false,
@@ -2314,9 +2359,20 @@ pub const CullModeFlags = packed struct {
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const PipelineMultisampleStateCreateFlags = Flags;
-pub const PipelineDepthStencilStateCreateFlags = Flags;
-pub const PipelineColorBlendStateCreateFlags = Flags;
+pub const PipelineMultisampleStateCreateFlags = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
+
+pub const PipelineDepthStencilStateCreateFlags = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
+
+pub const PipelineColorBlendStateCreateFlags = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
 
 pub const ColorComponentFlags = packed struct {
     r: bool = false,
@@ -2355,8 +2411,15 @@ pub const ColorComponentFlags = packed struct {
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const PipelineDynamicStateCreateFlags = Flags;
-pub const PipelineLayoutCreateFlags = Flags;
+pub const PipelineDynamicStateCreateFlags = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
+
+pub const PipelineLayoutCreateFlags = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
 
 pub const SamplerCreateFlags = packed struct {
     subsampledEXT: bool = false,
@@ -2475,7 +2538,10 @@ pub const DescriptorPoolCreateFlags = packed struct {
     pub usingnamespace FlagsMixin(Self);
 };
 
-pub const DescriptorPoolResetFlags = Flags;
+pub const DescriptorPoolResetFlags = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
 
 pub const FramebufferCreateFlags = packed struct {
     imageless: bool = false,
@@ -6244,8 +6310,15 @@ pub const MemoryAllocateFlags = packed struct {
     pub usingnamespace FlagsMixin(Self);
 };
 
-pub const CommandPoolTrimFlags = Flags;
-pub const DescriptorUpdateTemplateCreateFlags = Flags;
+pub const CommandPoolTrimFlags = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
+
+pub const DescriptorUpdateTemplateCreateFlags = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
 
 pub const ExternalMemoryHandleTypeFlags = packed struct {
     opaqueFd: bool = false,
@@ -9091,8 +9164,15 @@ pub const DisplayPlaneAlphaFlagsKHR = packed struct {
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const DisplayModeCreateFlagsKHR = Flags;
-pub const DisplaySurfaceCreateFlagsKHR = Flags;
+pub const DisplayModeCreateFlagsKHR = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
+
+pub const DisplaySurfaceCreateFlagsKHR = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
 
 pub const DisplayPropertiesKHR = extern struct {
     display: DisplayKHR,
@@ -11614,7 +11694,10 @@ pub const EXT_transform_feedback = 1;
 pub const EXT_TRANSFORM_FEEDBACK_SPEC_VERSION = 1;
 pub const EXT_TRANSFORM_FEEDBACK_EXTENSION_NAME = "VK_EXT_transform_feedback";
 
-pub const PipelineRasterizationStateStreamCreateFlagsEXT = Flags;
+pub const PipelineRasterizationStateStreamCreateFlagsEXT = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
 
 pub const PhysicalDeviceTransformFeedbackFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_TRANSFORM_FEEDBACK_FEATURES_EXT,
@@ -12858,7 +12941,10 @@ pub const ViewportCoordinateSwizzleNV = extern enum(i32) {
     _,
 };
 
-pub const PipelineViewportSwizzleStateCreateFlagsNV = Flags;
+pub const PipelineViewportSwizzleStateCreateFlagsNV = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
 
 pub const ViewportSwizzleNV = extern struct {
     x: ViewportCoordinateSwizzleNV,
@@ -12886,7 +12972,10 @@ pub const DiscardRectangleModeEXT = extern enum(i32) {
     _,
 };
 
-pub const PipelineDiscardRectangleStateCreateFlagsEXT = Flags;
+pub const PipelineDiscardRectangleStateCreateFlagsEXT = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
 
 pub const PhysicalDeviceDiscardRectanglePropertiesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_DISCARD_RECTANGLE_PROPERTIES_EXT,
@@ -12926,7 +13015,10 @@ pub const ConservativeRasterizationModeEXT = extern enum(i32) {
     _,
 };
 
-pub const PipelineRasterizationConservativeStateCreateFlagsEXT = Flags;
+pub const PipelineRasterizationConservativeStateCreateFlagsEXT = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
 
 pub const PhysicalDeviceConservativeRasterizationPropertiesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_CONSERVATIVE_RASTERIZATION_PROPERTIES_EXT,
@@ -12955,7 +13047,10 @@ pub const EXT_depth_clip_enable = 1;
 pub const EXT_DEPTH_CLIP_ENABLE_SPEC_VERSION = 1;
 pub const EXT_DEPTH_CLIP_ENABLE_EXTENSION_NAME = "VK_EXT_depth_clip_enable";
 
-pub const PipelineRasterizationDepthClipStateCreateFlagsEXT = Flags;
+pub const PipelineRasterizationDepthClipStateCreateFlagsEXT = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
 
 pub const PhysicalDeviceDepthClipEnableFeaturesEXT = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_DEPTH_CLIP_ENABLE_FEATURES_EXT,
@@ -13028,8 +13123,15 @@ pub const DebugUtilsMessengerEXT = *@OpaqueType();
 pub const EXT_DEBUG_UTILS_SPEC_VERSION = 1;
 pub const EXT_DEBUG_UTILS_EXTENSION_NAME = "VK_EXT_debug_utils";
 
-pub const DebugUtilsMessengerCallbackDataFlagsEXT = Flags;
-pub const DebugUtilsMessengerCreateFlagsEXT = Flags;
+pub const DebugUtilsMessengerCallbackDataFlagsEXT = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
+
+pub const DebugUtilsMessengerCreateFlagsEXT = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
 
 pub const DebugUtilsMessageSeverityFlagsEXT = packed struct {
     verbose: bool = false,
@@ -13465,7 +13567,10 @@ pub const NV_fragment_coverage_to_color = 1;
 pub const NV_FRAGMENT_COVERAGE_TO_COLOR_SPEC_VERSION = 1;
 pub const NV_FRAGMENT_COVERAGE_TO_COLOR_EXTENSION_NAME = "VK_NV_fragment_coverage_to_color";
 
-pub const PipelineCoverageToColorStateCreateFlagsNV = Flags;
+pub const PipelineCoverageToColorStateCreateFlagsNV = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
 
 pub const PipelineCoverageToColorStateCreateInfoNV = extern struct {
     sType: StructureType = .PIPELINE_COVERAGE_TO_COLOR_STATE_CREATE_INFO_NV,
@@ -13488,7 +13593,10 @@ pub const CoverageModulationModeNV = extern enum(i32) {
     _,
 };
 
-pub const PipelineCoverageModulationStateCreateFlagsNV = Flags;
+pub const PipelineCoverageModulationStateCreateFlagsNV = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
 
 pub const PipelineCoverageModulationStateCreateInfoNV = extern struct {
     sType: StructureType = .PIPELINE_COVERAGE_MODULATION_STATE_CREATE_INFO_NV,
@@ -13603,7 +13711,10 @@ pub const ValidationCacheHeaderVersionEXT = extern enum(i32) {
     _,
 };
 
-pub const ValidationCacheCreateFlagsEXT = Flags;
+pub const ValidationCacheCreateFlagsEXT = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
 
 pub const ValidationCacheCreateInfoEXT = extern struct {
     sType: StructureType = .VALIDATION_CACHE_CREATE_INFO_EXT,
@@ -15531,7 +15642,10 @@ pub const CoverageReductionModeNV = extern enum(i32) {
     _,
 };
 
-pub const PipelineCoverageReductionStateCreateFlagsNV = Flags;
+pub const PipelineCoverageReductionStateCreateFlagsNV = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
 
 pub const PhysicalDeviceCoverageReductionModeFeaturesNV = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_COVERAGE_REDUCTION_MODE_FEATURES_NV,
@@ -15622,7 +15736,10 @@ pub const EXT_headless_surface = 1;
 pub const EXT_HEADLESS_SURFACE_SPEC_VERSION = 1;
 pub const EXT_HEADLESS_SURFACE_EXTENSION_NAME = "VK_EXT_headless_surface";
 
-pub const HeadlessSurfaceCreateFlagsEXT = Flags;
+pub const HeadlessSurfaceCreateFlagsEXT = struct {
+    __reserved_bits_00_31: u32 = 0,
+    pub usingnamespace FlagsMixin(@This());
+};
 
 pub const HeadlessSurfaceCreateInfoEXT = extern struct {
     sType: StructureType = .HEADLESS_SURFACE_CREATE_INFO_EXT,
