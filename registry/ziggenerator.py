@@ -76,6 +76,8 @@ def flagNameToZigName(name, enumTypeExpanded, expandedSuffix):
     # TODO don't convert the vendor tag
     name = mainName.replace('_', ' ').title().replace(' ', '')
     name = name[0].lower() + name[1:] + vendor
+    if name == 'type' or name == 'error':
+        name += 'Bit';
     return name
 
 def splitTypeName(name):
@@ -351,35 +353,35 @@ class ZigOutputGenerator(OutputGenerator):
         if genOpts.coreFile:
             write('usingnamespace @import("' + genOpts.coreFile + '");', file=self.outFile)
         else:
-            write('pub const CString = [*]const u8;', file=self.outFile)
+            write('pub const CString = [*:0]const u8;', file=self.outFile)
             write("""pub fn FlagsMixin(comptime FlagType: type) type {
-	comptime assert(@sizeOf(FlagType) == 4);
-	return struct {
-		pub fn toInt(self: FlagType) Flags {
-			return @bitCast(Flags, self);
-		}
-		pub fn fromInt(value: Flags) FlagType {
-			return @bitCast(FlagType, value);
-		}
-		pub fn with(a: FlagType, b: FlagType) FlagType {
-			return fromInt(toInt(a) | toInt(b));
-		}
-		pub fn only(a: FlagType, b: FlagType) FlagType {
-			return fromInt(toInt(a) & toInt(b));
-		}
-		pub fn without(a: FlagType, b: FlagType) FlagType {
-			return fromInt(toInt(a) & ~toInt(b));
-		}
-		pub fn hasAllSet(a: FlagType, b: FlagType) bool {
-			return (toInt(a) & toInt(b)) == toInt(b);
-		}
-		pub fn hasAnySet(a: FlagType, b: FlagType) bool {
-			return (toInt(a) & toInt(b)) != 0;
-		}
-		pub fn isEmpty(a: FlagType) bool {
-			return toInt(a) == 0;
-		}
-	};
+    comptime assert(@sizeOf(FlagType) == 4);
+    return struct {
+        pub fn toInt(self: FlagType) Flags {
+            return @bitCast(Flags, self);
+        }
+        pub fn fromInt(value: Flags) FlagType {
+            return @bitCast(FlagType, value);
+        }
+        pub fn with(a: FlagType, b: FlagType) FlagType {
+            return fromInt(toInt(a) | toInt(b));
+        }
+        pub fn only(a: FlagType, b: FlagType) FlagType {
+            return fromInt(toInt(a) & toInt(b));
+        }
+        pub fn without(a: FlagType, b: FlagType) FlagType {
+            return fromInt(toInt(a) & ~toInt(b));
+        }
+        pub fn hasAllSet(a: FlagType, b: FlagType) bool {
+            return (toInt(a) & toInt(b)) == toInt(b);
+        }
+        pub fn hasAnySet(a: FlagType, b: FlagType) bool {
+            return (toInt(a) & toInt(b)) != 0;
+        }
+        pub fn isEmpty(a: FlagType) bool {
+            return toInt(a) == 0;
+        }
+    };
 }""", file=self.outFile)
 
     def endFile(self):
@@ -1238,9 +1240,7 @@ class ZigOutputGenerator(OutputGenerator):
         numVal = None
         if 'value' in elem.keys():
             value = elem.get('value')
-            if value[0] == '"':
-                value = 'c'+value
-            else:
+            if value[0] != '"':
                 value = value.replace("0ULL", "u64(0)").replace("0U", "u32(0)")
                 if value[-1] == 'f':
                     value = 'f32(' + value[:-1] + ')'
