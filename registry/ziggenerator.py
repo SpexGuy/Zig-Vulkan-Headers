@@ -252,12 +252,16 @@ class ZigParam:
                 decl += '('
                 parenDepth += 1
             decl += '?'
-            
-        if len(decl) > 0 and decl[-1].isalpha():
-            decl += ' '
 
         if decl and 'Flags' in self.valueType.declValueType:
-            decl += 'align(4) '
+            # swap the order of align(4) and last const for consistency with zig fmt
+            if decl.endswith('const'):
+                decl = decl[:-5] + 'align(4) const '
+            else:
+                decl += 'align(4) '
+
+        if len(decl) > 0 and decl[-1].isalpha():
+            decl += ' '
 
         decl += self.valueType.declValueType
         

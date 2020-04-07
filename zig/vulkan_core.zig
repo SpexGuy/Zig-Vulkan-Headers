@@ -3334,7 +3334,7 @@ pub const SubmitInfo = extern struct {
     pNext: ?*const c_void = null,
     waitSemaphoreCount: u32 = 0,
     pWaitSemaphores: [*]const Semaphore = undefined,
-    pWaitDstStageMask: [*]const align(4) PipelineStageFlags = undefined,
+    pWaitDstStageMask: [*]align(4) const PipelineStageFlags = undefined,
     commandBufferCount: u32 = 0,
     pCommandBuffers: [*]const CommandBuffer = undefined,
     signalSemaphoreCount: u32 = 0,
@@ -8040,7 +8040,7 @@ pub const DescriptorSetLayoutBindingFlagsCreateInfo = extern struct {
     sType: StructureType = .DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO,
     pNext: ?*const c_void = null,
     bindingCount: u32 = 0,
-    pBindingFlags: ?[*]const align(4) DescriptorBindingFlags = null,
+    pBindingFlags: ?[*]align(4) const DescriptorBindingFlags = null,
 };
 
 pub const PhysicalDeviceDescriptorIndexingFeatures = extern struct {
@@ -12397,7 +12397,7 @@ pub const ObjectTableCreateInfoNVX = extern struct {
     objectCount: u32,
     pObjectEntryTypes: [*]const ObjectEntryTypeNVX,
     pObjectEntryCounts: [*]const u32,
-    pObjectEntryUsageFlags: [*]const align(4) ObjectEntryUsageFlagsNVX,
+    pObjectEntryUsageFlags: [*]align(4) const ObjectEntryUsageFlagsNVX,
     maxUniformBuffersPerDescriptor: u32,
     maxStorageBuffersPerDescriptor: u32,
     maxStorageImagesPerDescriptor: u32,
