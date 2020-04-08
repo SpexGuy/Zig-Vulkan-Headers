@@ -3011,7 +3011,7 @@ pub const ApplicationInfo = extern struct {
 pub const InstanceCreateInfo = extern struct {
     sType: StructureType = .INSTANCE_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: InstanceCreateFlags align(4) = .{},
+    flags: InstanceCreateFlags align(4) = InstanceCreateFlags{},
     pApplicationInfo: ?*const ApplicationInfo = null,
     enabledLayerCount: u32 = 0,
     ppEnabledLayerNames: [*]const CString = undefined,
@@ -3121,9 +3121,9 @@ pub const PhysicalDeviceFeatures = extern struct {
 };
 
 pub const FormatProperties = extern struct {
-    linearTilingFeatures: FormatFeatureFlags align(4) = .{},
-    optimalTilingFeatures: FormatFeatureFlags align(4) = .{},
-    bufferFeatures: FormatFeatureFlags align(4) = .{},
+    linearTilingFeatures: FormatFeatureFlags align(4) = FormatFeatureFlags{},
+    optimalTilingFeatures: FormatFeatureFlags align(4) = FormatFeatureFlags{},
+    bufferFeatures: FormatFeatureFlags align(4) = FormatFeatureFlags{},
 };
 
 pub const Extent3D = extern struct {
@@ -3136,7 +3136,7 @@ pub const ImageFormatProperties = extern struct {
     maxExtent: Extent3D,
     maxMipLevels: u32,
     maxArrayLayers: u32,
-    sampleCounts: SampleCountFlags align(4) = .{},
+    sampleCounts: SampleCountFlags align(4) = SampleCountFlags{},
     maxResourceSize: DeviceSize,
 };
 
@@ -3221,16 +3221,16 @@ pub const PhysicalDeviceLimits = extern struct {
     maxFramebufferWidth: u32,
     maxFramebufferHeight: u32,
     maxFramebufferLayers: u32,
-    framebufferColorSampleCounts: SampleCountFlags align(4) = .{},
-    framebufferDepthSampleCounts: SampleCountFlags align(4) = .{},
-    framebufferStencilSampleCounts: SampleCountFlags align(4) = .{},
-    framebufferNoAttachmentsSampleCounts: SampleCountFlags align(4) = .{},
+    framebufferColorSampleCounts: SampleCountFlags align(4) = SampleCountFlags{},
+    framebufferDepthSampleCounts: SampleCountFlags align(4) = SampleCountFlags{},
+    framebufferStencilSampleCounts: SampleCountFlags align(4) = SampleCountFlags{},
+    framebufferNoAttachmentsSampleCounts: SampleCountFlags align(4) = SampleCountFlags{},
     maxColorAttachments: u32,
-    sampledImageColorSampleCounts: SampleCountFlags align(4) = .{},
-    sampledImageIntegerSampleCounts: SampleCountFlags align(4) = .{},
-    sampledImageDepthSampleCounts: SampleCountFlags align(4) = .{},
-    sampledImageStencilSampleCounts: SampleCountFlags align(4) = .{},
-    storageImageSampleCounts: SampleCountFlags align(4) = .{},
+    sampledImageColorSampleCounts: SampleCountFlags align(4) = SampleCountFlags{},
+    sampledImageIntegerSampleCounts: SampleCountFlags align(4) = SampleCountFlags{},
+    sampledImageDepthSampleCounts: SampleCountFlags align(4) = SampleCountFlags{},
+    sampledImageStencilSampleCounts: SampleCountFlags align(4) = SampleCountFlags{},
+    storageImageSampleCounts: SampleCountFlags align(4) = SampleCountFlags{},
     maxSampleMaskWords: u32,
     timestampComputeAndGraphics: Bool32,
     timestampPeriod: f32,
@@ -3270,20 +3270,20 @@ pub const PhysicalDeviceProperties = extern struct {
 };
 
 pub const QueueFamilyProperties = extern struct {
-    queueFlags: QueueFlags align(4) = .{},
+    queueFlags: QueueFlags align(4) = QueueFlags{},
     queueCount: u32,
     timestampValidBits: u32,
     minImageTransferGranularity: Extent3D,
 };
 
 pub const MemoryType = extern struct {
-    propertyFlags: MemoryPropertyFlags align(4) = .{},
+    propertyFlags: MemoryPropertyFlags align(4) = MemoryPropertyFlags{},
     heapIndex: u32,
 };
 
 pub const MemoryHeap = extern struct {
     size: DeviceSize,
-    flags: MemoryHeapFlags align(4) = .{},
+    flags: MemoryHeapFlags align(4) = MemoryHeapFlags{},
 };
 
 pub const PhysicalDeviceMemoryProperties = extern struct {
@@ -3298,7 +3298,7 @@ pub const PFN_VoidFunction = extern fn () void;
 pub const DeviceQueueCreateInfo = extern struct {
     sType: StructureType = .DEVICE_QUEUE_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: DeviceQueueCreateFlags align(4) = .{},
+    flags: DeviceQueueCreateFlags align(4) = DeviceQueueCreateFlags{},
     queueFamilyIndex: u32,
     queueCount: u32,
     pQueuePriorities: [*]const f32,
@@ -3307,7 +3307,7 @@ pub const DeviceQueueCreateInfo = extern struct {
 pub const DeviceCreateInfo = extern struct {
     sType: StructureType = .DEVICE_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: DeviceCreateFlags align(4) = .{},
+    flags: DeviceCreateFlags align(4) = DeviceCreateFlags{},
     queueCreateInfoCount: u32,
     pQueueCreateInfos: [*]const DeviceQueueCreateInfo,
     enabledLayerCount: u32 = 0,
@@ -3363,9 +3363,9 @@ pub const MemoryRequirements = extern struct {
 };
 
 pub const SparseImageFormatProperties = extern struct {
-    aspectMask: ImageAspectFlags align(4) = .{},
+    aspectMask: ImageAspectFlags align(4) = ImageAspectFlags{},
     imageGranularity: Extent3D,
-    flags: SparseImageFormatFlags align(4) = .{},
+    flags: SparseImageFormatFlags align(4) = SparseImageFormatFlags{},
 };
 
 pub const SparseImageMemoryRequirements = extern struct {
@@ -3381,7 +3381,7 @@ pub const SparseMemoryBind = extern struct {
     size: DeviceSize,
     memory: ?DeviceMemory = null,
     memoryOffset: DeviceSize,
-    flags: SparseMemoryBindFlags align(4) = .{},
+    flags: SparseMemoryBindFlags align(4) = SparseMemoryBindFlags{},
 };
 
 pub const SparseBufferMemoryBindInfo = extern struct {
@@ -3414,7 +3414,7 @@ pub const SparseImageMemoryBind = extern struct {
     extent: Extent3D,
     memory: ?DeviceMemory = null,
     memoryOffset: DeviceSize,
-    flags: SparseMemoryBindFlags align(4) = .{},
+    flags: SparseMemoryBindFlags align(4) = SparseMemoryBindFlags{},
 };
 
 pub const SparseImageMemoryBindInfo = extern struct {
@@ -3441,34 +3441,34 @@ pub const BindSparseInfo = extern struct {
 pub const FenceCreateInfo = extern struct {
     sType: StructureType = .FENCE_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: FenceCreateFlags align(4) = .{},
+    flags: FenceCreateFlags align(4) = FenceCreateFlags{},
 };
 
 pub const SemaphoreCreateInfo = extern struct {
     sType: StructureType = .SEMAPHORE_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: SemaphoreCreateFlags align(4) = .{},
+    flags: SemaphoreCreateFlags align(4) = SemaphoreCreateFlags{},
 };
 
 pub const EventCreateInfo = extern struct {
     sType: StructureType = .EVENT_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: EventCreateFlags align(4) = .{},
+    flags: EventCreateFlags align(4) = EventCreateFlags{},
 };
 
 pub const QueryPoolCreateInfo = extern struct {
     sType: StructureType = .QUERY_POOL_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: QueryPoolCreateFlags align(4) = .{},
+    flags: QueryPoolCreateFlags align(4) = QueryPoolCreateFlags{},
     queryType: QueryType,
     queryCount: u32,
-    pipelineStatistics: QueryPipelineStatisticFlags align(4) = .{},
+    pipelineStatistics: QueryPipelineStatisticFlags align(4) = QueryPipelineStatisticFlags{},
 };
 
 pub const BufferCreateInfo = extern struct {
     sType: StructureType = .BUFFER_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: BufferCreateFlags align(4) = .{},
+    flags: BufferCreateFlags align(4) = BufferCreateFlags{},
     size: DeviceSize,
     usage: BufferUsageFlags align(4),
     sharingMode: SharingMode,
@@ -3479,7 +3479,7 @@ pub const BufferCreateInfo = extern struct {
 pub const BufferViewCreateInfo = extern struct {
     sType: StructureType = .BUFFER_VIEW_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: BufferViewCreateFlags align(4) = .{},
+    flags: BufferViewCreateFlags align(4) = BufferViewCreateFlags{},
     buffer: Buffer,
     format: Format,
     offset: DeviceSize,
@@ -3489,7 +3489,7 @@ pub const BufferViewCreateInfo = extern struct {
 pub const ImageCreateInfo = extern struct {
     sType: StructureType = .IMAGE_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: ImageCreateFlags align(4) = .{},
+    flags: ImageCreateFlags align(4) = ImageCreateFlags{},
     imageType: ImageType,
     format: Format,
     extent: Extent3D,
@@ -3530,7 +3530,7 @@ pub const ImageSubresourceRange = extern struct {
 pub const ImageViewCreateInfo = extern struct {
     sType: StructureType = .IMAGE_VIEW_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: ImageViewCreateFlags align(4) = .{},
+    flags: ImageViewCreateFlags align(4) = ImageViewCreateFlags{},
     image: Image,
     viewType: ImageViewType,
     format: Format,
@@ -3541,7 +3541,7 @@ pub const ImageViewCreateInfo = extern struct {
 pub const ShaderModuleCreateInfo = extern struct {
     sType: StructureType = .SHADER_MODULE_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: ShaderModuleCreateFlags align(4) = .{},
+    flags: ShaderModuleCreateFlags align(4) = ShaderModuleCreateFlags{},
     codeSize: usize,
     pCode: [*]const u32,
 };
@@ -3549,7 +3549,7 @@ pub const ShaderModuleCreateInfo = extern struct {
 pub const PipelineCacheCreateInfo = extern struct {
     sType: StructureType = .PIPELINE_CACHE_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: PipelineCacheCreateFlags align(4) = .{},
+    flags: PipelineCacheCreateFlags align(4) = PipelineCacheCreateFlags{},
     initialDataSize: usize = 0,
     pInitialData: ?*const c_void = undefined,
 };
@@ -3570,7 +3570,7 @@ pub const SpecializationInfo = extern struct {
 pub const PipelineShaderStageCreateInfo = extern struct {
     sType: StructureType = .PIPELINE_SHADER_STAGE_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: PipelineShaderStageCreateFlags align(4) = .{},
+    flags: PipelineShaderStageCreateFlags align(4) = PipelineShaderStageCreateFlags{},
     stage: ShaderStageFlags align(4),
     module: ShaderModule,
     pName: CString,
@@ -3593,7 +3593,7 @@ pub const VertexInputAttributeDescription = extern struct {
 pub const PipelineVertexInputStateCreateInfo = extern struct {
     sType: StructureType = .PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: PipelineVertexInputStateCreateFlags align(4) = .{},
+    flags: PipelineVertexInputStateCreateFlags align(4) = PipelineVertexInputStateCreateFlags{},
     vertexBindingDescriptionCount: u32 = 0,
     pVertexBindingDescriptions: [*]const VertexInputBindingDescription = undefined,
     vertexAttributeDescriptionCount: u32 = 0,
@@ -3603,7 +3603,7 @@ pub const PipelineVertexInputStateCreateInfo = extern struct {
 pub const PipelineInputAssemblyStateCreateInfo = extern struct {
     sType: StructureType = .PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: PipelineInputAssemblyStateCreateFlags align(4) = .{},
+    flags: PipelineInputAssemblyStateCreateFlags align(4) = PipelineInputAssemblyStateCreateFlags{},
     topology: PrimitiveTopology,
     primitiveRestartEnable: Bool32,
 };
@@ -3611,7 +3611,7 @@ pub const PipelineInputAssemblyStateCreateInfo = extern struct {
 pub const PipelineTessellationStateCreateInfo = extern struct {
     sType: StructureType = .PIPELINE_TESSELLATION_STATE_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: PipelineTessellationStateCreateFlags align(4) = .{},
+    flags: PipelineTessellationStateCreateFlags align(4) = PipelineTessellationStateCreateFlags{},
     patchControlPoints: u32,
 };
 
@@ -3642,7 +3642,7 @@ pub const Rect2D = extern struct {
 pub const PipelineViewportStateCreateInfo = extern struct {
     sType: StructureType = .PIPELINE_VIEWPORT_STATE_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: PipelineViewportStateCreateFlags align(4) = .{},
+    flags: PipelineViewportStateCreateFlags align(4) = PipelineViewportStateCreateFlags{},
     viewportCount: u32,
     pViewports: ?[*]const Viewport = null,
     scissorCount: u32,
@@ -3652,11 +3652,11 @@ pub const PipelineViewportStateCreateInfo = extern struct {
 pub const PipelineRasterizationStateCreateInfo = extern struct {
     sType: StructureType = .PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: PipelineRasterizationStateCreateFlags align(4) = .{},
+    flags: PipelineRasterizationStateCreateFlags align(4) = PipelineRasterizationStateCreateFlags{},
     depthClampEnable: Bool32,
     rasterizerDiscardEnable: Bool32,
     polygonMode: PolygonMode,
-    cullMode: CullModeFlags align(4) = .{},
+    cullMode: CullModeFlags align(4) = CullModeFlags{},
     frontFace: FrontFace,
     depthBiasEnable: Bool32,
     depthBiasConstantFactor: f32,
@@ -3668,7 +3668,7 @@ pub const PipelineRasterizationStateCreateInfo = extern struct {
 pub const PipelineMultisampleStateCreateInfo = extern struct {
     sType: StructureType = .PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: PipelineMultisampleStateCreateFlags align(4) = .{},
+    flags: PipelineMultisampleStateCreateFlags align(4) = PipelineMultisampleStateCreateFlags{},
     rasterizationSamples: SampleCountFlags align(4),
     sampleShadingEnable: Bool32,
     minSampleShading: f32,
@@ -3690,7 +3690,7 @@ pub const StencilOpState = extern struct {
 pub const PipelineDepthStencilStateCreateInfo = extern struct {
     sType: StructureType = .PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: PipelineDepthStencilStateCreateFlags align(4) = .{},
+    flags: PipelineDepthStencilStateCreateFlags align(4) = PipelineDepthStencilStateCreateFlags{},
     depthTestEnable: Bool32,
     depthWriteEnable: Bool32,
     depthCompareOp: CompareOp,
@@ -3710,13 +3710,13 @@ pub const PipelineColorBlendAttachmentState = extern struct {
     srcAlphaBlendFactor: BlendFactor,
     dstAlphaBlendFactor: BlendFactor,
     alphaBlendOp: BlendOp,
-    colorWriteMask: ColorComponentFlags align(4) = .{},
+    colorWriteMask: ColorComponentFlags align(4) = ColorComponentFlags{},
 };
 
 pub const PipelineColorBlendStateCreateInfo = extern struct {
     sType: StructureType = .PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: PipelineColorBlendStateCreateFlags align(4) = .{},
+    flags: PipelineColorBlendStateCreateFlags align(4) = PipelineColorBlendStateCreateFlags{},
     logicOpEnable: Bool32,
     logicOp: LogicOp,
     attachmentCount: u32 = 0,
@@ -3727,7 +3727,7 @@ pub const PipelineColorBlendStateCreateInfo = extern struct {
 pub const PipelineDynamicStateCreateInfo = extern struct {
     sType: StructureType = .PIPELINE_DYNAMIC_STATE_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: PipelineDynamicStateCreateFlags align(4) = .{},
+    flags: PipelineDynamicStateCreateFlags align(4) = PipelineDynamicStateCreateFlags{},
     dynamicStateCount: u32 = 0,
     pDynamicStates: [*]const DynamicState = undefined,
 };
@@ -3735,7 +3735,7 @@ pub const PipelineDynamicStateCreateInfo = extern struct {
 pub const GraphicsPipelineCreateInfo = extern struct {
     sType: StructureType = .GRAPHICS_PIPELINE_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: PipelineCreateFlags align(4) = .{},
+    flags: PipelineCreateFlags align(4) = PipelineCreateFlags{},
     stageCount: u32,
     pStages: [*]const PipelineShaderStageCreateInfo,
     pVertexInputState: ?*const PipelineVertexInputStateCreateInfo = null,
@@ -3757,7 +3757,7 @@ pub const GraphicsPipelineCreateInfo = extern struct {
 pub const ComputePipelineCreateInfo = extern struct {
     sType: StructureType = .COMPUTE_PIPELINE_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: PipelineCreateFlags align(4) = .{},
+    flags: PipelineCreateFlags align(4) = PipelineCreateFlags{},
     stage: PipelineShaderStageCreateInfo,
     layout: PipelineLayout,
     basePipelineHandle: ?Pipeline = null,
@@ -3773,7 +3773,7 @@ pub const PushConstantRange = extern struct {
 pub const PipelineLayoutCreateInfo = extern struct {
     sType: StructureType = .PIPELINE_LAYOUT_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: PipelineLayoutCreateFlags align(4) = .{},
+    flags: PipelineLayoutCreateFlags align(4) = PipelineLayoutCreateFlags{},
     setLayoutCount: u32 = 0,
     pSetLayouts: [*]const DescriptorSetLayout = undefined,
     pushConstantRangeCount: u32 = 0,
@@ -3783,7 +3783,7 @@ pub const PipelineLayoutCreateInfo = extern struct {
 pub const SamplerCreateInfo = extern struct {
     sType: StructureType = .SAMPLER_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: SamplerCreateFlags align(4) = .{},
+    flags: SamplerCreateFlags align(4) = SamplerCreateFlags{},
     magFilter: Filter,
     minFilter: Filter,
     mipmapMode: SamplerMipmapMode,
@@ -3812,7 +3812,7 @@ pub const DescriptorSetLayoutBinding = extern struct {
 pub const DescriptorSetLayoutCreateInfo = extern struct {
     sType: StructureType = .DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: DescriptorSetLayoutCreateFlags align(4) = .{},
+    flags: DescriptorSetLayoutCreateFlags align(4) = DescriptorSetLayoutCreateFlags{},
     bindingCount: u32 = 0,
     pBindings: [*]const DescriptorSetLayoutBinding = undefined,
 };
@@ -3825,7 +3825,7 @@ pub const DescriptorPoolSize = extern struct {
 pub const DescriptorPoolCreateInfo = extern struct {
     sType: StructureType = .DESCRIPTOR_POOL_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: DescriptorPoolCreateFlags align(4) = .{},
+    flags: DescriptorPoolCreateFlags align(4) = DescriptorPoolCreateFlags{},
     maxSets: u32,
     poolSizeCount: u32,
     pPoolSizes: [*]const DescriptorPoolSize,
@@ -3879,7 +3879,7 @@ pub const CopyDescriptorSet = extern struct {
 pub const FramebufferCreateInfo = extern struct {
     sType: StructureType = .FRAMEBUFFER_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: FramebufferCreateFlags align(4) = .{},
+    flags: FramebufferCreateFlags align(4) = FramebufferCreateFlags{},
     renderPass: RenderPass,
     attachmentCount: u32 = 0,
     pAttachments: [*]const ImageView = undefined,
@@ -3889,7 +3889,7 @@ pub const FramebufferCreateInfo = extern struct {
 };
 
 pub const AttachmentDescription = extern struct {
-    flags: AttachmentDescriptionFlags align(4) = .{},
+    flags: AttachmentDescriptionFlags align(4) = AttachmentDescriptionFlags{},
     format: Format,
     samples: SampleCountFlags align(4),
     loadOp: AttachmentLoadOp,
@@ -3906,7 +3906,7 @@ pub const AttachmentReference = extern struct {
 };
 
 pub const SubpassDescription = extern struct {
-    flags: SubpassDescriptionFlags align(4) = .{},
+    flags: SubpassDescriptionFlags align(4) = SubpassDescriptionFlags{},
     pipelineBindPoint: PipelineBindPoint,
     inputAttachmentCount: u32 = 0,
     pInputAttachments: [*]const AttachmentReference = undefined,
@@ -3923,15 +3923,15 @@ pub const SubpassDependency = extern struct {
     dstSubpass: u32,
     srcStageMask: PipelineStageFlags align(4),
     dstStageMask: PipelineStageFlags align(4),
-    srcAccessMask: AccessFlags align(4) = .{},
-    dstAccessMask: AccessFlags align(4) = .{},
-    dependencyFlags: DependencyFlags align(4) = .{},
+    srcAccessMask: AccessFlags align(4) = AccessFlags{},
+    dstAccessMask: AccessFlags align(4) = AccessFlags{},
+    dependencyFlags: DependencyFlags align(4) = DependencyFlags{},
 };
 
 pub const RenderPassCreateInfo = extern struct {
     sType: StructureType = .RENDER_PASS_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: RenderPassCreateFlags align(4) = .{},
+    flags: RenderPassCreateFlags align(4) = RenderPassCreateFlags{},
     attachmentCount: u32 = 0,
     pAttachments: [*]const AttachmentDescription = undefined,
     subpassCount: u32,
@@ -3943,7 +3943,7 @@ pub const RenderPassCreateInfo = extern struct {
 pub const CommandPoolCreateInfo = extern struct {
     sType: StructureType = .COMMAND_POOL_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: CommandPoolCreateFlags align(4) = .{},
+    flags: CommandPoolCreateFlags align(4) = CommandPoolCreateFlags{},
     queueFamilyIndex: u32,
 };
 
@@ -3962,14 +3962,14 @@ pub const CommandBufferInheritanceInfo = extern struct {
     subpass: u32,
     framebuffer: ?Framebuffer = null,
     occlusionQueryEnable: Bool32,
-    queryFlags: QueryControlFlags align(4) = .{},
-    pipelineStatistics: QueryPipelineStatisticFlags align(4) = .{},
+    queryFlags: QueryControlFlags align(4) = QueryControlFlags{},
+    pipelineStatistics: QueryPipelineStatisticFlags align(4) = QueryPipelineStatisticFlags{},
 };
 
 pub const CommandBufferBeginInfo = extern struct {
     sType: StructureType = .COMMAND_BUFFER_BEGIN_INFO,
     pNext: ?*const c_void = null,
-    flags: CommandBufferUsageFlags align(4) = .{},
+    flags: CommandBufferUsageFlags align(4) = CommandBufferUsageFlags{},
     pInheritanceInfo: ?*const CommandBufferInheritanceInfo = null,
 };
 
@@ -4049,8 +4049,8 @@ pub const ImageResolve = extern struct {
 pub const MemoryBarrier = extern struct {
     sType: StructureType = .MEMORY_BARRIER,
     pNext: ?*const c_void = null,
-    srcAccessMask: AccessFlags align(4) = .{},
-    dstAccessMask: AccessFlags align(4) = .{},
+    srcAccessMask: AccessFlags align(4) = AccessFlags{},
+    dstAccessMask: AccessFlags align(4) = AccessFlags{},
 };
 
 pub const BufferMemoryBarrier = extern struct {
@@ -6708,7 +6708,7 @@ pub const MemoryDedicatedAllocateInfo = extern struct {
 pub const MemoryAllocateFlagsInfo = extern struct {
     sType: StructureType = .MEMORY_ALLOCATE_FLAGS_INFO,
     pNext: ?*const c_void = null,
-    flags: MemoryAllocateFlags align(4) = .{},
+    flags: MemoryAllocateFlags align(4) = MemoryAllocateFlags{},
     deviceMask: u32,
 };
 
@@ -6838,7 +6838,7 @@ pub const PhysicalDeviceImageFormatInfo2 = extern struct {
     inType: ImageType,
     tiling: ImageTiling,
     usage: ImageUsageFlags align(4),
-    flags: ImageCreateFlags align(4) = .{},
+    flags: ImageCreateFlags align(4) = ImageCreateFlags{},
 };
 
 pub const QueueFamilyProperties2 = extern struct {
@@ -6950,7 +6950,7 @@ pub const PhysicalDeviceProtectedMemoryProperties = extern struct {
 pub const DeviceQueueInfo2 = extern struct {
     sType: StructureType = .DEVICE_QUEUE_INFO_2,
     pNext: ?*const c_void = null,
-    flags: DeviceQueueCreateFlags align(4) = .{},
+    flags: DeviceQueueCreateFlags align(4) = DeviceQueueCreateFlags{},
     queueFamilyIndex: u32,
     queueIndex: u32,
 };
@@ -7016,7 +7016,7 @@ pub const DescriptorUpdateTemplateEntry = extern struct {
 pub const DescriptorUpdateTemplateCreateInfo = extern struct {
     sType: StructureType = .DESCRIPTOR_UPDATE_TEMPLATE_CREATE_INFO,
     pNext: ?*const c_void = null,
-    flags: DescriptorUpdateTemplateCreateFlags align(4) = .{},
+    flags: DescriptorUpdateTemplateCreateFlags align(4) = DescriptorUpdateTemplateCreateFlags{},
     descriptorUpdateEntryCount: u32,
     pDescriptorUpdateEntries: [*]const DescriptorUpdateTemplateEntry,
     templateType: DescriptorUpdateTemplateType,
@@ -7028,14 +7028,14 @@ pub const DescriptorUpdateTemplateCreateInfo = extern struct {
 
 pub const ExternalMemoryProperties = extern struct {
     externalMemoryFeatures: ExternalMemoryFeatureFlags align(4),
-    exportFromImportedHandleTypes: ExternalMemoryHandleTypeFlags align(4) = .{},
+    exportFromImportedHandleTypes: ExternalMemoryHandleTypeFlags align(4) = ExternalMemoryHandleTypeFlags{},
     compatibleHandleTypes: ExternalMemoryHandleTypeFlags align(4),
 };
 
 pub const PhysicalDeviceExternalImageFormatInfo = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_EXTERNAL_IMAGE_FORMAT_INFO,
     pNext: ?*const c_void = null,
-    handleType: ExternalMemoryHandleTypeFlags align(4) = .{},
+    handleType: ExternalMemoryHandleTypeFlags align(4) = ExternalMemoryHandleTypeFlags{},
 };
 
 pub const ExternalImageFormatProperties = extern struct {
@@ -7047,7 +7047,7 @@ pub const ExternalImageFormatProperties = extern struct {
 pub const PhysicalDeviceExternalBufferInfo = extern struct {
     sType: StructureType = .PHYSICAL_DEVICE_EXTERNAL_BUFFER_INFO,
     pNext: ?*const c_void = null,
-    flags: BufferCreateFlags align(4) = .{},
+    flags: BufferCreateFlags align(4) = BufferCreateFlags{},
     usage: BufferUsageFlags align(4),
     handleType: ExternalMemoryHandleTypeFlags align(4),
 };
@@ -7077,13 +7077,13 @@ pub const ExternalMemoryImageCreateInfo = extern struct {
 pub const ExternalMemoryBufferCreateInfo = extern struct {
     sType: StructureType = .EXTERNAL_MEMORY_BUFFER_CREATE_INFO,
     pNext: ?*const c_void = null,
-    handleTypes: ExternalMemoryHandleTypeFlags align(4) = .{},
+    handleTypes: ExternalMemoryHandleTypeFlags align(4) = ExternalMemoryHandleTypeFlags{},
 };
 
 pub const ExportMemoryAllocateInfo = extern struct {
     sType: StructureType = .EXPORT_MEMORY_ALLOCATE_INFO,
     pNext: ?*const c_void = null,
-    handleTypes: ExternalMemoryHandleTypeFlags align(4) = .{},
+    handleTypes: ExternalMemoryHandleTypeFlags align(4) = ExternalMemoryHandleTypeFlags{},
 };
 
 pub const PhysicalDeviceExternalFenceInfo = extern struct {
@@ -7097,19 +7097,19 @@ pub const ExternalFenceProperties = extern struct {
     pNext: ?*c_void = null,
     exportFromImportedHandleTypes: ExternalFenceHandleTypeFlags align(4),
     compatibleHandleTypes: ExternalFenceHandleTypeFlags align(4),
-    externalFenceFeatures: ExternalFenceFeatureFlags align(4) = .{},
+    externalFenceFeatures: ExternalFenceFeatureFlags align(4) = ExternalFenceFeatureFlags{},
 };
 
 pub const ExportFenceCreateInfo = extern struct {
     sType: StructureType = .EXPORT_FENCE_CREATE_INFO,
     pNext: ?*const c_void = null,
-    handleTypes: ExternalFenceHandleTypeFlags align(4) = .{},
+    handleTypes: ExternalFenceHandleTypeFlags align(4) = ExternalFenceHandleTypeFlags{},
 };
 
 pub const ExportSemaphoreCreateInfo = extern struct {
     sType: StructureType = .EXPORT_SEMAPHORE_CREATE_INFO,
     pNext: ?*const c_void = null,
-    handleTypes: ExternalSemaphoreHandleTypeFlags align(4) = .{},
+    handleTypes: ExternalSemaphoreHandleTypeFlags align(4) = ExternalSemaphoreHandleTypeFlags{},
 };
 
 pub const PhysicalDeviceExternalSemaphoreInfo = extern struct {
@@ -7123,7 +7123,7 @@ pub const ExternalSemaphoreProperties = extern struct {
     pNext: ?*c_void = null,
     exportFromImportedHandleTypes: ExternalSemaphoreHandleTypeFlags align(4),
     compatibleHandleTypes: ExternalSemaphoreHandleTypeFlags align(4),
-    externalSemaphoreFeatures: ExternalSemaphoreFeatureFlags align(4) = .{},
+    externalSemaphoreFeatures: ExternalSemaphoreFeatureFlags align(4) = ExternalSemaphoreFeatureFlags{},
 };
 
 pub const PhysicalDeviceMaintenance3Properties = extern struct {
@@ -7897,7 +7897,7 @@ pub const PhysicalDeviceVulkan12Properties = extern struct {
     filterMinmaxSingleComponentFormats: Bool32,
     filterMinmaxImageComponentMapping: Bool32,
     maxTimelineSemaphoreValueDifference: u64,
-    framebufferIntegerColorSampleCounts: SampleCountFlags align(4) = .{},
+    framebufferIntegerColorSampleCounts: SampleCountFlags align(4) = SampleCountFlags{},
 };
 
 pub const ImageFormatListCreateInfo = extern struct {
@@ -7910,7 +7910,7 @@ pub const ImageFormatListCreateInfo = extern struct {
 pub const AttachmentDescription2 = extern struct {
     sType: StructureType = .ATTACHMENT_DESCRIPTION_2,
     pNext: ?*const c_void = null,
-    flags: AttachmentDescriptionFlags align(4) = .{},
+    flags: AttachmentDescriptionFlags align(4) = AttachmentDescriptionFlags{},
     format: Format,
     samples: SampleCountFlags align(4),
     loadOp: AttachmentLoadOp,
@@ -7932,7 +7932,7 @@ pub const AttachmentReference2 = extern struct {
 pub const SubpassDescription2 = extern struct {
     sType: StructureType = .SUBPASS_DESCRIPTION_2,
     pNext: ?*const c_void = null,
-    flags: SubpassDescriptionFlags align(4) = .{},
+    flags: SubpassDescriptionFlags align(4) = SubpassDescriptionFlags{},
     pipelineBindPoint: PipelineBindPoint,
     viewMask: u32,
     inputAttachmentCount: u32 = 0,
@@ -7952,16 +7952,16 @@ pub const SubpassDependency2 = extern struct {
     dstSubpass: u32,
     srcStageMask: PipelineStageFlags align(4),
     dstStageMask: PipelineStageFlags align(4),
-    srcAccessMask: AccessFlags align(4) = .{},
-    dstAccessMask: AccessFlags align(4) = .{},
-    dependencyFlags: DependencyFlags align(4) = .{},
+    srcAccessMask: AccessFlags align(4) = AccessFlags{},
+    dstAccessMask: AccessFlags align(4) = AccessFlags{},
+    dependencyFlags: DependencyFlags align(4) = DependencyFlags{},
     viewOffset: i32 = 0,
 };
 
 pub const RenderPassCreateInfo2 = extern struct {
     sType: StructureType = .RENDER_PASS_CREATE_INFO_2,
     pNext: ?*const c_void = null,
-    flags: RenderPassCreateFlags align(4) = .{},
+    flags: RenderPassCreateFlags align(4) = RenderPassCreateFlags{},
     attachmentCount: u32 = 0,
     pAttachments: [*]const AttachmentDescription2 = undefined,
     subpassCount: u32,
@@ -8168,7 +8168,7 @@ pub const PhysicalDeviceImagelessFramebufferFeatures = extern struct {
 pub const FramebufferAttachmentImageInfo = extern struct {
     sType: StructureType = .FRAMEBUFFER_ATTACHMENT_IMAGE_INFO,
     pNext: ?*const c_void = null,
-    flags: ImageCreateFlags align(4) = .{},
+    flags: ImageCreateFlags align(4) = ImageCreateFlags{},
     usage: ImageUsageFlags align(4),
     width: u32,
     height: u32,
@@ -8259,7 +8259,7 @@ pub const TimelineSemaphoreSubmitInfo = extern struct {
 pub const SemaphoreWaitInfo = extern struct {
     sType: StructureType = .SEMAPHORE_WAIT_INFO,
     pNext: ?*const c_void = null,
-    flags: SemaphoreWaitFlags align(4) = .{},
+    flags: SemaphoreWaitFlags align(4) = SemaphoreWaitFlags{},
     semaphoreCount: u32,
     pSemaphores: [*]const Semaphore,
     pValues: [*]const u64,
@@ -8592,10 +8592,10 @@ pub const SurfaceCapabilitiesKHR = extern struct {
     minImageExtent: Extent2D,
     maxImageExtent: Extent2D,
     maxImageArrayLayers: u32,
-    supportedTransforms: SurfaceTransformFlagsKHR align(4) = .{},
+    supportedTransforms: SurfaceTransformFlagsKHR align(4) = SurfaceTransformFlagsKHR{},
     currentTransform: SurfaceTransformFlagsKHR align(4),
-    supportedCompositeAlpha: CompositeAlphaFlagsKHR align(4) = .{},
-    supportedUsageFlags: ImageUsageFlags align(4) = .{},
+    supportedCompositeAlpha: CompositeAlphaFlagsKHR align(4) = CompositeAlphaFlagsKHR{},
+    supportedUsageFlags: ImageUsageFlags align(4) = ImageUsageFlags{},
 };
 
 pub const SurfaceFormatKHR = extern struct {
@@ -8818,7 +8818,7 @@ pub const DeviceGroupPresentModeFlagsKHR = packed struct {
 pub const SwapchainCreateInfoKHR = extern struct {
     sType: StructureType = .SWAPCHAIN_CREATE_INFO_KHR,
     pNext: ?*const c_void = null,
-    flags: SwapchainCreateFlagsKHR align(4) = .{},
+    flags: SwapchainCreateFlagsKHR align(4) = SwapchainCreateFlagsKHR{},
     surface: SurfaceKHR,
     minImageCount: u32,
     imageFormat: Format,
@@ -9179,7 +9179,7 @@ pub const DisplayPropertiesKHR = extern struct {
     displayName: CString,
     physicalDimensions: Extent2D,
     physicalResolution: Extent2D,
-    supportedTransforms: SurfaceTransformFlagsKHR align(4) = .{},
+    supportedTransforms: SurfaceTransformFlagsKHR align(4) = SurfaceTransformFlagsKHR{},
     planeReorderPossible: Bool32,
     persistentContent: Bool32,
 };
@@ -9197,12 +9197,12 @@ pub const DisplayModePropertiesKHR = extern struct {
 pub const DisplayModeCreateInfoKHR = extern struct {
     sType: StructureType = .DISPLAY_MODE_CREATE_INFO_KHR,
     pNext: ?*const c_void = null,
-    flags: DisplayModeCreateFlagsKHR align(4) = .{},
+    flags: DisplayModeCreateFlagsKHR align(4) = DisplayModeCreateFlagsKHR{},
     parameters: DisplayModeParametersKHR,
 };
 
 pub const DisplayPlaneCapabilitiesKHR = extern struct {
-    supportedAlpha: DisplayPlaneAlphaFlagsKHR align(4) = .{},
+    supportedAlpha: DisplayPlaneAlphaFlagsKHR align(4) = DisplayPlaneAlphaFlagsKHR{},
     minSrcPosition: Offset2D,
     maxSrcPosition: Offset2D,
     minSrcExtent: Extent2D,
@@ -9221,7 +9221,7 @@ pub const DisplayPlanePropertiesKHR = extern struct {
 pub const DisplaySurfaceCreateInfoKHR = extern struct {
     sType: StructureType = .DISPLAY_SURFACE_CREATE_INFO_KHR,
     pNext: ?*const c_void = null,
-    flags: DisplaySurfaceCreateFlagsKHR align(4) = .{},
+    flags: DisplaySurfaceCreateFlagsKHR align(4) = DisplaySurfaceCreateFlagsKHR{},
     displayMode: DisplayModeKHR,
     planeIndex: u32,
     planeStackIndex: u32,
@@ -9779,7 +9779,7 @@ pub const KHR_EXTERNAL_MEMORY_FD_EXTENSION_NAME = "VK_KHR_external_memory_fd";
 pub const ImportMemoryFdInfoKHR = extern struct {
     sType: StructureType = .IMPORT_MEMORY_FD_INFO_KHR,
     pNext: ?*const c_void = null,
-    handleType: ExternalMemoryHandleTypeFlags align(4) = .{},
+    handleType: ExternalMemoryHandleTypeFlags align(4) = ExternalMemoryHandleTypeFlags{},
     fd: c_int,
 };
 
@@ -9875,7 +9875,7 @@ pub const ImportSemaphoreFdInfoKHR = extern struct {
     sType: StructureType = .IMPORT_SEMAPHORE_FD_INFO_KHR,
     pNext: ?*const c_void = null,
     semaphore: Semaphore,
-    flags: SemaphoreImportFlags align(4) = .{},
+    flags: SemaphoreImportFlags align(4) = SemaphoreImportFlags{},
     handleType: ExternalSemaphoreHandleTypeFlags align(4),
     fd: c_int,
 };
@@ -10124,7 +10124,7 @@ pub const KHR_SHARED_PRESENTABLE_IMAGE_EXTENSION_NAME = "VK_KHR_shared_presentab
 pub const SharedPresentSurfaceCapabilitiesKHR = extern struct {
     sType: StructureType = .SHARED_PRESENT_SURFACE_CAPABILITIES_KHR,
     pNext: ?*c_void = null,
-    sharedPresentSupportedUsageFlags: ImageUsageFlags align(4) = .{},
+    sharedPresentSupportedUsageFlags: ImageUsageFlags align(4) = ImageUsageFlags{},
 };
 
 pub extern fn vkGetSwapchainStatusKHR(
@@ -10189,7 +10189,7 @@ pub const ImportFenceFdInfoKHR = extern struct {
     sType: StructureType = .IMPORT_FENCE_FD_INFO_KHR,
     pNext: ?*const c_void = null,
     fence: Fence,
-    flags: FenceImportFlags align(4) = .{},
+    flags: FenceImportFlags align(4) = FenceImportFlags{},
     handleType: ExternalFenceHandleTypeFlags align(4),
     fd: c_int,
 };
@@ -10377,7 +10377,7 @@ pub const PerformanceCounterKHR = extern struct {
 pub const PerformanceCounterDescriptionKHR = extern struct {
     sType: StructureType = .PERFORMANCE_COUNTER_DESCRIPTION_KHR,
     pNext: ?*const c_void = null,
-    flags: PerformanceCounterDescriptionFlagsKHR align(4) = .{},
+    flags: PerformanceCounterDescriptionFlagsKHR align(4) = PerformanceCounterDescriptionFlagsKHR{},
     name: [MAX_DESCRIPTION_SIZE-1:0]u8,
     category: [MAX_DESCRIPTION_SIZE-1:0]u8,
     description: [MAX_DESCRIPTION_SIZE-1:0]u8,
@@ -10403,7 +10403,7 @@ pub const PerformanceCounterResultKHR = extern union {
 pub const AcquireProfilingLockInfoKHR = extern struct {
     sType: StructureType = .ACQUIRE_PROFILING_LOCK_INFO_KHR,
     pNext: ?*const c_void = null,
-    flags: AcquireProfilingLockFlagsKHR align(4) = .{},
+    flags: AcquireProfilingLockFlagsKHR align(4) = AcquireProfilingLockFlagsKHR{},
     timeout: u64,
 };
 
@@ -11490,7 +11490,7 @@ pub const PFN_DebugReportCallbackEXT = extern fn (
 pub const DebugReportCallbackCreateInfoEXT = extern struct {
     sType: StructureType = .DEBUG_REPORT_CALLBACK_CREATE_INFO_EXT,
     pNext: ?*const c_void = null,
-    flags: DebugReportFlagsEXT align(4) = .{},
+    flags: DebugReportFlagsEXT align(4) = DebugReportFlagsEXT{},
     pfnCallback: PFN_DebugReportCallbackEXT,
     pUserData: ?*c_void = null,
 };
@@ -11724,7 +11724,7 @@ pub const PhysicalDeviceTransformFeedbackPropertiesEXT = extern struct {
 pub const PipelineRasterizationStateStreamCreateInfoEXT = extern struct {
     sType: StructureType = .PIPELINE_RASTERIZATION_STATE_STREAM_CREATE_INFO_EXT,
     pNext: ?*const c_void = null,
-    flags: PipelineRasterizationStateStreamCreateFlagsEXT align(4) = .{},
+    flags: PipelineRasterizationStateStreamCreateFlagsEXT align(4) = PipelineRasterizationStateStreamCreateFlagsEXT{},
     rasterizationStream: u32,
 };
 
@@ -12048,9 +12048,9 @@ pub const ExternalMemoryFeatureFlagsNV = packed struct {
 
 pub const ExternalImageFormatPropertiesNV = extern struct {
     imageFormatProperties: ImageFormatProperties,
-    externalMemoryFeatures: ExternalMemoryFeatureFlagsNV align(4) = .{},
-    exportFromImportedHandleTypes: ExternalMemoryHandleTypeFlagsNV align(4) = .{},
-    compatibleHandleTypes: ExternalMemoryHandleTypeFlagsNV align(4) = .{},
+    externalMemoryFeatures: ExternalMemoryFeatureFlagsNV align(4) = ExternalMemoryFeatureFlagsNV{},
+    exportFromImportedHandleTypes: ExternalMemoryHandleTypeFlagsNV align(4) = ExternalMemoryHandleTypeFlagsNV{},
+    compatibleHandleTypes: ExternalMemoryHandleTypeFlagsNV align(4) = ExternalMemoryHandleTypeFlagsNV{},
 };
 
 pub extern fn vkGetPhysicalDeviceExternalImageFormatPropertiesNV(
@@ -12086,13 +12086,13 @@ pub const NV_EXTERNAL_MEMORY_EXTENSION_NAME = "VK_NV_external_memory";
 pub const ExternalMemoryImageCreateInfoNV = extern struct {
     sType: StructureType = .EXTERNAL_MEMORY_IMAGE_CREATE_INFO_NV,
     pNext: ?*const c_void = null,
-    handleTypes: ExternalMemoryHandleTypeFlagsNV align(4) = .{},
+    handleTypes: ExternalMemoryHandleTypeFlagsNV align(4) = ExternalMemoryHandleTypeFlagsNV{},
 };
 
 pub const ExportMemoryAllocateInfoNV = extern struct {
     sType: StructureType = .EXPORT_MEMORY_ALLOCATE_INFO_NV,
     pNext: ?*const c_void = null,
-    handleTypes: ExternalMemoryHandleTypeFlagsNV align(4) = .{},
+    handleTypes: ExternalMemoryHandleTypeFlagsNV align(4) = ExternalMemoryHandleTypeFlagsNV{},
 };
 
 
@@ -12198,7 +12198,7 @@ pub const ConditionalRenderingBeginInfoEXT = extern struct {
     pNext: ?*const c_void = null,
     buffer: Buffer,
     offset: DeviceSize,
-    flags: ConditionalRenderingFlagsEXT align(4) = .{},
+    flags: ConditionalRenderingFlagsEXT align(4) = ConditionalRenderingFlagsEXT{},
 };
 
 pub const PhysicalDeviceConditionalRenderingFeaturesEXT = extern struct {
@@ -12670,11 +12670,11 @@ pub const SurfaceCapabilities2EXT = extern struct {
     minImageExtent: Extent2D,
     maxImageExtent: Extent2D,
     maxImageArrayLayers: u32,
-    supportedTransforms: SurfaceTransformFlagsKHR align(4) = .{},
+    supportedTransforms: SurfaceTransformFlagsKHR align(4) = SurfaceTransformFlagsKHR{},
     currentTransform: SurfaceTransformFlagsKHR align(4),
-    supportedCompositeAlpha: CompositeAlphaFlagsKHR align(4) = .{},
-    supportedUsageFlags: ImageUsageFlags align(4) = .{},
-    supportedSurfaceCounters: SurfaceCounterFlagsEXT align(4) = .{},
+    supportedCompositeAlpha: CompositeAlphaFlagsKHR align(4) = CompositeAlphaFlagsKHR{},
+    supportedUsageFlags: ImageUsageFlags align(4) = ImageUsageFlags{},
+    supportedSurfaceCounters: SurfaceCounterFlagsEXT align(4) = SurfaceCounterFlagsEXT{},
 };
 
 pub extern fn vkGetPhysicalDeviceSurfaceCapabilities2EXT(
@@ -12740,7 +12740,7 @@ pub const DisplayEventInfoEXT = extern struct {
 pub const SwapchainCounterCreateInfoEXT = extern struct {
     sType: StructureType = .SWAPCHAIN_COUNTER_CREATE_INFO_EXT,
     pNext: ?*const c_void = null,
-    surfaceCounters: SurfaceCounterFlagsEXT align(4) = .{},
+    surfaceCounters: SurfaceCounterFlagsEXT align(4) = SurfaceCounterFlagsEXT{},
 };
 
 pub extern fn vkDisplayPowerControlEXT(
@@ -12956,7 +12956,7 @@ pub const ViewportSwizzleNV = extern struct {
 pub const PipelineViewportSwizzleStateCreateInfoNV = extern struct {
     sType: StructureType = .PIPELINE_VIEWPORT_SWIZZLE_STATE_CREATE_INFO_NV,
     pNext: ?*const c_void = null,
-    flags: PipelineViewportSwizzleStateCreateFlagsNV align(4) = .{},
+    flags: PipelineViewportSwizzleStateCreateFlagsNV align(4) = PipelineViewportSwizzleStateCreateFlagsNV{},
     viewportCount: u32,
     pViewportSwizzles: [*]const ViewportSwizzleNV,
 };
@@ -12986,7 +12986,7 @@ pub const PhysicalDeviceDiscardRectanglePropertiesEXT = extern struct {
 pub const PipelineDiscardRectangleStateCreateInfoEXT = extern struct {
     sType: StructureType = .PIPELINE_DISCARD_RECTANGLE_STATE_CREATE_INFO_EXT,
     pNext: ?*const c_void = null,
-    flags: PipelineDiscardRectangleStateCreateFlagsEXT align(4) = .{},
+    flags: PipelineDiscardRectangleStateCreateFlagsEXT align(4) = PipelineDiscardRectangleStateCreateFlagsEXT{},
     discardRectangleMode: DiscardRectangleModeEXT,
     discardRectangleCount: u32 = 0,
     pDiscardRectangles: ?[*]const Rect2D = null,
@@ -13037,7 +13037,7 @@ pub const PhysicalDeviceConservativeRasterizationPropertiesEXT = extern struct {
 pub const PipelineRasterizationConservativeStateCreateInfoEXT = extern struct {
     sType: StructureType = .PIPELINE_RASTERIZATION_CONSERVATIVE_STATE_CREATE_INFO_EXT,
     pNext: ?*const c_void = null,
-    flags: PipelineRasterizationConservativeStateCreateFlagsEXT align(4) = .{},
+    flags: PipelineRasterizationConservativeStateCreateFlagsEXT align(4) = PipelineRasterizationConservativeStateCreateFlagsEXT{},
     conservativeRasterizationMode: ConservativeRasterizationModeEXT,
     extraPrimitiveOverestimationSize: f32,
 };
@@ -13061,7 +13061,7 @@ pub const PhysicalDeviceDepthClipEnableFeaturesEXT = extern struct {
 pub const PipelineRasterizationDepthClipStateCreateInfoEXT = extern struct {
     sType: StructureType = .PIPELINE_RASTERIZATION_DEPTH_CLIP_STATE_CREATE_INFO_EXT,
     pNext: ?*const c_void = null,
-    flags: PipelineRasterizationDepthClipStateCreateFlagsEXT align(4) = .{},
+    flags: PipelineRasterizationDepthClipStateCreateFlagsEXT align(4) = PipelineRasterizationDepthClipStateCreateFlagsEXT{},
     depthClipEnable: Bool32,
 };
 
@@ -13235,7 +13235,7 @@ pub const DebugUtilsLabelEXT = extern struct {
 pub const DebugUtilsMessengerCallbackDataEXT = extern struct {
     sType: StructureType = .DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT,
     pNext: ?*const c_void = null,
-    flags: DebugUtilsMessengerCallbackDataFlagsEXT align(4) = .{},
+    flags: DebugUtilsMessengerCallbackDataFlagsEXT align(4) = DebugUtilsMessengerCallbackDataFlagsEXT{},
     pMessageIdName: ?CString = null,
     messageIdNumber: i32 = 0,
     pMessage: CString,
@@ -13257,7 +13257,7 @@ pub const PFN_DebugUtilsMessengerCallbackEXT = extern fn (
 pub const DebugUtilsMessengerCreateInfoEXT = extern struct {
     sType: StructureType = .DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
     pNext: ?*const c_void = null,
-    flags: DebugUtilsMessengerCreateFlagsEXT align(4) = .{},
+    flags: DebugUtilsMessengerCreateFlagsEXT align(4) = DebugUtilsMessengerCreateFlagsEXT{},
     messageSeverity: DebugUtilsMessageSeverityFlagsEXT align(4),
     messageType: DebugUtilsMessageTypeFlagsEXT align(4),
     pfnUserCallback: PFN_DebugUtilsMessengerCallbackEXT,
@@ -13456,7 +13456,7 @@ pub const SampleLocationEXT = extern struct {
 pub const SampleLocationsInfoEXT = extern struct {
     sType: StructureType = .SAMPLE_LOCATIONS_INFO_EXT,
     pNext: ?*const c_void = null,
-    sampleLocationsPerPixel: SampleCountFlags align(4) = .{},
+    sampleLocationsPerPixel: SampleCountFlags align(4) = SampleCountFlags{},
     sampleLocationGridSize: Extent2D,
     sampleLocationsCount: u32 = 0,
     pSampleLocations: [*]const SampleLocationEXT = undefined,
@@ -13575,7 +13575,7 @@ pub const PipelineCoverageToColorStateCreateFlagsNV = packed struct {
 pub const PipelineCoverageToColorStateCreateInfoNV = extern struct {
     sType: StructureType = .PIPELINE_COVERAGE_TO_COLOR_STATE_CREATE_INFO_NV,
     pNext: ?*const c_void = null,
-    flags: PipelineCoverageToColorStateCreateFlagsNV align(4) = .{},
+    flags: PipelineCoverageToColorStateCreateFlagsNV align(4) = PipelineCoverageToColorStateCreateFlagsNV{},
     coverageToColorEnable: Bool32,
     coverageToColorLocation: u32 = 0,
 };
@@ -13601,7 +13601,7 @@ pub const PipelineCoverageModulationStateCreateFlagsNV = packed struct {
 pub const PipelineCoverageModulationStateCreateInfoNV = extern struct {
     sType: StructureType = .PIPELINE_COVERAGE_MODULATION_STATE_CREATE_INFO_NV,
     pNext: ?*const c_void = null,
-    flags: PipelineCoverageModulationStateCreateFlagsNV align(4) = .{},
+    flags: PipelineCoverageModulationStateCreateFlagsNV align(4) = PipelineCoverageModulationStateCreateFlagsNV{},
     coverageModulationMode: CoverageModulationModeNV,
     coverageModulationTableEnable: Bool32,
     coverageModulationTableCount: u32 = 0,
@@ -13719,7 +13719,7 @@ pub const ValidationCacheCreateFlagsEXT = packed struct {
 pub const ValidationCacheCreateInfoEXT = extern struct {
     sType: StructureType = .VALIDATION_CACHE_CREATE_INFO_EXT,
     pNext: ?*const c_void = null,
-    flags: ValidationCacheCreateFlagsEXT align(4) = .{},
+    flags: ValidationCacheCreateFlagsEXT align(4) = ValidationCacheCreateFlagsEXT{},
     initialDataSize: usize = 0,
     pInitialData: ?*const c_void = undefined,
 };
@@ -14104,7 +14104,7 @@ pub const RayTracingShaderGroupCreateInfoNV = extern struct {
 pub const RayTracingPipelineCreateInfoNV = extern struct {
     sType: StructureType = .RAY_TRACING_PIPELINE_CREATE_INFO_NV,
     pNext: ?*const c_void = null,
-    flags: PipelineCreateFlags align(4) = .{},
+    flags: PipelineCreateFlags align(4) = PipelineCreateFlags{},
     stageCount: u32,
     pStages: [*]const PipelineShaderStageCreateInfo,
     groupCount: u32,
@@ -14150,14 +14150,14 @@ pub const GeometryNV = extern struct {
     pNext: ?*const c_void = null,
     geometryType: GeometryTypeNV,
     geometry: GeometryDataNV,
-    flags: GeometryFlagsNV align(4) = .{},
+    flags: GeometryFlagsNV align(4) = GeometryFlagsNV{},
 };
 
 pub const AccelerationStructureInfoNV = extern struct {
     sType: StructureType = .ACCELERATION_STRUCTURE_INFO_NV,
     pNext: ?*const c_void = null,
     inType: AccelerationStructureTypeNV,
-    flags: BuildAccelerationStructureFlagsNV align(4) = .{},
+    flags: BuildAccelerationStructureFlagsNV align(4) = BuildAccelerationStructureFlagsNV{},
     instanceCount: u32 = 0,
     geometryCount: u32 = 0,
     pGeometries: [*]const GeometryNV = undefined,
@@ -14554,7 +14554,7 @@ pub const PipelineCompilerControlFlagsAMD = packed struct {
 pub const PipelineCompilerControlCreateInfoAMD = extern struct {
     sType: StructureType = .PIPELINE_COMPILER_CONTROL_CREATE_INFO_AMD,
     pNext: ?*const c_void = null,
-    compilerControlFlags: PipelineCompilerControlFlagsAMD align(4) = .{},
+    compilerControlFlags: PipelineCompilerControlFlagsAMD align(4) = PipelineCompilerControlFlagsAMD{},
 };
 
 
@@ -15656,7 +15656,7 @@ pub const PhysicalDeviceCoverageReductionModeFeaturesNV = extern struct {
 pub const PipelineCoverageReductionStateCreateInfoNV = extern struct {
     sType: StructureType = .PIPELINE_COVERAGE_REDUCTION_STATE_CREATE_INFO_NV,
     pNext: ?*const c_void = null,
-    flags: PipelineCoverageReductionStateCreateFlagsNV align(4) = .{},
+    flags: PipelineCoverageReductionStateCreateFlagsNV align(4) = PipelineCoverageReductionStateCreateFlagsNV{},
     coverageReductionMode: CoverageReductionModeNV,
 };
 
@@ -15744,7 +15744,7 @@ pub const HeadlessSurfaceCreateFlagsEXT = packed struct {
 pub const HeadlessSurfaceCreateInfoEXT = extern struct {
     sType: StructureType = .HEADLESS_SURFACE_CREATE_INFO_EXT,
     pNext: ?*const c_void = null,
-    flags: HeadlessSurfaceCreateFlagsEXT align(4) = .{},
+    flags: HeadlessSurfaceCreateFlagsEXT align(4) = HeadlessSurfaceCreateFlagsEXT{},
 };
 
 pub extern fn vkCreateHeadlessSurfaceEXT(

@@ -728,7 +728,7 @@ class ZigOutputGenerator(OutputGenerator):
 
         defaultValue = None
         if isParamOptional:
-            defaultValue = 'null' if isPointer else '.{}' if 'Flags' in declValueType else '0'
+            defaultValue = 'null' if isPointer else (declValueType + '{}') if 'Flags' in declValueType else '0'
         elif name == 'pNext' and cValueType == 'void':
             defaultValue = 'null'
         elif allParams and len(lengths) >= 1:
