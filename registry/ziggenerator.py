@@ -804,7 +804,7 @@ class ZigOutputGenerator(OutputGenerator):
         if alias:
             body = 'pub const ' + valueTypeToZigType(name) + ' = ' + valueTypeToZigType(alias) + ';'
         elif not typeinfo.elem.get('requires'):
-            body = 'pub const ' + valueTypeToZigType(name) + ' = struct {\n    __reserved_bits_00_31: u32 = 0,\n    pub usingnamespace FlagsMixin(@This());\n};'
+            body = 'pub const ' + valueTypeToZigType(name) + ' = packed struct {\n    __reserved_bits_00_31: u32 = 0,\n    pub usingnamespace FlagsMixin(@This());\n};'
         
         if body:
             self.appendSection("bitmask", body)

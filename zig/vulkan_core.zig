@@ -1396,7 +1396,7 @@ pub const VendorId = extern enum(i32) {
     _,
 };
 
-pub const InstanceCreateFlags = struct {
+pub const InstanceCreateFlags = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
@@ -1684,7 +1684,7 @@ pub const MemoryHeapFlags = packed struct {
     pub usingnamespace FlagsMixin(Self);
 };
 
-pub const DeviceCreateFlags = struct {
+pub const DeviceCreateFlags = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
@@ -1763,7 +1763,7 @@ pub const PipelineStageFlags = packed struct {
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const MemoryMapFlags = struct {
+pub const MemoryMapFlags = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
@@ -1921,17 +1921,17 @@ pub const FenceCreateFlags = packed struct {
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const SemaphoreCreateFlags = struct {
+pub const SemaphoreCreateFlags = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const EventCreateFlags = struct {
+pub const EventCreateFlags = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const QueryPoolCreateFlags = struct {
+pub const QueryPoolCreateFlags = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
@@ -2092,7 +2092,7 @@ pub const BufferUsageFlags = packed struct {
     pub usingnamespace FlagsMixin(Self);
 };
 
-pub const BufferViewCreateFlags = struct {
+pub const BufferViewCreateFlags = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
@@ -2171,7 +2171,7 @@ pub const ShaderModuleCreateFlags = packed struct {
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const PipelineCacheCreateFlags = struct {
+pub const PipelineCacheCreateFlags = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
@@ -2294,27 +2294,27 @@ pub const ShaderStageFlags = packed struct {
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const PipelineVertexInputStateCreateFlags = struct {
+pub const PipelineVertexInputStateCreateFlags = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const PipelineInputAssemblyStateCreateFlags = struct {
+pub const PipelineInputAssemblyStateCreateFlags = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const PipelineTessellationStateCreateFlags = struct {
+pub const PipelineTessellationStateCreateFlags = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const PipelineViewportStateCreateFlags = struct {
+pub const PipelineViewportStateCreateFlags = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const PipelineRasterizationStateCreateFlags = struct {
+pub const PipelineRasterizationStateCreateFlags = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
@@ -2359,17 +2359,17 @@ pub const CullModeFlags = packed struct {
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const PipelineMultisampleStateCreateFlags = struct {
+pub const PipelineMultisampleStateCreateFlags = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const PipelineDepthStencilStateCreateFlags = struct {
+pub const PipelineDepthStencilStateCreateFlags = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const PipelineColorBlendStateCreateFlags = struct {
+pub const PipelineColorBlendStateCreateFlags = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
@@ -2411,12 +2411,12 @@ pub const ColorComponentFlags = packed struct {
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const PipelineDynamicStateCreateFlags = struct {
+pub const PipelineDynamicStateCreateFlags = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const PipelineLayoutCreateFlags = struct {
+pub const PipelineLayoutCreateFlags = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
@@ -2538,7 +2538,7 @@ pub const DescriptorPoolCreateFlags = packed struct {
     pub usingnamespace FlagsMixin(Self);
 };
 
-pub const DescriptorPoolResetFlags = struct {
+pub const DescriptorPoolResetFlags = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
@@ -6310,12 +6310,12 @@ pub const MemoryAllocateFlags = packed struct {
     pub usingnamespace FlagsMixin(Self);
 };
 
-pub const CommandPoolTrimFlags = struct {
+pub const CommandPoolTrimFlags = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const DescriptorUpdateTemplateCreateFlags = struct {
+pub const DescriptorUpdateTemplateCreateFlags = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
@@ -9164,12 +9164,12 @@ pub const DisplayPlaneAlphaFlagsKHR = packed struct {
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const DisplayModeCreateFlagsKHR = struct {
+pub const DisplayModeCreateFlagsKHR = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const DisplaySurfaceCreateFlagsKHR = struct {
+pub const DisplaySurfaceCreateFlagsKHR = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
@@ -11694,7 +11694,7 @@ pub const EXT_transform_feedback = 1;
 pub const EXT_TRANSFORM_FEEDBACK_SPEC_VERSION = 1;
 pub const EXT_TRANSFORM_FEEDBACK_EXTENSION_NAME = "VK_EXT_transform_feedback";
 
-pub const PipelineRasterizationStateStreamCreateFlagsEXT = struct {
+pub const PipelineRasterizationStateStreamCreateFlagsEXT = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
@@ -12941,7 +12941,7 @@ pub const ViewportCoordinateSwizzleNV = extern enum(i32) {
     _,
 };
 
-pub const PipelineViewportSwizzleStateCreateFlagsNV = struct {
+pub const PipelineViewportSwizzleStateCreateFlagsNV = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
@@ -12972,7 +12972,7 @@ pub const DiscardRectangleModeEXT = extern enum(i32) {
     _,
 };
 
-pub const PipelineDiscardRectangleStateCreateFlagsEXT = struct {
+pub const PipelineDiscardRectangleStateCreateFlagsEXT = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
@@ -13015,7 +13015,7 @@ pub const ConservativeRasterizationModeEXT = extern enum(i32) {
     _,
 };
 
-pub const PipelineRasterizationConservativeStateCreateFlagsEXT = struct {
+pub const PipelineRasterizationConservativeStateCreateFlagsEXT = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
@@ -13047,7 +13047,7 @@ pub const EXT_depth_clip_enable = 1;
 pub const EXT_DEPTH_CLIP_ENABLE_SPEC_VERSION = 1;
 pub const EXT_DEPTH_CLIP_ENABLE_EXTENSION_NAME = "VK_EXT_depth_clip_enable";
 
-pub const PipelineRasterizationDepthClipStateCreateFlagsEXT = struct {
+pub const PipelineRasterizationDepthClipStateCreateFlagsEXT = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
@@ -13123,12 +13123,12 @@ pub const DebugUtilsMessengerEXT = *@OpaqueType();
 pub const EXT_DEBUG_UTILS_SPEC_VERSION = 1;
 pub const EXT_DEBUG_UTILS_EXTENSION_NAME = "VK_EXT_debug_utils";
 
-pub const DebugUtilsMessengerCallbackDataFlagsEXT = struct {
+pub const DebugUtilsMessengerCallbackDataFlagsEXT = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
 
-pub const DebugUtilsMessengerCreateFlagsEXT = struct {
+pub const DebugUtilsMessengerCreateFlagsEXT = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
@@ -13567,7 +13567,7 @@ pub const NV_fragment_coverage_to_color = 1;
 pub const NV_FRAGMENT_COVERAGE_TO_COLOR_SPEC_VERSION = 1;
 pub const NV_FRAGMENT_COVERAGE_TO_COLOR_EXTENSION_NAME = "VK_NV_fragment_coverage_to_color";
 
-pub const PipelineCoverageToColorStateCreateFlagsNV = struct {
+pub const PipelineCoverageToColorStateCreateFlagsNV = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
@@ -13593,7 +13593,7 @@ pub const CoverageModulationModeNV = extern enum(i32) {
     _,
 };
 
-pub const PipelineCoverageModulationStateCreateFlagsNV = struct {
+pub const PipelineCoverageModulationStateCreateFlagsNV = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
@@ -13711,7 +13711,7 @@ pub const ValidationCacheHeaderVersionEXT = extern enum(i32) {
     _,
 };
 
-pub const ValidationCacheCreateFlagsEXT = struct {
+pub const ValidationCacheCreateFlagsEXT = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
@@ -15642,7 +15642,7 @@ pub const CoverageReductionModeNV = extern enum(i32) {
     _,
 };
 
-pub const PipelineCoverageReductionStateCreateFlagsNV = struct {
+pub const PipelineCoverageReductionStateCreateFlagsNV = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
@@ -15736,7 +15736,7 @@ pub const EXT_headless_surface = 1;
 pub const EXT_HEADLESS_SURFACE_SPEC_VERSION = 1;
 pub const EXT_HEADLESS_SURFACE_EXTENSION_NAME = "VK_EXT_headless_surface";
 
-pub const HeadlessSurfaceCreateFlagsEXT = struct {
+pub const HeadlessSurfaceCreateFlagsEXT = packed struct {
     __reserved_bits_00_31: u32 = 0,
     pub usingnamespace FlagsMixin(@This());
 };
