@@ -375,8 +375,8 @@ class ZigOutputGenerator(OutputGenerator):
         if genOpts.coreFile:
             write('usingnamespace @import("' + genOpts.coreFile + '");', file=self.outFile)
         else:
-            write('pub const CString = [*:0]const u8;', file=self.outFile)
-            write("""pub fn FlagsMixin(comptime FlagType: type) type {
+            write("""pub const CString = [*:0]const u8;
+pub fn FlagsMixin(comptime FlagType: type) type {
     comptime assert(@sizeOf(FlagType) == 4);
     return struct {
         pub fn toInt(self: FlagType) Flags {
@@ -404,10 +404,23 @@ class ZigOutputGenerator(OutputGenerator):
             return toInt(a) == 0;
         }
     };
-}""", file=self.outFile)
+}
+
+const builtin = @import("builtin");
+pub const CallConv = if (builtin.os.tag == .windows)
+        builtin.CallingConvention.Stdcall
+    else if (builtin.abi == .android and (builtin.cpu.arch.isARM() or builtin.cpu.arch.isThumb()) and builtin.Target.arm.featureSetHas(builtin.cpu.features, .has_v7) and builtin.cpu.arch.ptrBitWidth() == 32)
+        // On Android 32-bit ARM targets, Vulkan functions use the "hardfloat"
+        // calling convention, i.e. float parameters are passed in registers. This
+        // is true even if the rest of the application passes floats on the stack,
+        // as it does by default when compiling for the armeabi-v7a NDK ABI.
+        builtin.CallingConvention.AAPCSVFP
+    else
+        builtin.CallingConvention.C;
+""", file=self.outFile)
 
     def endFile(self):
-        # write('\ntest "Compile All" { _ = @import("std").meta.declarations(@This()); }', file=self.outFile)
+        #write('\ntest "Compile All" { @setEvalBranchQuota(10000); _ = @import("std").meta.refAllDecls(@This()); }', file=self.outFile)
         OutputGenerator.endFile(self)
 
     def beginFeature(self, interface, emit):
@@ -587,7 +600,7 @@ class ZigOutputGenerator(OutputGenerator):
         paramStrings = text[paramStart+1 : paramEnd].split(',')
         params = [self.parseParam(x, True) for x in paramStrings if x != 'void']
         
-        body = 'pub const ' + valueTypeToZigType(name) + ' = extern fn ('
+        body = 'pub const ' + valueTypeToZigType(name) + ' = fn ('
         if len(params) > 1:
             body += '\n'
             for param in params:
@@ -596,7 +609,7 @@ class ZigOutputGenerator(OutputGenerator):
             for param in params:
                 body += param.typeDecl(self.genOpts.workaround3325)
         
-        body += ') ' + returnType + ';'
+        body += ') callconv(CallConv) ' + returnType + ';'
         
         self.appendSection(section, body)
     
@@ -1014,7 +1027,7 @@ class ZigOutputGenerator(OutputGenerator):
                 externFn += p.paramDecl(self.genOpts.workaround3325)
             externFn += ')'
             
-        externFn += ' ' + zigReturnType + ';'
+        externFn += ' callconv(CallConv) ' + zigReturnType + ';'
 
         # Figure out the wrapper function
         ZigParam.link(params)
