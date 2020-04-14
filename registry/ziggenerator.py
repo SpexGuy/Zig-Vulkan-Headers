@@ -173,6 +173,9 @@ class ZigParam:
         if len(self.indirections) == 0: return False
         outermost = self.indirections[0]
         return outermost.type == ZigIndirect.TYPE_POINTER and outermost.cLength != '1'
+    
+    def isDirectFlags(self):
+        return not self.indirections and not self.valueType.isOptional and 'Flags' in self.valueType.declValueType
 
     def getValueParam(self):
         """ Get a parameter that has one less indirection """
@@ -210,7 +213,7 @@ class ZigParam:
                         other.buffers.append(param)
                         break
     
-    def typeDecl(self, workaround3325):
+    def typeDecl(self, workaround3325, eraseFlags):
         parenDepth = 0
         decl = ''
         for indirect in self.indirections:
@@ -264,6 +267,9 @@ class ZigParam:
             decl += ' '
 
         decl += self.valueType.declValueType
+
+        if self.isDirectFlags() and eraseFlags:
+            decl += '.IntType'
         
         for _ in range(parenDepth):
             decl += ')'
@@ -271,19 +277,19 @@ class ZigParam:
         return decl
     
     def structDecl(self, workaround3325):
-        decl = self.name + ': ' + self.typeDecl(workaround3325)
-        if not self.indirections and not self.valueType.isOptional and 'Flags' in self.valueType.declValueType:
+        decl = self.name + ': ' + self.typeDecl(workaround3325, False)
+        if self.isDirectFlags():
             decl += ' align(4)'
         if self.defaultValue:
             decl += ' = ' + self.defaultValue
         return decl
     
-    def paramDecl(self, workaround3325):
-        return self.name + ': ' + self.typeDecl(workaround3325)
+    def paramDecl(self, workaround3325, eraseFlags):
+        return self.name + ': ' + self.typeDecl(workaround3325, eraseFlags)
         
     def varDecl(self, workaround3325):
-        decl = 'var ' + self.name + ': ' + self.typeDecl(workaround3325)
-        if not self.indirections and not self.valueType.isOptional and 'Flags' in self.valueType.declValueType:
+        decl = 'var ' + self.name + ': ' + self.typeDecl(workaround3325, False)
+        if self.isDirectFlags():
             decl += ' align(4)'
         if self.defaultValue:
             decl += ' = ' + self.defaultValue
@@ -379,6 +385,7 @@ class ZigOutputGenerator(OutputGenerator):
 pub fn FlagsMixin(comptime FlagType: type) type {
     comptime assert(@sizeOf(FlagType) == 4);
     return struct {
+        pub const IntType = Flags;
         pub fn toInt(self: FlagType) Flags {
             return @bitCast(Flags, self);
         }
@@ -592,7 +599,7 @@ pub const CallConv = if (builtin.os.tag == .windows)
         if returnText == 'void':
             returnType = 'void'
         else:
-            returnType = self.parseParam(returnText + ' retVal', True).typeDecl(self.genOpts.workaround3325)
+            returnType = self.parseParam(returnText + ' retVal', True).typeDecl(self.genOpts.workaround3325, True)
         
         # parse out the parameter list
         paramStart = text.rindex('(')
@@ -604,10 +611,10 @@ pub const CallConv = if (builtin.os.tag == .windows)
         if len(params) > 1:
             body += '\n'
             for param in params:
-                body += '    ' + param.typeDecl(self.genOpts.workaround3325) + ',\n'
+                body += '    ' + param.typeDecl(self.genOpts.workaround3325, True) + ',\n'
         else:
             for param in params:
-                body += param.typeDecl(self.genOpts.workaround3325)
+                body += param.typeDecl(self.genOpts.workaround3325, True)
         
         body += ') callconv(CallConv) ' + returnType + ';'
         
@@ -1019,12 +1026,12 @@ pub const CallConv = if (builtin.os.tag == .windows)
         if len(params) > 1:
             externFn += '(\n'
             for p in params:
-                externFn += '    ' + p.paramDecl(self.genOpts.workaround3325) + ',\n'
+                externFn += '    ' + p.paramDecl(self.genOpts.workaround3325, True) + ',\n'
             externFn += ')'
         else:
             externFn += '('
             for p in params:
-                externFn += p.paramDecl(self.genOpts.workaround3325)
+                externFn += p.paramDecl(self.genOpts.workaround3325, True)
             externFn += ')'
             
         externFn += ' callconv(CallConv) ' + zigReturnType + ';'
@@ -1176,6 +1183,10 @@ pub const CallConv = if (builtin.os.tag == .windows)
                     valueParam = param.getValueParam()
                     userParams.append(valueParam)
                     apiParams.append('&'+valueParam.name)
+                elif param.isDirectFlags():
+                    shouldWrap = True
+                    userParams.append(param)
+                    apiParams.append(param.name+'.toInt()')
                 else:
                     userParams.append(param)
                     apiParams.append(param.name)
@@ -1207,7 +1218,7 @@ pub const CallConv = if (builtin.os.tag == .windows)
                     returnVal = returnParams[0]
                     returnVal.name = 'out_' + returnVal.name
                     locals.insert(0, returnVal)
-                    wrapperReturnType = returnVal.typeDecl(self.genOpts.workaround3325)
+                    wrapperReturnType = returnVal.typeDecl(self.genOpts.workaround3325, False)
                     returnStatement = 'return '+returnVal.name+';'
 
                     apiParams = [x.replace('returnValues.', 'out_') for x in apiParams]
@@ -1221,7 +1232,7 @@ pub const CallConv = if (builtin.os.tag == .windows)
                 
                 (prefix, suffix) = splitTypeName(name[2:])
                 funcDecl += 'pub inline fn '+prefix+variant+suffix+'('
-                funcDecl += ', '.join(p.paramDecl(self.genOpts.workaround3325) for p in userParams)
+                funcDecl += ', '.join(p.paramDecl(self.genOpts.workaround3325, False) for p in userParams)
                 funcDecl += ') ' + wrapperReturnType + ' {\n'
                 for local in locals:
                     funcDecl += '    ' + local.varDecl(self.genOpts.workaround3325) + ';\n'
