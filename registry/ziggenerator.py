@@ -107,10 +107,14 @@ def bitIndex(flag):
     return lowBit
 
 class ZigValueType:
-    def __init__(self, cValueType, declValueType, isPointer, isOptional):
+    TYPE_OTHER = 0,
+    TYPE_POINTER = 1,
+    TYPE_HANDLE = 2,
+    TYPE_FLAGS = 3,
+    def __init__(self, cValueType, declValueType, metaType, isOptional):
         self.cValueType = cValueType
         self.declValueType = declValueType
-        self.isPointer = isPointer
+        self.metaType = metaType
         self.isOptional = isOptional
 
 class ZigIndirect:
@@ -175,7 +179,10 @@ class ZigParam:
         return outermost.type == ZigIndirect.TYPE_POINTER and outermost.cLength != '1'
     
     def isDirectFlags(self):
-        return not self.indirections and not self.valueType.isOptional and 'Flags' in self.valueType.declValueType
+        return not self.indirections and not self.valueType.isOptional and self.valueType.metaType == ZigValueType.TYPE_FLAGS
+
+    def isDirectHandle(self):
+        return not self.indirections and not self.valueType.isOptional and self.valueType.metaType == ZigValueType.TYPE_HANDLE
 
     def getValueParam(self):
         """ Get a parameter that has one less indirection """
@@ -194,7 +201,7 @@ class ZigParam:
         valueType = self.valueType
         if valueType.cValueType == 'void':
             # translate to []u8
-            valueType = ZigValueType(valueType.cValueType, 'u8', valueType.isPointer, valueType.isOptional)
+            valueType = ZigValueType(valueType.cValueType, 'u8', valueType.metaType, valueType.isOptional)
         value = ZigParam(name, valueType, self.indirections[1:], None, self.isOptional)
         value.indirections.insert(0, ZigIndirect(ZigIndirect.TYPE_SLICE, ind0.cLength, False, ind0.isConst))
         return value
@@ -213,7 +220,7 @@ class ZigParam:
                         other.buffers.append(param)
                         break
     
-    def typeDecl(self, workaround3325, eraseFlags):
+    def typeDecl(self, workaround3325, isRawApi):
         parenDepth = 0
         decl = ''
         for indirect in self.indirections:
@@ -256,7 +263,7 @@ class ZigParam:
                 parenDepth += 1
             decl += '?'
 
-        if decl and 'Flags' in self.valueType.declValueType:
+        if decl and self.valueType.metaType == ZigValueType.TYPE_FLAGS:
             # swap the order of align(4) and last const for consistency with zig fmt
             if decl.endswith('const'):
                 decl = decl[:-5] + 'align(4) const '
@@ -268,7 +275,10 @@ class ZigParam:
 
         decl += self.valueType.declValueType
 
-        if self.isDirectFlags() and eraseFlags:
+        if self.isDirectFlags() and isRawApi:
+            decl += '.IntType'
+            
+        if self.isDirectHandle() and isRawApi:
             decl += '.IntType'
         
         for _ in range(parenDepth):
@@ -284,8 +294,8 @@ class ZigParam:
             decl += ' = ' + self.defaultValue
         return decl
     
-    def paramDecl(self, workaround3325, eraseFlags):
-        return self.name + ': ' + self.typeDecl(workaround3325, eraseFlags)
+    def paramDecl(self, workaround3325, isRawApi):
+        return self.name + ': ' + self.typeDecl(workaround3325, isRawApi)
         
     def varDecl(self, workaround3325):
         decl = 'var ' + self.name + ': ' + self.typeDecl(workaround3325, False)
@@ -354,7 +364,7 @@ class ZigOutputGenerator(OutputGenerator):
         self.sections = {section: [] for section in self.ALL_SECTIONS}
         self.feature_not_empty = False
         self.may_alias = None
-        self.handleTypes = {
+        self.pointer_value_types = {
             'VkCString': True,
             'HANDLE': True,
             'HINSTANCE': True,
@@ -362,6 +372,7 @@ class ZigOutputGenerator(OutputGenerator):
             'HMONITOR': True,
             'LPCWSTR': True,
         }
+        self.handle_types = {}
         self.resultAliases = {}
 
 
@@ -409,6 +420,18 @@ pub fn FlagsMixin(comptime FlagType: type) type {
         }
         pub fn isEmpty(a: FlagType) bool {
             return toInt(a) == 0;
+        }
+    };
+}
+
+fn Handle(comptime name: []const u8, comptime InIntType: type) type {
+    return extern struct {
+        pub const IntType = InIntType;
+
+        handle: IntType = 0,
+
+        pub inline fn isNull(self: @This()) bool {
+            return self.handle == 0;
         }
     };
 }
@@ -571,8 +594,13 @@ pub const CallConv = if (builtin.os.tag == .windows)
             if definition:
                 body = commentText + definition
         elif category == 'handle':
-            body = 'pub const ' + valueTypeToZigType(typeName) + ' = *@OpaqueType();'
-            self.handleTypes[typeName] = True
+            rawType = typeElem.find('type').text
+            zigType = valueTypeToZigType(typeName)
+            if rawType == 'VK_DEFINE_NON_DISPATCHABLE_HANDLE':
+                body = 'pub const '+zigType+' = Handle("'+zigType+'", u64);'
+            else:
+                body = 'pub const '+zigType+' = Handle("'+zigType+'", usize);'
+            self.handle_types[typeName] = True
         elif category == 'include':
             pass # don't generate includes
         else:
@@ -733,8 +761,8 @@ pub const CallConv = if (builtin.os.tag == .windows)
             elif part == 'const':
                 indirects[-1].isConst = True
 
-        valueTypeIsHandle = self.isValueTypePointer(cValueType)
-        valueTypeOptional = isParamOptional and len(indirects) == 0 and valueTypeIsHandle
+        valueTypeIsPointer = self.isValueTypePointer(cValueType)
+        valueTypeOptional = isParamOptional and len(indirects) == 0 and valueTypeIsPointer
 
         if cValueType == enclosingType:
             declValueType = '@This()'
@@ -744,11 +772,27 @@ pub const CallConv = if (builtin.os.tag == .windows)
         if len(indirects) > 0:
             isPointer = indirects[0].type == ZigIndirect.TYPE_POINTER
         else:
-            isPointer = valueTypeIsHandle
+            isPointer = valueTypeIsPointer
+            
+        if valueTypeIsPointer:
+            metaType = ZigValueType.TYPE_POINTER
+        elif cValueType in self.handle_types:
+            metaType = ZigValueType.TYPE_HANDLE
+        elif 'Flags' in declValueType:
+            metaType = ZigValueType.TYPE_FLAGS
+        else:
+            metaType = ZigValueType.TYPE_OTHER
 
         defaultValue = None
         if isParamOptional:
-            defaultValue = 'null' if isPointer else (declValueType + '{}') if 'Flags' in declValueType else '0'
+            if isPointer:
+                defaultValue = 'null'
+            elif metaType == ZigValueType.TYPE_HANDLE:
+                defaultValue = declValueType + '{}'
+            elif metaType == ZigValueType.TYPE_FLAGS:
+                defaultValue = declValueType + '{}'
+            else:
+                defaultValue = '0'
         elif name == 'pNext' and cValueType == 'void':
             defaultValue = 'null'
         elif allParams and len(lengths) >= 1:
@@ -768,7 +812,7 @@ pub const CallConv = if (builtin.os.tag == .windows)
                 if len(values) == 1 and values[0].startswith('VK_STRUCTURE_TYPE_'):
                     defaultValue = values[0].replace('VK_STRUCTURE_TYPE_', '.')
         
-        valueType = ZigValueType(cValueType, declValueType, valueTypeIsHandle, valueTypeOptional)
+        valueType = ZigValueType(cValueType, declValueType, metaType, valueTypeOptional)
         return ZigParam(name, valueType, indirects, defaultValue, isParamOptional)
 
     def genGroup(self, groupinfo, groupName, alias=None):
@@ -1187,6 +1231,10 @@ pub const CallConv = if (builtin.os.tag == .windows)
                     shouldWrap = True
                     userParams.append(param)
                     apiParams.append(param.name+'.toInt()')
+                elif param.isDirectHandle():
+                    shouldWrap = True
+                    userParams.append(param)
+                    apiParams.append(param.name+'.handle')
                 else:
                     userParams.append(param)
                     apiParams.append(param.name)
@@ -1330,4 +1378,4 @@ pub const CallConv = if (builtin.os.tag == .windows)
         return [None, None]
         
     def isValueTypePointer(self, typeName):
-        return typeName.startswith('PFN_') or typeName in self.handleTypes
+        return typeName.startswith('PFN_') or typeName in self.pointer_value_types
