@@ -278,9 +278,6 @@ class ZigParam:
         if self.isDirectFlags() and isRawApi:
             decl += '.IntType'
             
-        if self.isDirectHandle() and isRawApi:
-            decl += '.IntType'
-        
         for _ in range(parenDepth):
             decl += ')'
             
@@ -420,18 +417,6 @@ pub fn FlagsMixin(comptime FlagType: type) type {
         }
         pub fn isEmpty(a: FlagType) bool {
             return toInt(a) == 0;
-        }
-    };
-}
-
-fn Handle(comptime name: []const u8, comptime InIntType: type) type {
-    return extern struct {
-        pub const IntType = InIntType;
-
-        handle: IntType = 0,
-
-        pub inline fn isNull(self: @This()) bool {
-            return self.handle == 0;
         }
     };
 }
@@ -597,9 +582,9 @@ pub const CallConv = if (builtin.os.tag == .windows)
             rawType = typeElem.find('type').text
             zigType = valueTypeToZigType(typeName)
             if rawType == 'VK_DEFINE_NON_DISPATCHABLE_HANDLE':
-                body = 'pub const '+zigType+' = Handle("'+zigType+'", u64);'
+                body = 'pub const '+zigType+' = extern enum(u64) { Null = 0, _ };'
             else:
-                body = 'pub const '+zigType+' = Handle("'+zigType+'", usize);'
+                body = 'pub const '+zigType+' = extern enum(usize) { Null = 0, _ };'
             self.handle_types[typeName] = True
         elif category == 'include':
             pass # don't generate includes
@@ -788,7 +773,7 @@ pub const CallConv = if (builtin.os.tag == .windows)
             if isPointer:
                 defaultValue = 'null'
             elif metaType == ZigValueType.TYPE_HANDLE:
-                defaultValue = declValueType + '{}'
+                defaultValue = declValueType + '.Null'
             elif metaType == ZigValueType.TYPE_FLAGS:
                 defaultValue = declValueType + '{}'
             else:
@@ -1231,10 +1216,6 @@ pub const CallConv = if (builtin.os.tag == .windows)
                     shouldWrap = True
                     userParams.append(param)
                     apiParams.append(param.name+'.toInt()')
-                elif param.isDirectHandle():
-                    shouldWrap = True
-                    userParams.append(param)
-                    apiParams.append(param.name+'.handle')
                 else:
                     userParams.append(param)
                     apiParams.append(param.name)

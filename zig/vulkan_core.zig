@@ -52,18 +52,6 @@ pub fn FlagsMixin(comptime FlagType: type) type {
     };
 }
 
-fn Handle(comptime name: []const u8, comptime InIntType: type) type {
-    return extern struct {
-        pub const IntType = InIntType;
-
-        handle: IntType = 0,
-
-        pub inline fn isNull(self: @This()) bool {
-            return self.handle == 0;
-        }
-    };
-}
-
 const builtin = @import("builtin");
 pub const CallConv = if (builtin.os.tag == .windows)
         builtin.CallingConvention.Stdcall
@@ -98,31 +86,31 @@ pub const Bool32 = u32;
 pub const DeviceSize = u64;
 pub const SampleMask = u32;
 
-pub const Instance = Handle("Instance", usize);
-pub const PhysicalDevice = Handle("PhysicalDevice", usize);
-pub const Device = Handle("Device", usize);
-pub const Queue = Handle("Queue", usize);
-pub const Semaphore = Handle("Semaphore", u64);
-pub const CommandBuffer = Handle("CommandBuffer", usize);
-pub const Fence = Handle("Fence", u64);
-pub const DeviceMemory = Handle("DeviceMemory", u64);
-pub const Buffer = Handle("Buffer", u64);
-pub const Image = Handle("Image", u64);
-pub const Event = Handle("Event", u64);
-pub const QueryPool = Handle("QueryPool", u64);
-pub const BufferView = Handle("BufferView", u64);
-pub const ImageView = Handle("ImageView", u64);
-pub const ShaderModule = Handle("ShaderModule", u64);
-pub const PipelineCache = Handle("PipelineCache", u64);
-pub const PipelineLayout = Handle("PipelineLayout", u64);
-pub const RenderPass = Handle("RenderPass", u64);
-pub const Pipeline = Handle("Pipeline", u64);
-pub const DescriptorSetLayout = Handle("DescriptorSetLayout", u64);
-pub const Sampler = Handle("Sampler", u64);
-pub const DescriptorPool = Handle("DescriptorPool", u64);
-pub const DescriptorSet = Handle("DescriptorSet", u64);
-pub const Framebuffer = Handle("Framebuffer", u64);
-pub const CommandPool = Handle("CommandPool", u64);
+pub const Instance = extern enum(usize) { Null = 0, _ };
+pub const PhysicalDevice = extern enum(usize) { Null = 0, _ };
+pub const Device = extern enum(usize) { Null = 0, _ };
+pub const Queue = extern enum(usize) { Null = 0, _ };
+pub const Semaphore = extern enum(u64) { Null = 0, _ };
+pub const CommandBuffer = extern enum(usize) { Null = 0, _ };
+pub const Fence = extern enum(u64) { Null = 0, _ };
+pub const DeviceMemory = extern enum(u64) { Null = 0, _ };
+pub const Buffer = extern enum(u64) { Null = 0, _ };
+pub const Image = extern enum(u64) { Null = 0, _ };
+pub const Event = extern enum(u64) { Null = 0, _ };
+pub const QueryPool = extern enum(u64) { Null = 0, _ };
+pub const BufferView = extern enum(u64) { Null = 0, _ };
+pub const ImageView = extern enum(u64) { Null = 0, _ };
+pub const ShaderModule = extern enum(u64) { Null = 0, _ };
+pub const PipelineCache = extern enum(u64) { Null = 0, _ };
+pub const PipelineLayout = extern enum(u64) { Null = 0, _ };
+pub const RenderPass = extern enum(u64) { Null = 0, _ };
+pub const Pipeline = extern enum(u64) { Null = 0, _ };
+pub const DescriptorSetLayout = extern enum(u64) { Null = 0, _ };
+pub const Sampler = extern enum(u64) { Null = 0, _ };
+pub const DescriptorPool = extern enum(u64) { Null = 0, _ };
+pub const DescriptorSet = extern enum(u64) { Null = 0, _ };
+pub const Framebuffer = extern enum(u64) { Null = 0, _ };
+pub const CommandPool = extern enum(u64) { Null = 0, _ };
 
 pub const LOD_CLAMP_NONE = @as(f32, 1000.0);
 pub const REMAINING_MIP_LEVELS = (~@as(u32, 0));
@@ -3405,7 +3393,7 @@ pub const SparseImageMemoryRequirements = extern struct {
 pub const SparseMemoryBind = extern struct {
     resourceOffset: DeviceSize,
     size: DeviceSize,
-    memory: DeviceMemory = DeviceMemory{},
+    memory: DeviceMemory = DeviceMemory.Null,
     memoryOffset: DeviceSize,
     flags: SparseMemoryBindFlags align(4) = SparseMemoryBindFlags{},
 };
@@ -3438,7 +3426,7 @@ pub const SparseImageMemoryBind = extern struct {
     subresource: ImageSubresource,
     offset: Offset3D,
     extent: Extent3D,
-    memory: DeviceMemory = DeviceMemory{},
+    memory: DeviceMemory = DeviceMemory.Null,
     memoryOffset: DeviceSize,
     flags: SparseMemoryBindFlags align(4) = SparseMemoryBindFlags{},
 };
@@ -3776,7 +3764,7 @@ pub const GraphicsPipelineCreateInfo = extern struct {
     layout: PipelineLayout,
     renderPass: RenderPass,
     subpass: u32,
-    basePipelineHandle: Pipeline = Pipeline{},
+    basePipelineHandle: Pipeline = Pipeline.Null,
     basePipelineIndex: i32,
 };
 
@@ -3786,7 +3774,7 @@ pub const ComputePipelineCreateInfo = extern struct {
     flags: PipelineCreateFlags align(4) = PipelineCreateFlags{},
     stage: PipelineShaderStageCreateInfo,
     layout: PipelineLayout,
-    basePipelineHandle: Pipeline = Pipeline{},
+    basePipelineHandle: Pipeline = Pipeline.Null,
     basePipelineIndex: i32,
 };
 
@@ -3984,9 +3972,9 @@ pub const CommandBufferAllocateInfo = extern struct {
 pub const CommandBufferInheritanceInfo = extern struct {
     sType: StructureType = .COMMAND_BUFFER_INHERITANCE_INFO,
     pNext: ?*const c_void = null,
-    renderPass: RenderPass = RenderPass{},
+    renderPass: RenderPass = RenderPass.Null,
     subpass: u32,
-    framebuffer: Framebuffer = Framebuffer{},
+    framebuffer: Framebuffer = Framebuffer.Null,
     occlusionQueryEnable: Bool32,
     queryFlags: QueryControlFlags align(4) = QueryControlFlags{},
     pipelineStatistics: QueryPipelineStatisticFlags align(4) = QueryPipelineStatisticFlags{},
@@ -4152,29 +4140,29 @@ pub extern fn vkCreateInstance(
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyInstance(
-    instance: Instance.IntType,
+    instance: Instance,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkEnumeratePhysicalDevices(
-    instance: Instance.IntType,
+    instance: Instance,
     pPhysicalDeviceCount: *u32,
     pPhysicalDevices: ?[*]PhysicalDevice,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetPhysicalDeviceFeatures(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pFeatures: *PhysicalDeviceFeatures,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetPhysicalDeviceFormatProperties(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     format: Format,
     pFormatProperties: *FormatProperties,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetPhysicalDeviceImageFormatProperties(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     format: Format,
     inType: ImageType,
     tiling: ImageTiling,
@@ -4184,40 +4172,40 @@ pub extern fn vkGetPhysicalDeviceImageFormatProperties(
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetPhysicalDeviceProperties(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pProperties: *PhysicalDeviceProperties,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetPhysicalDeviceQueueFamilyProperties(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pQueueFamilyPropertyCount: *u32,
     pQueueFamilyProperties: ?[*]QueueFamilyProperties,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetPhysicalDeviceMemoryProperties(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pMemoryProperties: *PhysicalDeviceMemoryProperties,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetInstanceProcAddr(
-    instance: Instance.IntType,
+    instance: Instance,
     pName: CString,
 ) callconv(CallConv) PFN_VoidFunction;
 
 pub extern fn vkGetDeviceProcAddr(
-    device: Device.IntType,
+    device: Device,
     pName: CString,
 ) callconv(CallConv) PFN_VoidFunction;
 
 pub extern fn vkCreateDevice(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pCreateInfo: *const DeviceCreateInfo,
     pAllocator: ?*const AllocationCallbacks,
     pDevice: *Device,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyDevice(
-    device: Device.IntType,
+    device: Device,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
@@ -4228,7 +4216,7 @@ pub extern fn vkEnumerateInstanceExtensionProperties(
 ) callconv(CallConv) Result;
 
 pub extern fn vkEnumerateDeviceExtensionProperties(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pLayerName: ?CString,
     pPropertyCount: *u32,
     pProperties: ?[*]ExtensionProperties,
@@ -4240,44 +4228,44 @@ pub extern fn vkEnumerateInstanceLayerProperties(
 ) callconv(CallConv) Result;
 
 pub extern fn vkEnumerateDeviceLayerProperties(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pPropertyCount: *u32,
     pProperties: ?[*]LayerProperties,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetDeviceQueue(
-    device: Device.IntType,
+    device: Device,
     queueFamilyIndex: u32,
     queueIndex: u32,
     pQueue: *Queue,
 ) callconv(CallConv) void;
 
 pub extern fn vkQueueSubmit(
-    queue: Queue.IntType,
+    queue: Queue,
     submitCount: u32,
     pSubmits: [*]const SubmitInfo,
-    fence: Fence.IntType,
+    fence: Fence,
 ) callconv(CallConv) Result;
 
-pub extern fn vkQueueWaitIdle(queue: Queue.IntType) callconv(CallConv) Result;
-pub extern fn vkDeviceWaitIdle(device: Device.IntType) callconv(CallConv) Result;
+pub extern fn vkQueueWaitIdle(queue: Queue) callconv(CallConv) Result;
+pub extern fn vkDeviceWaitIdle(device: Device) callconv(CallConv) Result;
 
 pub extern fn vkAllocateMemory(
-    device: Device.IntType,
+    device: Device,
     pAllocateInfo: *const MemoryAllocateInfo,
     pAllocator: ?*const AllocationCallbacks,
     pMemory: *DeviceMemory,
 ) callconv(CallConv) Result;
 
 pub extern fn vkFreeMemory(
-    device: Device.IntType,
-    memory: DeviceMemory.IntType,
+    device: Device,
+    memory: DeviceMemory,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkMapMemory(
-    device: Device.IntType,
-    memory: DeviceMemory.IntType,
+    device: Device,
+    memory: DeviceMemory,
     offset: DeviceSize,
     size: DeviceSize,
     flags: MemoryMapFlags.IntType,
@@ -4285,63 +4273,63 @@ pub extern fn vkMapMemory(
 ) callconv(CallConv) Result;
 
 pub extern fn vkUnmapMemory(
-    device: Device.IntType,
-    memory: DeviceMemory.IntType,
+    device: Device,
+    memory: DeviceMemory,
 ) callconv(CallConv) void;
 
 pub extern fn vkFlushMappedMemoryRanges(
-    device: Device.IntType,
+    device: Device,
     memoryRangeCount: u32,
     pMemoryRanges: [*]const MappedMemoryRange,
 ) callconv(CallConv) Result;
 
 pub extern fn vkInvalidateMappedMemoryRanges(
-    device: Device.IntType,
+    device: Device,
     memoryRangeCount: u32,
     pMemoryRanges: [*]const MappedMemoryRange,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetDeviceMemoryCommitment(
-    device: Device.IntType,
-    memory: DeviceMemory.IntType,
+    device: Device,
+    memory: DeviceMemory,
     pCommittedMemoryInBytes: *DeviceSize,
 ) callconv(CallConv) void;
 
 pub extern fn vkBindBufferMemory(
-    device: Device.IntType,
-    buffer: Buffer.IntType,
-    memory: DeviceMemory.IntType,
+    device: Device,
+    buffer: Buffer,
+    memory: DeviceMemory,
     memoryOffset: DeviceSize,
 ) callconv(CallConv) Result;
 
 pub extern fn vkBindImageMemory(
-    device: Device.IntType,
-    image: Image.IntType,
-    memory: DeviceMemory.IntType,
+    device: Device,
+    image: Image,
+    memory: DeviceMemory,
     memoryOffset: DeviceSize,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetBufferMemoryRequirements(
-    device: Device.IntType,
-    buffer: Buffer.IntType,
+    device: Device,
+    buffer: Buffer,
     pMemoryRequirements: *MemoryRequirements,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetImageMemoryRequirements(
-    device: Device.IntType,
-    image: Image.IntType,
+    device: Device,
+    image: Image,
     pMemoryRequirements: *MemoryRequirements,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetImageSparseMemoryRequirements(
-    device: Device.IntType,
-    image: Image.IntType,
+    device: Device,
+    image: Image,
     pSparseMemoryRequirementCount: *u32,
     pSparseMemoryRequirements: ?[*]SparseImageMemoryRequirements,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetPhysicalDeviceSparseImageFormatProperties(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     format: Format,
     inType: ImageType,
     samples: SampleCountFlags.IntType,
@@ -4352,38 +4340,38 @@ pub extern fn vkGetPhysicalDeviceSparseImageFormatProperties(
 ) callconv(CallConv) void;
 
 pub extern fn vkQueueBindSparse(
-    queue: Queue.IntType,
+    queue: Queue,
     bindInfoCount: u32,
     pBindInfo: [*]const BindSparseInfo,
-    fence: Fence.IntType,
+    fence: Fence,
 ) callconv(CallConv) Result;
 
 pub extern fn vkCreateFence(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const FenceCreateInfo,
     pAllocator: ?*const AllocationCallbacks,
     pFence: *Fence,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyFence(
-    device: Device.IntType,
-    fence: Fence.IntType,
+    device: Device,
+    fence: Fence,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkResetFences(
-    device: Device.IntType,
+    device: Device,
     fenceCount: u32,
     pFences: [*]const Fence,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetFenceStatus(
-    device: Device.IntType,
-    fence: Fence.IntType,
+    device: Device,
+    fence: Fence,
 ) callconv(CallConv) Result;
 
 pub extern fn vkWaitForFences(
-    device: Device.IntType,
+    device: Device,
     fenceCount: u32,
     pFences: [*]const Fence,
     waitAll: Bool32,
@@ -4391,62 +4379,62 @@ pub extern fn vkWaitForFences(
 ) callconv(CallConv) Result;
 
 pub extern fn vkCreateSemaphore(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const SemaphoreCreateInfo,
     pAllocator: ?*const AllocationCallbacks,
     pSemaphore: *Semaphore,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroySemaphore(
-    device: Device.IntType,
-    semaphore: Semaphore.IntType,
+    device: Device,
+    semaphore: Semaphore,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkCreateEvent(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const EventCreateInfo,
     pAllocator: ?*const AllocationCallbacks,
     pEvent: *Event,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyEvent(
-    device: Device.IntType,
-    event: Event.IntType,
+    device: Device,
+    event: Event,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetEventStatus(
-    device: Device.IntType,
-    event: Event.IntType,
+    device: Device,
+    event: Event,
 ) callconv(CallConv) Result;
 
 pub extern fn vkSetEvent(
-    device: Device.IntType,
-    event: Event.IntType,
+    device: Device,
+    event: Event,
 ) callconv(CallConv) Result;
 
 pub extern fn vkResetEvent(
-    device: Device.IntType,
-    event: Event.IntType,
+    device: Device,
+    event: Event,
 ) callconv(CallConv) Result;
 
 pub extern fn vkCreateQueryPool(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const QueryPoolCreateInfo,
     pAllocator: ?*const AllocationCallbacks,
     pQueryPool: *QueryPool,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyQueryPool(
-    device: Device.IntType,
-    queryPool: QueryPool.IntType,
+    device: Device,
+    queryPool: QueryPool,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetQueryPoolResults(
-    device: Device.IntType,
-    queryPool: QueryPool.IntType,
+    device: Device,
+    queryPool: QueryPool,
     firstQuery: u32,
     queryCount: u32,
     dataSize: usize,
@@ -4456,107 +4444,107 @@ pub extern fn vkGetQueryPoolResults(
 ) callconv(CallConv) Result;
 
 pub extern fn vkCreateBuffer(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const BufferCreateInfo,
     pAllocator: ?*const AllocationCallbacks,
     pBuffer: *Buffer,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyBuffer(
-    device: Device.IntType,
-    buffer: Buffer.IntType,
+    device: Device,
+    buffer: Buffer,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkCreateBufferView(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const BufferViewCreateInfo,
     pAllocator: ?*const AllocationCallbacks,
     pView: *BufferView,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyBufferView(
-    device: Device.IntType,
-    bufferView: BufferView.IntType,
+    device: Device,
+    bufferView: BufferView,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkCreateImage(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const ImageCreateInfo,
     pAllocator: ?*const AllocationCallbacks,
     pImage: *Image,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyImage(
-    device: Device.IntType,
-    image: Image.IntType,
+    device: Device,
+    image: Image,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetImageSubresourceLayout(
-    device: Device.IntType,
-    image: Image.IntType,
+    device: Device,
+    image: Image,
     pSubresource: *const ImageSubresource,
     pLayout: *SubresourceLayout,
 ) callconv(CallConv) void;
 
 pub extern fn vkCreateImageView(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const ImageViewCreateInfo,
     pAllocator: ?*const AllocationCallbacks,
     pView: *ImageView,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyImageView(
-    device: Device.IntType,
-    imageView: ImageView.IntType,
+    device: Device,
+    imageView: ImageView,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkCreateShaderModule(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const ShaderModuleCreateInfo,
     pAllocator: ?*const AllocationCallbacks,
     pShaderModule: *ShaderModule,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyShaderModule(
-    device: Device.IntType,
-    shaderModule: ShaderModule.IntType,
+    device: Device,
+    shaderModule: ShaderModule,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkCreatePipelineCache(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const PipelineCacheCreateInfo,
     pAllocator: ?*const AllocationCallbacks,
     pPipelineCache: *PipelineCache,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyPipelineCache(
-    device: Device.IntType,
-    pipelineCache: PipelineCache.IntType,
+    device: Device,
+    pipelineCache: PipelineCache,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetPipelineCacheData(
-    device: Device.IntType,
-    pipelineCache: PipelineCache.IntType,
+    device: Device,
+    pipelineCache: PipelineCache,
     pDataSize: *usize,
     pData: ?*c_void,
 ) callconv(CallConv) Result;
 
 pub extern fn vkMergePipelineCaches(
-    device: Device.IntType,
-    dstCache: PipelineCache.IntType,
+    device: Device,
+    dstCache: PipelineCache,
     srcCacheCount: u32,
     pSrcCaches: [*]const PipelineCache,
 ) callconv(CallConv) Result;
 
 pub extern fn vkCreateGraphicsPipelines(
-    device: Device.IntType,
-    pipelineCache: PipelineCache.IntType,
+    device: Device,
+    pipelineCache: PipelineCache,
     createInfoCount: u32,
     pCreateInfos: [*]const GraphicsPipelineCreateInfo,
     pAllocator: ?*const AllocationCallbacks,
@@ -4564,8 +4552,8 @@ pub extern fn vkCreateGraphicsPipelines(
 ) callconv(CallConv) Result;
 
 pub extern fn vkCreateComputePipelines(
-    device: Device.IntType,
-    pipelineCache: PipelineCache.IntType,
+    device: Device,
+    pipelineCache: PipelineCache,
     createInfoCount: u32,
     pCreateInfos: [*]const ComputePipelineCreateInfo,
     pAllocator: ?*const AllocationCallbacks,
@@ -4573,84 +4561,84 @@ pub extern fn vkCreateComputePipelines(
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyPipeline(
-    device: Device.IntType,
-    pipeline: Pipeline.IntType,
+    device: Device,
+    pipeline: Pipeline,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkCreatePipelineLayout(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const PipelineLayoutCreateInfo,
     pAllocator: ?*const AllocationCallbacks,
     pPipelineLayout: *PipelineLayout,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyPipelineLayout(
-    device: Device.IntType,
-    pipelineLayout: PipelineLayout.IntType,
+    device: Device,
+    pipelineLayout: PipelineLayout,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkCreateSampler(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const SamplerCreateInfo,
     pAllocator: ?*const AllocationCallbacks,
     pSampler: *Sampler,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroySampler(
-    device: Device.IntType,
-    sampler: Sampler.IntType,
+    device: Device,
+    sampler: Sampler,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkCreateDescriptorSetLayout(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const DescriptorSetLayoutCreateInfo,
     pAllocator: ?*const AllocationCallbacks,
     pSetLayout: *DescriptorSetLayout,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyDescriptorSetLayout(
-    device: Device.IntType,
-    descriptorSetLayout: DescriptorSetLayout.IntType,
+    device: Device,
+    descriptorSetLayout: DescriptorSetLayout,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkCreateDescriptorPool(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const DescriptorPoolCreateInfo,
     pAllocator: ?*const AllocationCallbacks,
     pDescriptorPool: *DescriptorPool,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyDescriptorPool(
-    device: Device.IntType,
-    descriptorPool: DescriptorPool.IntType,
+    device: Device,
+    descriptorPool: DescriptorPool,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkResetDescriptorPool(
-    device: Device.IntType,
-    descriptorPool: DescriptorPool.IntType,
+    device: Device,
+    descriptorPool: DescriptorPool,
     flags: DescriptorPoolResetFlags.IntType,
 ) callconv(CallConv) Result;
 
 pub extern fn vkAllocateDescriptorSets(
-    device: Device.IntType,
+    device: Device,
     pAllocateInfo: *const DescriptorSetAllocateInfo,
     pDescriptorSets: [*]DescriptorSet,
 ) callconv(CallConv) Result;
 
 pub extern fn vkFreeDescriptorSets(
-    device: Device.IntType,
-    descriptorPool: DescriptorPool.IntType,
+    device: Device,
+    descriptorPool: DescriptorPool,
     descriptorSetCount: u32,
     pDescriptorSets: [*]const DescriptorSet,
 ) callconv(CallConv) Result;
 
 pub extern fn vkUpdateDescriptorSets(
-    device: Device.IntType,
+    device: Device,
     descriptorWriteCount: u32,
     pDescriptorWrites: [*]const WriteDescriptorSet,
     descriptorCopyCount: u32,
@@ -4658,146 +4646,146 @@ pub extern fn vkUpdateDescriptorSets(
 ) callconv(CallConv) void;
 
 pub extern fn vkCreateFramebuffer(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const FramebufferCreateInfo,
     pAllocator: ?*const AllocationCallbacks,
     pFramebuffer: *Framebuffer,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyFramebuffer(
-    device: Device.IntType,
-    framebuffer: Framebuffer.IntType,
+    device: Device,
+    framebuffer: Framebuffer,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkCreateRenderPass(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const RenderPassCreateInfo,
     pAllocator: ?*const AllocationCallbacks,
     pRenderPass: *RenderPass,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyRenderPass(
-    device: Device.IntType,
-    renderPass: RenderPass.IntType,
+    device: Device,
+    renderPass: RenderPass,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetRenderAreaGranularity(
-    device: Device.IntType,
-    renderPass: RenderPass.IntType,
+    device: Device,
+    renderPass: RenderPass,
     pGranularity: *Extent2D,
 ) callconv(CallConv) void;
 
 pub extern fn vkCreateCommandPool(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const CommandPoolCreateInfo,
     pAllocator: ?*const AllocationCallbacks,
     pCommandPool: *CommandPool,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyCommandPool(
-    device: Device.IntType,
-    commandPool: CommandPool.IntType,
+    device: Device,
+    commandPool: CommandPool,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkResetCommandPool(
-    device: Device.IntType,
-    commandPool: CommandPool.IntType,
+    device: Device,
+    commandPool: CommandPool,
     flags: CommandPoolResetFlags.IntType,
 ) callconv(CallConv) Result;
 
 pub extern fn vkAllocateCommandBuffers(
-    device: Device.IntType,
+    device: Device,
     pAllocateInfo: *const CommandBufferAllocateInfo,
     pCommandBuffers: [*]CommandBuffer,
 ) callconv(CallConv) Result;
 
 pub extern fn vkFreeCommandBuffers(
-    device: Device.IntType,
-    commandPool: CommandPool.IntType,
+    device: Device,
+    commandPool: CommandPool,
     commandBufferCount: u32,
     pCommandBuffers: [*]const CommandBuffer,
 ) callconv(CallConv) void;
 
 pub extern fn vkBeginCommandBuffer(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pBeginInfo: *const CommandBufferBeginInfo,
 ) callconv(CallConv) Result;
 
-pub extern fn vkEndCommandBuffer(commandBuffer: CommandBuffer.IntType) callconv(CallConv) Result;
+pub extern fn vkEndCommandBuffer(commandBuffer: CommandBuffer) callconv(CallConv) Result;
 
 pub extern fn vkResetCommandBuffer(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     flags: CommandBufferResetFlags.IntType,
 ) callconv(CallConv) Result;
 
 pub extern fn vkCmdBindPipeline(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pipelineBindPoint: PipelineBindPoint,
-    pipeline: Pipeline.IntType,
+    pipeline: Pipeline,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdSetViewport(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     firstViewport: u32,
     viewportCount: u32,
     pViewports: [*]const Viewport,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdSetScissor(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     firstScissor: u32,
     scissorCount: u32,
     pScissors: [*]const Rect2D,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdSetLineWidth(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     lineWidth: f32,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdSetDepthBias(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     depthBiasConstantFactor: f32,
     depthBiasClamp: f32,
     depthBiasSlopeFactor: f32,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdSetBlendConstants(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     blendConstants: *const[4]f32,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdSetDepthBounds(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     minDepthBounds: f32,
     maxDepthBounds: f32,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdSetStencilCompareMask(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     faceMask: StencilFaceFlags.IntType,
     compareMask: u32,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdSetStencilWriteMask(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     faceMask: StencilFaceFlags.IntType,
     writeMask: u32,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdSetStencilReference(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     faceMask: StencilFaceFlags.IntType,
     reference: u32,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdBindDescriptorSets(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pipelineBindPoint: PipelineBindPoint,
-    layout: PipelineLayout.IntType,
+    layout: PipelineLayout,
     firstSet: u32,
     descriptorSetCount: u32,
     pDescriptorSets: [*]const DescriptorSet,
@@ -4806,14 +4794,14 @@ pub extern fn vkCmdBindDescriptorSets(
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdBindIndexBuffer(
-    commandBuffer: CommandBuffer.IntType,
-    buffer: Buffer.IntType,
+    commandBuffer: CommandBuffer,
+    buffer: Buffer,
     offset: DeviceSize,
     indexType: IndexType,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdBindVertexBuffers(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     firstBinding: u32,
     bindingCount: u32,
     pBuffers: [*]const Buffer,
@@ -4821,7 +4809,7 @@ pub extern fn vkCmdBindVertexBuffers(
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdDraw(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     vertexCount: u32,
     instanceCount: u32,
     firstVertex: u32,
@@ -4829,7 +4817,7 @@ pub extern fn vkCmdDraw(
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdDrawIndexed(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     indexCount: u32,
     instanceCount: u32,
     firstIndex: u32,
@@ -4838,57 +4826,57 @@ pub extern fn vkCmdDrawIndexed(
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdDrawIndirect(
-    commandBuffer: CommandBuffer.IntType,
-    buffer: Buffer.IntType,
+    commandBuffer: CommandBuffer,
+    buffer: Buffer,
     offset: DeviceSize,
     drawCount: u32,
     stride: u32,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdDrawIndexedIndirect(
-    commandBuffer: CommandBuffer.IntType,
-    buffer: Buffer.IntType,
+    commandBuffer: CommandBuffer,
+    buffer: Buffer,
     offset: DeviceSize,
     drawCount: u32,
     stride: u32,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdDispatch(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     groupCountX: u32,
     groupCountY: u32,
     groupCountZ: u32,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdDispatchIndirect(
-    commandBuffer: CommandBuffer.IntType,
-    buffer: Buffer.IntType,
+    commandBuffer: CommandBuffer,
+    buffer: Buffer,
     offset: DeviceSize,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdCopyBuffer(
-    commandBuffer: CommandBuffer.IntType,
-    srcBuffer: Buffer.IntType,
-    dstBuffer: Buffer.IntType,
+    commandBuffer: CommandBuffer,
+    srcBuffer: Buffer,
+    dstBuffer: Buffer,
     regionCount: u32,
     pRegions: [*]const BufferCopy,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdCopyImage(
-    commandBuffer: CommandBuffer.IntType,
-    srcImage: Image.IntType,
+    commandBuffer: CommandBuffer,
+    srcImage: Image,
     srcImageLayout: ImageLayout,
-    dstImage: Image.IntType,
+    dstImage: Image,
     dstImageLayout: ImageLayout,
     regionCount: u32,
     pRegions: [*]const ImageCopy,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdBlitImage(
-    commandBuffer: CommandBuffer.IntType,
-    srcImage: Image.IntType,
+    commandBuffer: CommandBuffer,
+    srcImage: Image,
     srcImageLayout: ImageLayout,
-    dstImage: Image.IntType,
+    dstImage: Image,
     dstImageLayout: ImageLayout,
     regionCount: u32,
     pRegions: [*]const ImageBlit,
@@ -4896,42 +4884,42 @@ pub extern fn vkCmdBlitImage(
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdCopyBufferToImage(
-    commandBuffer: CommandBuffer.IntType,
-    srcBuffer: Buffer.IntType,
-    dstImage: Image.IntType,
+    commandBuffer: CommandBuffer,
+    srcBuffer: Buffer,
+    dstImage: Image,
     dstImageLayout: ImageLayout,
     regionCount: u32,
     pRegions: [*]const BufferImageCopy,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdCopyImageToBuffer(
-    commandBuffer: CommandBuffer.IntType,
-    srcImage: Image.IntType,
+    commandBuffer: CommandBuffer,
+    srcImage: Image,
     srcImageLayout: ImageLayout,
-    dstBuffer: Buffer.IntType,
+    dstBuffer: Buffer,
     regionCount: u32,
     pRegions: [*]const BufferImageCopy,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdUpdateBuffer(
-    commandBuffer: CommandBuffer.IntType,
-    dstBuffer: Buffer.IntType,
+    commandBuffer: CommandBuffer,
+    dstBuffer: Buffer,
     dstOffset: DeviceSize,
     dataSize: DeviceSize,
     pData: ?*const c_void,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdFillBuffer(
-    commandBuffer: CommandBuffer.IntType,
-    dstBuffer: Buffer.IntType,
+    commandBuffer: CommandBuffer,
+    dstBuffer: Buffer,
     dstOffset: DeviceSize,
     size: DeviceSize,
     data: u32,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdClearColorImage(
-    commandBuffer: CommandBuffer.IntType,
-    image: Image.IntType,
+    commandBuffer: CommandBuffer,
+    image: Image,
     imageLayout: ImageLayout,
     pColor: *const ClearColorValue,
     rangeCount: u32,
@@ -4939,8 +4927,8 @@ pub extern fn vkCmdClearColorImage(
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdClearDepthStencilImage(
-    commandBuffer: CommandBuffer.IntType,
-    image: Image.IntType,
+    commandBuffer: CommandBuffer,
+    image: Image,
     imageLayout: ImageLayout,
     pDepthStencil: *const ClearDepthStencilValue,
     rangeCount: u32,
@@ -4948,7 +4936,7 @@ pub extern fn vkCmdClearDepthStencilImage(
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdClearAttachments(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     attachmentCount: u32,
     pAttachments: [*]const ClearAttachment,
     rectCount: u32,
@@ -4956,29 +4944,29 @@ pub extern fn vkCmdClearAttachments(
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdResolveImage(
-    commandBuffer: CommandBuffer.IntType,
-    srcImage: Image.IntType,
+    commandBuffer: CommandBuffer,
+    srcImage: Image,
     srcImageLayout: ImageLayout,
-    dstImage: Image.IntType,
+    dstImage: Image,
     dstImageLayout: ImageLayout,
     regionCount: u32,
     pRegions: [*]const ImageResolve,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdSetEvent(
-    commandBuffer: CommandBuffer.IntType,
-    event: Event.IntType,
+    commandBuffer: CommandBuffer,
+    event: Event,
     stageMask: PipelineStageFlags.IntType,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdResetEvent(
-    commandBuffer: CommandBuffer.IntType,
-    event: Event.IntType,
+    commandBuffer: CommandBuffer,
+    event: Event,
     stageMask: PipelineStageFlags.IntType,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdWaitEvents(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     eventCount: u32,
     pEvents: [*]const Event,
     srcStageMask: PipelineStageFlags.IntType,
@@ -4992,7 +4980,7 @@ pub extern fn vkCmdWaitEvents(
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdPipelineBarrier(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     srcStageMask: PipelineStageFlags.IntType,
     dstStageMask: PipelineStageFlags.IntType,
     dependencyFlags: DependencyFlags.IntType,
@@ -5005,46 +4993,46 @@ pub extern fn vkCmdPipelineBarrier(
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdBeginQuery(
-    commandBuffer: CommandBuffer.IntType,
-    queryPool: QueryPool.IntType,
+    commandBuffer: CommandBuffer,
+    queryPool: QueryPool,
     query: u32,
     flags: QueryControlFlags.IntType,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdEndQuery(
-    commandBuffer: CommandBuffer.IntType,
-    queryPool: QueryPool.IntType,
+    commandBuffer: CommandBuffer,
+    queryPool: QueryPool,
     query: u32,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdResetQueryPool(
-    commandBuffer: CommandBuffer.IntType,
-    queryPool: QueryPool.IntType,
+    commandBuffer: CommandBuffer,
+    queryPool: QueryPool,
     firstQuery: u32,
     queryCount: u32,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdWriteTimestamp(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pipelineStage: PipelineStageFlags.IntType,
-    queryPool: QueryPool.IntType,
+    queryPool: QueryPool,
     query: u32,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdCopyQueryPoolResults(
-    commandBuffer: CommandBuffer.IntType,
-    queryPool: QueryPool.IntType,
+    commandBuffer: CommandBuffer,
+    queryPool: QueryPool,
     firstQuery: u32,
     queryCount: u32,
-    dstBuffer: Buffer.IntType,
+    dstBuffer: Buffer,
     dstOffset: DeviceSize,
     stride: DeviceSize,
     flags: QueryResultFlags.IntType,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdPushConstants(
-    commandBuffer: CommandBuffer.IntType,
-    layout: PipelineLayout.IntType,
+    commandBuffer: CommandBuffer,
+    layout: PipelineLayout,
     stageFlags: ShaderStageFlags.IntType,
     offset: u32,
     size: u32,
@@ -5052,20 +5040,20 @@ pub extern fn vkCmdPushConstants(
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdBeginRenderPass(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pRenderPassBegin: *const RenderPassBeginInfo,
     contents: SubpassContents,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdNextSubpass(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     contents: SubpassContents,
 ) callconv(CallConv) void;
 
-pub extern fn vkCmdEndRenderPass(commandBuffer: CommandBuffer.IntType) callconv(CallConv) void;
+pub extern fn vkCmdEndRenderPass(commandBuffer: CommandBuffer) callconv(CallConv) void;
 
 pub extern fn vkCmdExecuteCommands(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     commandBufferCount: u32,
     pCommandBuffers: [*]const CommandBuffer,
 ) callconv(CallConv) void;
@@ -5087,9 +5075,7 @@ pub inline fn CreateInstance(createInfo: InstanceCreateInfo, pAllocator: ?*const
     return out_instance;
 }
 
-pub inline fn DestroyInstance(instance: Instance, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyInstance(instance.handle, pAllocator);
-}
+pub const DestroyInstance = vkDestroyInstance;
 
 pub const EnumeratePhysicalDevicesResult = struct {
     result: Result,
@@ -5098,7 +5084,7 @@ pub const EnumeratePhysicalDevicesResult = struct {
 pub inline fn EnumeratePhysicalDevices(instance: Instance, physicalDevices: []PhysicalDevice) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_INITIALIZATION_FAILED,VK_UNDOCUMENTED_ERROR}!EnumeratePhysicalDevicesResult {
     var returnValues: EnumeratePhysicalDevicesResult = undefined;
     var physicalDeviceCount: u32 = @intCast(u32, physicalDevices.len);
-    const result = vkEnumeratePhysicalDevices(instance.handle, &physicalDeviceCount, physicalDevices.ptr);
+    const result = vkEnumeratePhysicalDevices(instance, &physicalDeviceCount, physicalDevices.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5113,7 +5099,7 @@ pub inline fn EnumeratePhysicalDevices(instance: Instance, physicalDevices: []Ph
 }
 pub inline fn EnumeratePhysicalDevicesCount(instance: Instance) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_INITIALIZATION_FAILED,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_physicalDeviceCount: u32 = undefined;
-    const result = vkEnumeratePhysicalDevices(instance.handle, &out_physicalDeviceCount, null);
+    const result = vkEnumeratePhysicalDevices(instance, &out_physicalDeviceCount, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5127,19 +5113,19 @@ pub inline fn EnumeratePhysicalDevicesCount(instance: Instance) error{VK_OUT_OF_
 
 pub inline fn GetPhysicalDeviceFeatures(physicalDevice: PhysicalDevice) PhysicalDeviceFeatures {
     var out_features: PhysicalDeviceFeatures = undefined;
-    vkGetPhysicalDeviceFeatures(physicalDevice.handle, &out_features);
+    vkGetPhysicalDeviceFeatures(physicalDevice, &out_features);
     return out_features;
 }
 
 pub inline fn GetPhysicalDeviceFormatProperties(physicalDevice: PhysicalDevice, format: Format) FormatProperties {
     var out_formatProperties: FormatProperties = undefined;
-    vkGetPhysicalDeviceFormatProperties(physicalDevice.handle, format, &out_formatProperties);
+    vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &out_formatProperties);
     return out_formatProperties;
 }
 
 pub inline fn GetPhysicalDeviceImageFormatProperties(physicalDevice: PhysicalDevice, format: Format, inType: ImageType, tiling: ImageTiling, usage: ImageUsageFlags, flags: ImageCreateFlags) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_FORMAT_NOT_SUPPORTED,VK_UNDOCUMENTED_ERROR}!ImageFormatProperties {
     var out_imageFormatProperties: ImageFormatProperties = undefined;
-    const result = vkGetPhysicalDeviceImageFormatProperties(physicalDevice.handle, format, inType, tiling, usage.toInt(), flags.toInt(), &out_imageFormatProperties);
+    const result = vkGetPhysicalDeviceImageFormatProperties(physicalDevice, format, inType, tiling, usage.toInt(), flags.toInt(), &out_imageFormatProperties);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5153,42 +5139,35 @@ pub inline fn GetPhysicalDeviceImageFormatProperties(physicalDevice: PhysicalDev
 
 pub inline fn GetPhysicalDeviceProperties(physicalDevice: PhysicalDevice) PhysicalDeviceProperties {
     var out_properties: PhysicalDeviceProperties = undefined;
-    vkGetPhysicalDeviceProperties(physicalDevice.handle, &out_properties);
+    vkGetPhysicalDeviceProperties(physicalDevice, &out_properties);
     return out_properties;
 }
 
 pub inline fn GetPhysicalDeviceQueueFamilyProperties(physicalDevice: PhysicalDevice, queueFamilyProperties: []QueueFamilyProperties) []QueueFamilyProperties {
     var out_queueFamilyProperties: []QueueFamilyProperties = undefined;
     var queueFamilyPropertyCount: u32 = @intCast(u32, queueFamilyProperties.len);
-    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice.handle, &queueFamilyPropertyCount, queueFamilyProperties.ptr);
+    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyPropertyCount, queueFamilyProperties.ptr);
     out_queueFamilyProperties = queueFamilyProperties[0..queueFamilyPropertyCount];
     return out_queueFamilyProperties;
 }
 pub inline fn GetPhysicalDeviceQueueFamilyPropertiesCount(physicalDevice: PhysicalDevice) u32 {
     var out_queueFamilyPropertyCount: u32 = undefined;
-    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice.handle, &out_queueFamilyPropertyCount, null);
+    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &out_queueFamilyPropertyCount, null);
     return out_queueFamilyPropertyCount;
 }
 
 pub inline fn GetPhysicalDeviceMemoryProperties(physicalDevice: PhysicalDevice) PhysicalDeviceMemoryProperties {
     var out_memoryProperties: PhysicalDeviceMemoryProperties = undefined;
-    vkGetPhysicalDeviceMemoryProperties(physicalDevice.handle, &out_memoryProperties);
+    vkGetPhysicalDeviceMemoryProperties(physicalDevice, &out_memoryProperties);
     return out_memoryProperties;
 }
 
-pub inline fn GetInstanceProcAddr(instance: Instance, pName: CString) PFN_VoidFunction {
-    const result = vkGetInstanceProcAddr(instance.handle, pName);
-    return result;
-}
-
-pub inline fn GetDeviceProcAddr(device: Device, pName: CString) PFN_VoidFunction {
-    const result = vkGetDeviceProcAddr(device.handle, pName);
-    return result;
-}
+pub const GetInstanceProcAddr = vkGetInstanceProcAddr;
+pub const GetDeviceProcAddr = vkGetDeviceProcAddr;
 
 pub inline fn CreateDevice(physicalDevice: PhysicalDevice, createInfo: DeviceCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_INITIALIZATION_FAILED,VK_EXTENSION_NOT_PRESENT,VK_FEATURE_NOT_PRESENT,VK_TOO_MANY_OBJECTS,VK_DEVICE_LOST,VK_UNDOCUMENTED_ERROR}!Device {
     var out_device: Device = undefined;
-    const result = vkCreateDevice(physicalDevice.handle, &createInfo, pAllocator, &out_device);
+    const result = vkCreateDevice(physicalDevice, &createInfo, pAllocator, &out_device);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5204,9 +5183,7 @@ pub inline fn CreateDevice(physicalDevice: PhysicalDevice, createInfo: DeviceCre
     return out_device;
 }
 
-pub inline fn DestroyDevice(device: Device, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyDevice(device.handle, pAllocator);
-}
+pub const DestroyDevice = vkDestroyDevice;
 
 pub const EnumerateInstanceExtensionPropertiesResult = struct {
     result: Result,
@@ -5249,7 +5226,7 @@ pub const EnumerateDeviceExtensionPropertiesResult = struct {
 pub inline fn EnumerateDeviceExtensionProperties(physicalDevice: PhysicalDevice, pLayerName: ?CString, properties: []ExtensionProperties) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_LAYER_NOT_PRESENT,VK_UNDOCUMENTED_ERROR}!EnumerateDeviceExtensionPropertiesResult {
     var returnValues: EnumerateDeviceExtensionPropertiesResult = undefined;
     var propertyCount: u32 = @intCast(u32, properties.len);
-    const result = vkEnumerateDeviceExtensionProperties(physicalDevice.handle, pLayerName, &propertyCount, properties.ptr);
+    const result = vkEnumerateDeviceExtensionProperties(physicalDevice, pLayerName, &propertyCount, properties.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5264,7 +5241,7 @@ pub inline fn EnumerateDeviceExtensionProperties(physicalDevice: PhysicalDevice,
 }
 pub inline fn EnumerateDeviceExtensionPropertiesCount(physicalDevice: PhysicalDevice, pLayerName: ?CString) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_LAYER_NOT_PRESENT,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_propertyCount: u32 = undefined;
-    const result = vkEnumerateDeviceExtensionProperties(physicalDevice.handle, pLayerName, &out_propertyCount, null);
+    const result = vkEnumerateDeviceExtensionProperties(physicalDevice, pLayerName, &out_propertyCount, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5315,7 +5292,7 @@ pub const EnumerateDeviceLayerPropertiesResult = struct {
 pub inline fn EnumerateDeviceLayerProperties(physicalDevice: PhysicalDevice, properties: []LayerProperties) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!EnumerateDeviceLayerPropertiesResult {
     var returnValues: EnumerateDeviceLayerPropertiesResult = undefined;
     var propertyCount: u32 = @intCast(u32, properties.len);
-    const result = vkEnumerateDeviceLayerProperties(physicalDevice.handle, &propertyCount, properties.ptr);
+    const result = vkEnumerateDeviceLayerProperties(physicalDevice, &propertyCount, properties.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5329,7 +5306,7 @@ pub inline fn EnumerateDeviceLayerProperties(physicalDevice: PhysicalDevice, pro
 }
 pub inline fn EnumerateDeviceLayerPropertiesCount(physicalDevice: PhysicalDevice) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_propertyCount: u32 = undefined;
-    const result = vkEnumerateDeviceLayerProperties(physicalDevice.handle, &out_propertyCount, null);
+    const result = vkEnumerateDeviceLayerProperties(physicalDevice, &out_propertyCount, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5342,12 +5319,12 @@ pub inline fn EnumerateDeviceLayerPropertiesCount(physicalDevice: PhysicalDevice
 
 pub inline fn GetDeviceQueue(device: Device, queueFamilyIndex: u32, queueIndex: u32) Queue {
     var out_queue: Queue = undefined;
-    vkGetDeviceQueue(device.handle, queueFamilyIndex, queueIndex, &out_queue);
+    vkGetDeviceQueue(device, queueFamilyIndex, queueIndex, &out_queue);
     return out_queue;
 }
 
 pub inline fn QueueSubmit(queue: Queue, submits: []const SubmitInfo, fence: Fence) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_DEVICE_LOST,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkQueueSubmit(queue.handle, @intCast(u32, submits.len), submits.ptr, fence.handle);
+    const result = vkQueueSubmit(queue, @intCast(u32, submits.len), submits.ptr, fence);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5359,7 +5336,7 @@ pub inline fn QueueSubmit(queue: Queue, submits: []const SubmitInfo, fence: Fenc
 }
 
 pub inline fn QueueWaitIdle(queue: Queue) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_DEVICE_LOST,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkQueueWaitIdle(queue.handle);
+    const result = vkQueueWaitIdle(queue);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5371,7 +5348,7 @@ pub inline fn QueueWaitIdle(queue: Queue) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_
 }
 
 pub inline fn DeviceWaitIdle(device: Device) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_DEVICE_LOST,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkDeviceWaitIdle(device.handle);
+    const result = vkDeviceWaitIdle(device);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5384,7 +5361,7 @@ pub inline fn DeviceWaitIdle(device: Device) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_
 
 pub inline fn AllocateMemory(device: Device, allocateInfo: MemoryAllocateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_TOO_MANY_OBJECTS,VK_INVALID_EXTERNAL_HANDLE,VK_INVALID_OPAQUE_CAPTURE_ADDRESS,VK_UNDOCUMENTED_ERROR}!DeviceMemory {
     var out_memory: DeviceMemory = undefined;
-    const result = vkAllocateMemory(device.handle, &allocateInfo, pAllocator, &out_memory);
+    const result = vkAllocateMemory(device, &allocateInfo, pAllocator, &out_memory);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5398,12 +5375,10 @@ pub inline fn AllocateMemory(device: Device, allocateInfo: MemoryAllocateInfo, p
     return out_memory;
 }
 
-pub inline fn FreeMemory(device: Device, memory: DeviceMemory, pAllocator: ?*const AllocationCallbacks) void {
-    vkFreeMemory(device.handle, memory.handle, pAllocator);
-}
+pub const FreeMemory = vkFreeMemory;
 
 pub inline fn MapMemory(device: Device, memory: DeviceMemory, offset: DeviceSize, size: DeviceSize, flags: MemoryMapFlags, ppData: ?**c_void) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_MEMORY_MAP_FAILED,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkMapMemory(device.handle, memory.handle, offset, size, flags.toInt(), ppData);
+    const result = vkMapMemory(device, memory, offset, size, flags.toInt(), ppData);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5414,12 +5389,10 @@ pub inline fn MapMemory(device: Device, memory: DeviceMemory, offset: DeviceSize
     }
 }
 
-pub inline fn UnmapMemory(device: Device, memory: DeviceMemory) void {
-    vkUnmapMemory(device.handle, memory.handle);
-}
+pub const UnmapMemory = vkUnmapMemory;
 
 pub inline fn FlushMappedMemoryRanges(device: Device, memoryRanges: []const MappedMemoryRange) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkFlushMappedMemoryRanges(device.handle, @intCast(u32, memoryRanges.len), memoryRanges.ptr);
+    const result = vkFlushMappedMemoryRanges(device, @intCast(u32, memoryRanges.len), memoryRanges.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5430,7 +5403,7 @@ pub inline fn FlushMappedMemoryRanges(device: Device, memoryRanges: []const Mapp
 }
 
 pub inline fn InvalidateMappedMemoryRanges(device: Device, memoryRanges: []const MappedMemoryRange) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkInvalidateMappedMemoryRanges(device.handle, @intCast(u32, memoryRanges.len), memoryRanges.ptr);
+    const result = vkInvalidateMappedMemoryRanges(device, @intCast(u32, memoryRanges.len), memoryRanges.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5442,12 +5415,12 @@ pub inline fn InvalidateMappedMemoryRanges(device: Device, memoryRanges: []const
 
 pub inline fn GetDeviceMemoryCommitment(device: Device, memory: DeviceMemory) DeviceSize {
     var out_committedMemoryInBytes: DeviceSize = undefined;
-    vkGetDeviceMemoryCommitment(device.handle, memory.handle, &out_committedMemoryInBytes);
+    vkGetDeviceMemoryCommitment(device, memory, &out_committedMemoryInBytes);
     return out_committedMemoryInBytes;
 }
 
 pub inline fn BindBufferMemory(device: Device, buffer: Buffer, memory: DeviceMemory, memoryOffset: DeviceSize) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_INVALID_OPAQUE_CAPTURE_ADDRESS,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkBindBufferMemory(device.handle, buffer.handle, memory.handle, memoryOffset);
+    const result = vkBindBufferMemory(device, buffer, memory, memoryOffset);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5459,7 +5432,7 @@ pub inline fn BindBufferMemory(device: Device, buffer: Buffer, memory: DeviceMem
 }
 
 pub inline fn BindImageMemory(device: Device, image: Image, memory: DeviceMemory, memoryOffset: DeviceSize) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkBindImageMemory(device.handle, image.handle, memory.handle, memoryOffset);
+    const result = vkBindImageMemory(device, image, memory, memoryOffset);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5471,44 +5444,44 @@ pub inline fn BindImageMemory(device: Device, image: Image, memory: DeviceMemory
 
 pub inline fn GetBufferMemoryRequirements(device: Device, buffer: Buffer) MemoryRequirements {
     var out_memoryRequirements: MemoryRequirements = undefined;
-    vkGetBufferMemoryRequirements(device.handle, buffer.handle, &out_memoryRequirements);
+    vkGetBufferMemoryRequirements(device, buffer, &out_memoryRequirements);
     return out_memoryRequirements;
 }
 
 pub inline fn GetImageMemoryRequirements(device: Device, image: Image) MemoryRequirements {
     var out_memoryRequirements: MemoryRequirements = undefined;
-    vkGetImageMemoryRequirements(device.handle, image.handle, &out_memoryRequirements);
+    vkGetImageMemoryRequirements(device, image, &out_memoryRequirements);
     return out_memoryRequirements;
 }
 
 pub inline fn GetImageSparseMemoryRequirements(device: Device, image: Image, sparseMemoryRequirements: []SparseImageMemoryRequirements) []SparseImageMemoryRequirements {
     var out_sparseMemoryRequirements: []SparseImageMemoryRequirements = undefined;
     var sparseMemoryRequirementCount: u32 = @intCast(u32, sparseMemoryRequirements.len);
-    vkGetImageSparseMemoryRequirements(device.handle, image.handle, &sparseMemoryRequirementCount, sparseMemoryRequirements.ptr);
+    vkGetImageSparseMemoryRequirements(device, image, &sparseMemoryRequirementCount, sparseMemoryRequirements.ptr);
     out_sparseMemoryRequirements = sparseMemoryRequirements[0..sparseMemoryRequirementCount];
     return out_sparseMemoryRequirements;
 }
 pub inline fn GetImageSparseMemoryRequirementsCount(device: Device, image: Image) u32 {
     var out_sparseMemoryRequirementCount: u32 = undefined;
-    vkGetImageSparseMemoryRequirements(device.handle, image.handle, &out_sparseMemoryRequirementCount, null);
+    vkGetImageSparseMemoryRequirements(device, image, &out_sparseMemoryRequirementCount, null);
     return out_sparseMemoryRequirementCount;
 }
 
 pub inline fn GetPhysicalDeviceSparseImageFormatProperties(physicalDevice: PhysicalDevice, format: Format, inType: ImageType, samples: SampleCountFlags, usage: ImageUsageFlags, tiling: ImageTiling, properties: []SparseImageFormatProperties) []SparseImageFormatProperties {
     var out_properties: []SparseImageFormatProperties = undefined;
     var propertyCount: u32 = @intCast(u32, properties.len);
-    vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevice.handle, format, inType, samples.toInt(), usage.toInt(), tiling, &propertyCount, properties.ptr);
+    vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevice, format, inType, samples.toInt(), usage.toInt(), tiling, &propertyCount, properties.ptr);
     out_properties = properties[0..propertyCount];
     return out_properties;
 }
 pub inline fn GetPhysicalDeviceSparseImageFormatPropertiesCount(physicalDevice: PhysicalDevice, format: Format, inType: ImageType, samples: SampleCountFlags, usage: ImageUsageFlags, tiling: ImageTiling) u32 {
     var out_propertyCount: u32 = undefined;
-    vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevice.handle, format, inType, samples.toInt(), usage.toInt(), tiling, &out_propertyCount, null);
+    vkGetPhysicalDeviceSparseImageFormatProperties(physicalDevice, format, inType, samples.toInt(), usage.toInt(), tiling, &out_propertyCount, null);
     return out_propertyCount;
 }
 
 pub inline fn QueueBindSparse(queue: Queue, bindInfo: []const BindSparseInfo, fence: Fence) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_DEVICE_LOST,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkQueueBindSparse(queue.handle, @intCast(u32, bindInfo.len), bindInfo.ptr, fence.handle);
+    const result = vkQueueBindSparse(queue, @intCast(u32, bindInfo.len), bindInfo.ptr, fence);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5521,7 +5494,7 @@ pub inline fn QueueBindSparse(queue: Queue, bindInfo: []const BindSparseInfo, fe
 
 pub inline fn CreateFence(device: Device, createInfo: FenceCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!Fence {
     var out_fence: Fence = undefined;
-    const result = vkCreateFence(device.handle, &createInfo, pAllocator, &out_fence);
+    const result = vkCreateFence(device, &createInfo, pAllocator, &out_fence);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5532,12 +5505,10 @@ pub inline fn CreateFence(device: Device, createInfo: FenceCreateInfo, pAllocato
     return out_fence;
 }
 
-pub inline fn DestroyFence(device: Device, fence: Fence, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyFence(device.handle, fence.handle, pAllocator);
-}
+pub const DestroyFence = vkDestroyFence;
 
 pub inline fn ResetFences(device: Device, fences: []const Fence) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkResetFences(device.handle, @intCast(u32, fences.len), fences.ptr);
+    const result = vkResetFences(device, @intCast(u32, fences.len), fences.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5548,7 +5519,7 @@ pub inline fn ResetFences(device: Device, fences: []const Fence) error{VK_OUT_OF
 }
 
 pub inline fn GetFenceStatus(device: Device, fence: Fence) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_DEVICE_LOST,VK_UNDOCUMENTED_ERROR}!Result {
-    const result = vkGetFenceStatus(device.handle, fence.handle);
+    const result = vkGetFenceStatus(device, fence);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5561,7 +5532,7 @@ pub inline fn GetFenceStatus(device: Device, fence: Fence) error{VK_OUT_OF_HOST_
 }
 
 pub inline fn WaitForFences(device: Device, fences: []const Fence, waitAll: Bool32, timeout: u64) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_DEVICE_LOST,VK_UNDOCUMENTED_ERROR}!Result {
-    const result = vkWaitForFences(device.handle, @intCast(u32, fences.len), fences.ptr, waitAll, timeout);
+    const result = vkWaitForFences(device, @intCast(u32, fences.len), fences.ptr, waitAll, timeout);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5575,7 +5546,7 @@ pub inline fn WaitForFences(device: Device, fences: []const Fence, waitAll: Bool
 
 pub inline fn CreateSemaphore(device: Device, createInfo: SemaphoreCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!Semaphore {
     var out_semaphore: Semaphore = undefined;
-    const result = vkCreateSemaphore(device.handle, &createInfo, pAllocator, &out_semaphore);
+    const result = vkCreateSemaphore(device, &createInfo, pAllocator, &out_semaphore);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5586,13 +5557,11 @@ pub inline fn CreateSemaphore(device: Device, createInfo: SemaphoreCreateInfo, p
     return out_semaphore;
 }
 
-pub inline fn DestroySemaphore(device: Device, semaphore: Semaphore, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroySemaphore(device.handle, semaphore.handle, pAllocator);
-}
+pub const DestroySemaphore = vkDestroySemaphore;
 
 pub inline fn CreateEvent(device: Device, createInfo: EventCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!Event {
     var out_event: Event = undefined;
-    const result = vkCreateEvent(device.handle, &createInfo, pAllocator, &out_event);
+    const result = vkCreateEvent(device, &createInfo, pAllocator, &out_event);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5603,12 +5572,10 @@ pub inline fn CreateEvent(device: Device, createInfo: EventCreateInfo, pAllocato
     return out_event;
 }
 
-pub inline fn DestroyEvent(device: Device, event: Event, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyEvent(device.handle, event.handle, pAllocator);
-}
+pub const DestroyEvent = vkDestroyEvent;
 
 pub inline fn GetEventStatus(device: Device, event: Event) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_DEVICE_LOST,VK_UNDOCUMENTED_ERROR}!Result {
-    const result = vkGetEventStatus(device.handle, event.handle);
+    const result = vkGetEventStatus(device, event);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5621,7 +5588,7 @@ pub inline fn GetEventStatus(device: Device, event: Event) error{VK_OUT_OF_HOST_
 }
 
 pub inline fn SetEvent(device: Device, event: Event) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkSetEvent(device.handle, event.handle);
+    const result = vkSetEvent(device, event);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5632,7 +5599,7 @@ pub inline fn SetEvent(device: Device, event: Event) error{VK_OUT_OF_HOST_MEMORY
 }
 
 pub inline fn ResetEvent(device: Device, event: Event) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkResetEvent(device.handle, event.handle);
+    const result = vkResetEvent(device, event);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5644,7 +5611,7 @@ pub inline fn ResetEvent(device: Device, event: Event) error{VK_OUT_OF_HOST_MEMO
 
 pub inline fn CreateQueryPool(device: Device, createInfo: QueryPoolCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!QueryPool {
     var out_queryPool: QueryPool = undefined;
-    const result = vkCreateQueryPool(device.handle, &createInfo, pAllocator, &out_queryPool);
+    const result = vkCreateQueryPool(device, &createInfo, pAllocator, &out_queryPool);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5655,12 +5622,10 @@ pub inline fn CreateQueryPool(device: Device, createInfo: QueryPoolCreateInfo, p
     return out_queryPool;
 }
 
-pub inline fn DestroyQueryPool(device: Device, queryPool: QueryPool, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyQueryPool(device.handle, queryPool.handle, pAllocator);
-}
+pub const DestroyQueryPool = vkDestroyQueryPool;
 
 pub inline fn GetQueryPoolResults(device: Device, queryPool: QueryPool, firstQuery: u32, queryCount: u32, data: []u8, stride: DeviceSize, flags: QueryResultFlags) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_DEVICE_LOST,VK_UNDOCUMENTED_ERROR}!Result {
-    const result = vkGetQueryPoolResults(device.handle, queryPool.handle, firstQuery, queryCount, @intCast(usize, data.len), data.ptr, stride, flags.toInt());
+    const result = vkGetQueryPoolResults(device, queryPool, firstQuery, queryCount, @intCast(usize, data.len), data.ptr, stride, flags.toInt());
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5674,7 +5639,7 @@ pub inline fn GetQueryPoolResults(device: Device, queryPool: QueryPool, firstQue
 
 pub inline fn CreateBuffer(device: Device, createInfo: BufferCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_INVALID_OPAQUE_CAPTURE_ADDRESS,VK_UNDOCUMENTED_ERROR}!Buffer {
     var out_buffer: Buffer = undefined;
-    const result = vkCreateBuffer(device.handle, &createInfo, pAllocator, &out_buffer);
+    const result = vkCreateBuffer(device, &createInfo, pAllocator, &out_buffer);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5686,13 +5651,11 @@ pub inline fn CreateBuffer(device: Device, createInfo: BufferCreateInfo, pAlloca
     return out_buffer;
 }
 
-pub inline fn DestroyBuffer(device: Device, buffer: Buffer, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyBuffer(device.handle, buffer.handle, pAllocator);
-}
+pub const DestroyBuffer = vkDestroyBuffer;
 
 pub inline fn CreateBufferView(device: Device, createInfo: BufferViewCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!BufferView {
     var out_view: BufferView = undefined;
-    const result = vkCreateBufferView(device.handle, &createInfo, pAllocator, &out_view);
+    const result = vkCreateBufferView(device, &createInfo, pAllocator, &out_view);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5703,13 +5666,11 @@ pub inline fn CreateBufferView(device: Device, createInfo: BufferViewCreateInfo,
     return out_view;
 }
 
-pub inline fn DestroyBufferView(device: Device, bufferView: BufferView, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyBufferView(device.handle, bufferView.handle, pAllocator);
-}
+pub const DestroyBufferView = vkDestroyBufferView;
 
 pub inline fn CreateImage(device: Device, createInfo: ImageCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!Image {
     var out_image: Image = undefined;
-    const result = vkCreateImage(device.handle, &createInfo, pAllocator, &out_image);
+    const result = vkCreateImage(device, &createInfo, pAllocator, &out_image);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5720,19 +5681,17 @@ pub inline fn CreateImage(device: Device, createInfo: ImageCreateInfo, pAllocato
     return out_image;
 }
 
-pub inline fn DestroyImage(device: Device, image: Image, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyImage(device.handle, image.handle, pAllocator);
-}
+pub const DestroyImage = vkDestroyImage;
 
 pub inline fn GetImageSubresourceLayout(device: Device, image: Image, subresource: ImageSubresource) SubresourceLayout {
     var out_layout: SubresourceLayout = undefined;
-    vkGetImageSubresourceLayout(device.handle, image.handle, &subresource, &out_layout);
+    vkGetImageSubresourceLayout(device, image, &subresource, &out_layout);
     return out_layout;
 }
 
 pub inline fn CreateImageView(device: Device, createInfo: ImageViewCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!ImageView {
     var out_view: ImageView = undefined;
-    const result = vkCreateImageView(device.handle, &createInfo, pAllocator, &out_view);
+    const result = vkCreateImageView(device, &createInfo, pAllocator, &out_view);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5743,13 +5702,11 @@ pub inline fn CreateImageView(device: Device, createInfo: ImageViewCreateInfo, p
     return out_view;
 }
 
-pub inline fn DestroyImageView(device: Device, imageView: ImageView, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyImageView(device.handle, imageView.handle, pAllocator);
-}
+pub const DestroyImageView = vkDestroyImageView;
 
 pub inline fn CreateShaderModule(device: Device, createInfo: ShaderModuleCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_INVALID_SHADER_NV,VK_UNDOCUMENTED_ERROR}!ShaderModule {
     var out_shaderModule: ShaderModule = undefined;
-    const result = vkCreateShaderModule(device.handle, &createInfo, pAllocator, &out_shaderModule);
+    const result = vkCreateShaderModule(device, &createInfo, pAllocator, &out_shaderModule);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5761,13 +5718,11 @@ pub inline fn CreateShaderModule(device: Device, createInfo: ShaderModuleCreateI
     return out_shaderModule;
 }
 
-pub inline fn DestroyShaderModule(device: Device, shaderModule: ShaderModule, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyShaderModule(device.handle, shaderModule.handle, pAllocator);
-}
+pub const DestroyShaderModule = vkDestroyShaderModule;
 
 pub inline fn CreatePipelineCache(device: Device, createInfo: PipelineCacheCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!PipelineCache {
     var out_pipelineCache: PipelineCache = undefined;
-    const result = vkCreatePipelineCache(device.handle, &createInfo, pAllocator, &out_pipelineCache);
+    const result = vkCreatePipelineCache(device, &createInfo, pAllocator, &out_pipelineCache);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5778,9 +5733,7 @@ pub inline fn CreatePipelineCache(device: Device, createInfo: PipelineCacheCreat
     return out_pipelineCache;
 }
 
-pub inline fn DestroyPipelineCache(device: Device, pipelineCache: PipelineCache, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyPipelineCache(device.handle, pipelineCache.handle, pAllocator);
-}
+pub const DestroyPipelineCache = vkDestroyPipelineCache;
 
 pub const GetPipelineCacheDataResult = struct {
     result: Result,
@@ -5789,7 +5742,7 @@ pub const GetPipelineCacheDataResult = struct {
 pub inline fn GetPipelineCacheData(device: Device, pipelineCache: PipelineCache, data: []u8) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!GetPipelineCacheDataResult {
     var returnValues: GetPipelineCacheDataResult = undefined;
     var dataSize: usize = @intCast(usize, data.len);
-    const result = vkGetPipelineCacheData(device.handle, pipelineCache.handle, &dataSize, data.ptr);
+    const result = vkGetPipelineCacheData(device, pipelineCache, &dataSize, data.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5803,7 +5756,7 @@ pub inline fn GetPipelineCacheData(device: Device, pipelineCache: PipelineCache,
 }
 pub inline fn GetPipelineCacheDataCount(device: Device, pipelineCache: PipelineCache) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!usize {
     var out_dataSize: usize = undefined;
-    const result = vkGetPipelineCacheData(device.handle, pipelineCache.handle, &out_dataSize, null);
+    const result = vkGetPipelineCacheData(device, pipelineCache, &out_dataSize, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5815,7 +5768,7 @@ pub inline fn GetPipelineCacheDataCount(device: Device, pipelineCache: PipelineC
 }
 
 pub inline fn MergePipelineCaches(device: Device, dstCache: PipelineCache, srcCaches: []const PipelineCache) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkMergePipelineCaches(device.handle, dstCache.handle, @intCast(u32, srcCaches.len), srcCaches.ptr);
+    const result = vkMergePipelineCaches(device, dstCache, @intCast(u32, srcCaches.len), srcCaches.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5827,7 +5780,7 @@ pub inline fn MergePipelineCaches(device: Device, dstCache: PipelineCache, srcCa
 
 pub inline fn CreateGraphicsPipelines(device: Device, pipelineCache: PipelineCache, createInfos: []const GraphicsPipelineCreateInfo, pAllocator: ?*const AllocationCallbacks, pipelines: []Pipeline) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_INVALID_SHADER_NV,VK_UNDOCUMENTED_ERROR}!void {
     assert(pipelines.len >= createInfos.len);
-    const result = vkCreateGraphicsPipelines(device.handle, pipelineCache.handle, @intCast(u32, createInfos.len), createInfos.ptr, pAllocator, pipelines.ptr);
+    const result = vkCreateGraphicsPipelines(device, pipelineCache, @intCast(u32, createInfos.len), createInfos.ptr, pAllocator, pipelines.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5840,7 +5793,7 @@ pub inline fn CreateGraphicsPipelines(device: Device, pipelineCache: PipelineCac
 
 pub inline fn CreateComputePipelines(device: Device, pipelineCache: PipelineCache, createInfos: []const ComputePipelineCreateInfo, pAllocator: ?*const AllocationCallbacks, pipelines: []Pipeline) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_INVALID_SHADER_NV,VK_UNDOCUMENTED_ERROR}!void {
     assert(pipelines.len >= createInfos.len);
-    const result = vkCreateComputePipelines(device.handle, pipelineCache.handle, @intCast(u32, createInfos.len), createInfos.ptr, pAllocator, pipelines.ptr);
+    const result = vkCreateComputePipelines(device, pipelineCache, @intCast(u32, createInfos.len), createInfos.ptr, pAllocator, pipelines.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5851,13 +5804,11 @@ pub inline fn CreateComputePipelines(device: Device, pipelineCache: PipelineCach
     }
 }
 
-pub inline fn DestroyPipeline(device: Device, pipeline: Pipeline, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyPipeline(device.handle, pipeline.handle, pAllocator);
-}
+pub const DestroyPipeline = vkDestroyPipeline;
 
 pub inline fn CreatePipelineLayout(device: Device, createInfo: PipelineLayoutCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!PipelineLayout {
     var out_pipelineLayout: PipelineLayout = undefined;
-    const result = vkCreatePipelineLayout(device.handle, &createInfo, pAllocator, &out_pipelineLayout);
+    const result = vkCreatePipelineLayout(device, &createInfo, pAllocator, &out_pipelineLayout);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5868,13 +5819,11 @@ pub inline fn CreatePipelineLayout(device: Device, createInfo: PipelineLayoutCre
     return out_pipelineLayout;
 }
 
-pub inline fn DestroyPipelineLayout(device: Device, pipelineLayout: PipelineLayout, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyPipelineLayout(device.handle, pipelineLayout.handle, pAllocator);
-}
+pub const DestroyPipelineLayout = vkDestroyPipelineLayout;
 
 pub inline fn CreateSampler(device: Device, createInfo: SamplerCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_TOO_MANY_OBJECTS,VK_UNDOCUMENTED_ERROR}!Sampler {
     var out_sampler: Sampler = undefined;
-    const result = vkCreateSampler(device.handle, &createInfo, pAllocator, &out_sampler);
+    const result = vkCreateSampler(device, &createInfo, pAllocator, &out_sampler);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5886,13 +5835,11 @@ pub inline fn CreateSampler(device: Device, createInfo: SamplerCreateInfo, pAllo
     return out_sampler;
 }
 
-pub inline fn DestroySampler(device: Device, sampler: Sampler, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroySampler(device.handle, sampler.handle, pAllocator);
-}
+pub const DestroySampler = vkDestroySampler;
 
 pub inline fn CreateDescriptorSetLayout(device: Device, createInfo: DescriptorSetLayoutCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!DescriptorSetLayout {
     var out_setLayout: DescriptorSetLayout = undefined;
-    const result = vkCreateDescriptorSetLayout(device.handle, &createInfo, pAllocator, &out_setLayout);
+    const result = vkCreateDescriptorSetLayout(device, &createInfo, pAllocator, &out_setLayout);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5903,13 +5850,11 @@ pub inline fn CreateDescriptorSetLayout(device: Device, createInfo: DescriptorSe
     return out_setLayout;
 }
 
-pub inline fn DestroyDescriptorSetLayout(device: Device, descriptorSetLayout: DescriptorSetLayout, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyDescriptorSetLayout(device.handle, descriptorSetLayout.handle, pAllocator);
-}
+pub const DestroyDescriptorSetLayout = vkDestroyDescriptorSetLayout;
 
 pub inline fn CreateDescriptorPool(device: Device, createInfo: DescriptorPoolCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_FRAGMENTATION,VK_UNDOCUMENTED_ERROR}!DescriptorPool {
     var out_descriptorPool: DescriptorPool = undefined;
-    const result = vkCreateDescriptorPool(device.handle, &createInfo, pAllocator, &out_descriptorPool);
+    const result = vkCreateDescriptorPool(device, &createInfo, pAllocator, &out_descriptorPool);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5921,12 +5866,10 @@ pub inline fn CreateDescriptorPool(device: Device, createInfo: DescriptorPoolCre
     return out_descriptorPool;
 }
 
-pub inline fn DestroyDescriptorPool(device: Device, descriptorPool: DescriptorPool, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyDescriptorPool(device.handle, descriptorPool.handle, pAllocator);
-}
+pub const DestroyDescriptorPool = vkDestroyDescriptorPool;
 
 pub inline fn ResetDescriptorPool(device: Device, descriptorPool: DescriptorPool, flags: DescriptorPoolResetFlags) error{VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkResetDescriptorPool(device.handle, descriptorPool.handle, flags.toInt());
+    const result = vkResetDescriptorPool(device, descriptorPool, flags.toInt());
     if (@bitCast(c_int, result) < 0) {
         return error.VK_UNDOCUMENTED_ERROR;
     }
@@ -5934,7 +5877,7 @@ pub inline fn ResetDescriptorPool(device: Device, descriptorPool: DescriptorPool
 
 pub inline fn AllocateDescriptorSets(device: Device, allocateInfo: DescriptorSetAllocateInfo, descriptorSets: []DescriptorSet) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_FRAGMENTED_POOL,VK_OUT_OF_POOL_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
     assert(descriptorSets.len >= allocateInfo.descriptorSetCount);
-    const result = vkAllocateDescriptorSets(device.handle, &allocateInfo, descriptorSets.ptr);
+    const result = vkAllocateDescriptorSets(device, &allocateInfo, descriptorSets.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5947,19 +5890,19 @@ pub inline fn AllocateDescriptorSets(device: Device, allocateInfo: DescriptorSet
 }
 
 pub inline fn FreeDescriptorSets(device: Device, descriptorPool: DescriptorPool, descriptorSets: []const DescriptorSet) error{VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkFreeDescriptorSets(device.handle, descriptorPool.handle, @intCast(u32, descriptorSets.len), descriptorSets.ptr);
+    const result = vkFreeDescriptorSets(device, descriptorPool, @intCast(u32, descriptorSets.len), descriptorSets.ptr);
     if (@bitCast(c_int, result) < 0) {
         return error.VK_UNDOCUMENTED_ERROR;
     }
 }
 
 pub inline fn UpdateDescriptorSets(device: Device, descriptorWrites: []const WriteDescriptorSet, descriptorCopies: []const CopyDescriptorSet) void {
-    vkUpdateDescriptorSets(device.handle, @intCast(u32, descriptorWrites.len), descriptorWrites.ptr, @intCast(u32, descriptorCopies.len), descriptorCopies.ptr);
+    vkUpdateDescriptorSets(device, @intCast(u32, descriptorWrites.len), descriptorWrites.ptr, @intCast(u32, descriptorCopies.len), descriptorCopies.ptr);
 }
 
 pub inline fn CreateFramebuffer(device: Device, createInfo: FramebufferCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!Framebuffer {
     var out_framebuffer: Framebuffer = undefined;
-    const result = vkCreateFramebuffer(device.handle, &createInfo, pAllocator, &out_framebuffer);
+    const result = vkCreateFramebuffer(device, &createInfo, pAllocator, &out_framebuffer);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5970,13 +5913,11 @@ pub inline fn CreateFramebuffer(device: Device, createInfo: FramebufferCreateInf
     return out_framebuffer;
 }
 
-pub inline fn DestroyFramebuffer(device: Device, framebuffer: Framebuffer, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyFramebuffer(device.handle, framebuffer.handle, pAllocator);
-}
+pub const DestroyFramebuffer = vkDestroyFramebuffer;
 
 pub inline fn CreateRenderPass(device: Device, createInfo: RenderPassCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!RenderPass {
     var out_renderPass: RenderPass = undefined;
-    const result = vkCreateRenderPass(device.handle, &createInfo, pAllocator, &out_renderPass);
+    const result = vkCreateRenderPass(device, &createInfo, pAllocator, &out_renderPass);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -5987,19 +5928,17 @@ pub inline fn CreateRenderPass(device: Device, createInfo: RenderPassCreateInfo,
     return out_renderPass;
 }
 
-pub inline fn DestroyRenderPass(device: Device, renderPass: RenderPass, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyRenderPass(device.handle, renderPass.handle, pAllocator);
-}
+pub const DestroyRenderPass = vkDestroyRenderPass;
 
 pub inline fn GetRenderAreaGranularity(device: Device, renderPass: RenderPass) Extent2D {
     var out_granularity: Extent2D = undefined;
-    vkGetRenderAreaGranularity(device.handle, renderPass.handle, &out_granularity);
+    vkGetRenderAreaGranularity(device, renderPass, &out_granularity);
     return out_granularity;
 }
 
 pub inline fn CreateCommandPool(device: Device, createInfo: CommandPoolCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!CommandPool {
     var out_commandPool: CommandPool = undefined;
-    const result = vkCreateCommandPool(device.handle, &createInfo, pAllocator, &out_commandPool);
+    const result = vkCreateCommandPool(device, &createInfo, pAllocator, &out_commandPool);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -6010,12 +5949,10 @@ pub inline fn CreateCommandPool(device: Device, createInfo: CommandPoolCreateInf
     return out_commandPool;
 }
 
-pub inline fn DestroyCommandPool(device: Device, commandPool: CommandPool, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyCommandPool(device.handle, commandPool.handle, pAllocator);
-}
+pub const DestroyCommandPool = vkDestroyCommandPool;
 
 pub inline fn ResetCommandPool(device: Device, commandPool: CommandPool, flags: CommandPoolResetFlags) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkResetCommandPool(device.handle, commandPool.handle, flags.toInt());
+    const result = vkResetCommandPool(device, commandPool, flags.toInt());
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -6027,7 +5964,7 @@ pub inline fn ResetCommandPool(device: Device, commandPool: CommandPool, flags: 
 
 pub inline fn AllocateCommandBuffers(device: Device, allocateInfo: CommandBufferAllocateInfo, commandBuffers: []CommandBuffer) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
     assert(commandBuffers.len >= allocateInfo.commandBufferCount);
-    const result = vkAllocateCommandBuffers(device.handle, &allocateInfo, commandBuffers.ptr);
+    const result = vkAllocateCommandBuffers(device, &allocateInfo, commandBuffers.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -6038,11 +5975,11 @@ pub inline fn AllocateCommandBuffers(device: Device, allocateInfo: CommandBuffer
 }
 
 pub inline fn FreeCommandBuffers(device: Device, commandPool: CommandPool, commandBuffers: []const CommandBuffer) void {
-    vkFreeCommandBuffers(device.handle, commandPool.handle, @intCast(u32, commandBuffers.len), commandBuffers.ptr);
+    vkFreeCommandBuffers(device, commandPool, @intCast(u32, commandBuffers.len), commandBuffers.ptr);
 }
 
 pub inline fn BeginCommandBuffer(commandBuffer: CommandBuffer, beginInfo: CommandBufferBeginInfo) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkBeginCommandBuffer(commandBuffer.handle, &beginInfo);
+    const result = vkBeginCommandBuffer(commandBuffer, &beginInfo);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -6053,7 +5990,7 @@ pub inline fn BeginCommandBuffer(commandBuffer: CommandBuffer, beginInfo: Comman
 }
 
 pub inline fn EndCommandBuffer(commandBuffer: CommandBuffer) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkEndCommandBuffer(commandBuffer.handle);
+    const result = vkEndCommandBuffer(commandBuffer);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -6064,7 +6001,7 @@ pub inline fn EndCommandBuffer(commandBuffer: CommandBuffer) error{VK_OUT_OF_HOS
 }
 
 pub inline fn ResetCommandBuffer(commandBuffer: CommandBuffer, flags: CommandBufferResetFlags) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkResetCommandBuffer(commandBuffer.handle, flags.toInt());
+    const result = vkResetCommandBuffer(commandBuffer, flags.toInt());
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -6074,181 +6011,141 @@ pub inline fn ResetCommandBuffer(commandBuffer: CommandBuffer, flags: CommandBuf
     }
 }
 
-pub inline fn CmdBindPipeline(commandBuffer: CommandBuffer, pipelineBindPoint: PipelineBindPoint, pipeline: Pipeline) void {
-    vkCmdBindPipeline(commandBuffer.handle, pipelineBindPoint, pipeline.handle);
-}
+pub const CmdBindPipeline = vkCmdBindPipeline;
 
 pub inline fn CmdSetViewport(commandBuffer: CommandBuffer, firstViewport: u32, viewports: []const Viewport) void {
-    vkCmdSetViewport(commandBuffer.handle, firstViewport, @intCast(u32, viewports.len), viewports.ptr);
+    vkCmdSetViewport(commandBuffer, firstViewport, @intCast(u32, viewports.len), viewports.ptr);
 }
 
 pub inline fn CmdSetScissor(commandBuffer: CommandBuffer, firstScissor: u32, scissors: []const Rect2D) void {
-    vkCmdSetScissor(commandBuffer.handle, firstScissor, @intCast(u32, scissors.len), scissors.ptr);
+    vkCmdSetScissor(commandBuffer, firstScissor, @intCast(u32, scissors.len), scissors.ptr);
 }
 
-pub inline fn CmdSetLineWidth(commandBuffer: CommandBuffer, lineWidth: f32) void {
-    vkCmdSetLineWidth(commandBuffer.handle, lineWidth);
-}
-
-pub inline fn CmdSetDepthBias(commandBuffer: CommandBuffer, depthBiasConstantFactor: f32, depthBiasClamp: f32, depthBiasSlopeFactor: f32) void {
-    vkCmdSetDepthBias(commandBuffer.handle, depthBiasConstantFactor, depthBiasClamp, depthBiasSlopeFactor);
-}
+pub const CmdSetLineWidth = vkCmdSetLineWidth;
+pub const CmdSetDepthBias = vkCmdSetDepthBias;
 
 pub inline fn CmdSetBlendConstants(commandBuffer: CommandBuffer, blendConstants: [4]f32) void {
-    vkCmdSetBlendConstants(commandBuffer.handle, &blendConstants);
+    vkCmdSetBlendConstants(commandBuffer, &blendConstants);
 }
 
-pub inline fn CmdSetDepthBounds(commandBuffer: CommandBuffer, minDepthBounds: f32, maxDepthBounds: f32) void {
-    vkCmdSetDepthBounds(commandBuffer.handle, minDepthBounds, maxDepthBounds);
-}
+pub const CmdSetDepthBounds = vkCmdSetDepthBounds;
 
 pub inline fn CmdSetStencilCompareMask(commandBuffer: CommandBuffer, faceMask: StencilFaceFlags, compareMask: u32) void {
-    vkCmdSetStencilCompareMask(commandBuffer.handle, faceMask.toInt(), compareMask);
+    vkCmdSetStencilCompareMask(commandBuffer, faceMask.toInt(), compareMask);
 }
 
 pub inline fn CmdSetStencilWriteMask(commandBuffer: CommandBuffer, faceMask: StencilFaceFlags, writeMask: u32) void {
-    vkCmdSetStencilWriteMask(commandBuffer.handle, faceMask.toInt(), writeMask);
+    vkCmdSetStencilWriteMask(commandBuffer, faceMask.toInt(), writeMask);
 }
 
 pub inline fn CmdSetStencilReference(commandBuffer: CommandBuffer, faceMask: StencilFaceFlags, reference: u32) void {
-    vkCmdSetStencilReference(commandBuffer.handle, faceMask.toInt(), reference);
+    vkCmdSetStencilReference(commandBuffer, faceMask.toInt(), reference);
 }
 
 pub inline fn CmdBindDescriptorSets(commandBuffer: CommandBuffer, pipelineBindPoint: PipelineBindPoint, layout: PipelineLayout, firstSet: u32, descriptorSets: []const DescriptorSet, dynamicOffsets: []const u32) void {
-    vkCmdBindDescriptorSets(commandBuffer.handle, pipelineBindPoint, layout.handle, firstSet, @intCast(u32, descriptorSets.len), descriptorSets.ptr, @intCast(u32, dynamicOffsets.len), dynamicOffsets.ptr);
+    vkCmdBindDescriptorSets(commandBuffer, pipelineBindPoint, layout, firstSet, @intCast(u32, descriptorSets.len), descriptorSets.ptr, @intCast(u32, dynamicOffsets.len), dynamicOffsets.ptr);
 }
 
-pub inline fn CmdBindIndexBuffer(commandBuffer: CommandBuffer, buffer: Buffer, offset: DeviceSize, indexType: IndexType) void {
-    vkCmdBindIndexBuffer(commandBuffer.handle, buffer.handle, offset, indexType);
-}
+pub const CmdBindIndexBuffer = vkCmdBindIndexBuffer;
 
 pub inline fn CmdBindVertexBuffers(commandBuffer: CommandBuffer, firstBinding: u32, buffers: []const Buffer, offsets: []const DeviceSize) void {
     assert(offsets.len >= buffers.len);
-    vkCmdBindVertexBuffers(commandBuffer.handle, firstBinding, @intCast(u32, buffers.len), buffers.ptr, offsets.ptr);
+    vkCmdBindVertexBuffers(commandBuffer, firstBinding, @intCast(u32, buffers.len), buffers.ptr, offsets.ptr);
 }
 
-pub inline fn CmdDraw(commandBuffer: CommandBuffer, vertexCount: u32, instanceCount: u32, firstVertex: u32, firstInstance: u32) void {
-    vkCmdDraw(commandBuffer.handle, vertexCount, instanceCount, firstVertex, firstInstance);
-}
-
-pub inline fn CmdDrawIndexed(commandBuffer: CommandBuffer, indexCount: u32, instanceCount: u32, firstIndex: u32, vertexOffset: i32, firstInstance: u32) void {
-    vkCmdDrawIndexed(commandBuffer.handle, indexCount, instanceCount, firstIndex, vertexOffset, firstInstance);
-}
-
-pub inline fn CmdDrawIndirect(commandBuffer: CommandBuffer, buffer: Buffer, offset: DeviceSize, drawCount: u32, stride: u32) void {
-    vkCmdDrawIndirect(commandBuffer.handle, buffer.handle, offset, drawCount, stride);
-}
-
-pub inline fn CmdDrawIndexedIndirect(commandBuffer: CommandBuffer, buffer: Buffer, offset: DeviceSize, drawCount: u32, stride: u32) void {
-    vkCmdDrawIndexedIndirect(commandBuffer.handle, buffer.handle, offset, drawCount, stride);
-}
-
-pub inline fn CmdDispatch(commandBuffer: CommandBuffer, groupCountX: u32, groupCountY: u32, groupCountZ: u32) void {
-    vkCmdDispatch(commandBuffer.handle, groupCountX, groupCountY, groupCountZ);
-}
-
-pub inline fn CmdDispatchIndirect(commandBuffer: CommandBuffer, buffer: Buffer, offset: DeviceSize) void {
-    vkCmdDispatchIndirect(commandBuffer.handle, buffer.handle, offset);
-}
+pub const CmdDraw = vkCmdDraw;
+pub const CmdDrawIndexed = vkCmdDrawIndexed;
+pub const CmdDrawIndirect = vkCmdDrawIndirect;
+pub const CmdDrawIndexedIndirect = vkCmdDrawIndexedIndirect;
+pub const CmdDispatch = vkCmdDispatch;
+pub const CmdDispatchIndirect = vkCmdDispatchIndirect;
 
 pub inline fn CmdCopyBuffer(commandBuffer: CommandBuffer, srcBuffer: Buffer, dstBuffer: Buffer, regions: []const BufferCopy) void {
-    vkCmdCopyBuffer(commandBuffer.handle, srcBuffer.handle, dstBuffer.handle, @intCast(u32, regions.len), regions.ptr);
+    vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, @intCast(u32, regions.len), regions.ptr);
 }
 
 pub inline fn CmdCopyImage(commandBuffer: CommandBuffer, srcImage: Image, srcImageLayout: ImageLayout, dstImage: Image, dstImageLayout: ImageLayout, regions: []const ImageCopy) void {
-    vkCmdCopyImage(commandBuffer.handle, srcImage.handle, srcImageLayout, dstImage.handle, dstImageLayout, @intCast(u32, regions.len), regions.ptr);
+    vkCmdCopyImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, @intCast(u32, regions.len), regions.ptr);
 }
 
 pub inline fn CmdBlitImage(commandBuffer: CommandBuffer, srcImage: Image, srcImageLayout: ImageLayout, dstImage: Image, dstImageLayout: ImageLayout, regions: []const ImageBlit, filter: Filter) void {
-    vkCmdBlitImage(commandBuffer.handle, srcImage.handle, srcImageLayout, dstImage.handle, dstImageLayout, @intCast(u32, regions.len), regions.ptr, filter);
+    vkCmdBlitImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, @intCast(u32, regions.len), regions.ptr, filter);
 }
 
 pub inline fn CmdCopyBufferToImage(commandBuffer: CommandBuffer, srcBuffer: Buffer, dstImage: Image, dstImageLayout: ImageLayout, regions: []const BufferImageCopy) void {
-    vkCmdCopyBufferToImage(commandBuffer.handle, srcBuffer.handle, dstImage.handle, dstImageLayout, @intCast(u32, regions.len), regions.ptr);
+    vkCmdCopyBufferToImage(commandBuffer, srcBuffer, dstImage, dstImageLayout, @intCast(u32, regions.len), regions.ptr);
 }
 
 pub inline fn CmdCopyImageToBuffer(commandBuffer: CommandBuffer, srcImage: Image, srcImageLayout: ImageLayout, dstBuffer: Buffer, regions: []const BufferImageCopy) void {
-    vkCmdCopyImageToBuffer(commandBuffer.handle, srcImage.handle, srcImageLayout, dstBuffer.handle, @intCast(u32, regions.len), regions.ptr);
+    vkCmdCopyImageToBuffer(commandBuffer, srcImage, srcImageLayout, dstBuffer, @intCast(u32, regions.len), regions.ptr);
 }
 
 pub inline fn CmdUpdateBuffer(commandBuffer: CommandBuffer, dstBuffer: Buffer, dstOffset: DeviceSize, data: []const u8) void {
-    vkCmdUpdateBuffer(commandBuffer.handle, dstBuffer.handle, dstOffset, @intCast(DeviceSize, data.len), data.ptr);
+    vkCmdUpdateBuffer(commandBuffer, dstBuffer, dstOffset, @intCast(DeviceSize, data.len), data.ptr);
 }
 
-pub inline fn CmdFillBuffer(commandBuffer: CommandBuffer, dstBuffer: Buffer, dstOffset: DeviceSize, size: DeviceSize, data: u32) void {
-    vkCmdFillBuffer(commandBuffer.handle, dstBuffer.handle, dstOffset, size, data);
-}
+pub const CmdFillBuffer = vkCmdFillBuffer;
 
 pub inline fn CmdClearColorImage(commandBuffer: CommandBuffer, image: Image, imageLayout: ImageLayout, color: ClearColorValue, ranges: []const ImageSubresourceRange) void {
-    vkCmdClearColorImage(commandBuffer.handle, image.handle, imageLayout, &color, @intCast(u32, ranges.len), ranges.ptr);
+    vkCmdClearColorImage(commandBuffer, image, imageLayout, &color, @intCast(u32, ranges.len), ranges.ptr);
 }
 
 pub inline fn CmdClearDepthStencilImage(commandBuffer: CommandBuffer, image: Image, imageLayout: ImageLayout, depthStencil: ClearDepthStencilValue, ranges: []const ImageSubresourceRange) void {
-    vkCmdClearDepthStencilImage(commandBuffer.handle, image.handle, imageLayout, &depthStencil, @intCast(u32, ranges.len), ranges.ptr);
+    vkCmdClearDepthStencilImage(commandBuffer, image, imageLayout, &depthStencil, @intCast(u32, ranges.len), ranges.ptr);
 }
 
 pub inline fn CmdClearAttachments(commandBuffer: CommandBuffer, attachments: []const ClearAttachment, rects: []const ClearRect) void {
-    vkCmdClearAttachments(commandBuffer.handle, @intCast(u32, attachments.len), attachments.ptr, @intCast(u32, rects.len), rects.ptr);
+    vkCmdClearAttachments(commandBuffer, @intCast(u32, attachments.len), attachments.ptr, @intCast(u32, rects.len), rects.ptr);
 }
 
 pub inline fn CmdResolveImage(commandBuffer: CommandBuffer, srcImage: Image, srcImageLayout: ImageLayout, dstImage: Image, dstImageLayout: ImageLayout, regions: []const ImageResolve) void {
-    vkCmdResolveImage(commandBuffer.handle, srcImage.handle, srcImageLayout, dstImage.handle, dstImageLayout, @intCast(u32, regions.len), regions.ptr);
+    vkCmdResolveImage(commandBuffer, srcImage, srcImageLayout, dstImage, dstImageLayout, @intCast(u32, regions.len), regions.ptr);
 }
 
 pub inline fn CmdSetEvent(commandBuffer: CommandBuffer, event: Event, stageMask: PipelineStageFlags) void {
-    vkCmdSetEvent(commandBuffer.handle, event.handle, stageMask.toInt());
+    vkCmdSetEvent(commandBuffer, event, stageMask.toInt());
 }
 
 pub inline fn CmdResetEvent(commandBuffer: CommandBuffer, event: Event, stageMask: PipelineStageFlags) void {
-    vkCmdResetEvent(commandBuffer.handle, event.handle, stageMask.toInt());
+    vkCmdResetEvent(commandBuffer, event, stageMask.toInt());
 }
 
 pub inline fn CmdWaitEvents(commandBuffer: CommandBuffer, events: []const Event, srcStageMask: PipelineStageFlags, dstStageMask: PipelineStageFlags, memoryBarriers: []const MemoryBarrier, bufferMemoryBarriers: []const BufferMemoryBarrier, imageMemoryBarriers: []const ImageMemoryBarrier) void {
-    vkCmdWaitEvents(commandBuffer.handle, @intCast(u32, events.len), events.ptr, srcStageMask.toInt(), dstStageMask.toInt(), @intCast(u32, memoryBarriers.len), memoryBarriers.ptr, @intCast(u32, bufferMemoryBarriers.len), bufferMemoryBarriers.ptr, @intCast(u32, imageMemoryBarriers.len), imageMemoryBarriers.ptr);
+    vkCmdWaitEvents(commandBuffer, @intCast(u32, events.len), events.ptr, srcStageMask.toInt(), dstStageMask.toInt(), @intCast(u32, memoryBarriers.len), memoryBarriers.ptr, @intCast(u32, bufferMemoryBarriers.len), bufferMemoryBarriers.ptr, @intCast(u32, imageMemoryBarriers.len), imageMemoryBarriers.ptr);
 }
 
 pub inline fn CmdPipelineBarrier(commandBuffer: CommandBuffer, srcStageMask: PipelineStageFlags, dstStageMask: PipelineStageFlags, dependencyFlags: DependencyFlags, memoryBarriers: []const MemoryBarrier, bufferMemoryBarriers: []const BufferMemoryBarrier, imageMemoryBarriers: []const ImageMemoryBarrier) void {
-    vkCmdPipelineBarrier(commandBuffer.handle, srcStageMask.toInt(), dstStageMask.toInt(), dependencyFlags.toInt(), @intCast(u32, memoryBarriers.len), memoryBarriers.ptr, @intCast(u32, bufferMemoryBarriers.len), bufferMemoryBarriers.ptr, @intCast(u32, imageMemoryBarriers.len), imageMemoryBarriers.ptr);
+    vkCmdPipelineBarrier(commandBuffer, srcStageMask.toInt(), dstStageMask.toInt(), dependencyFlags.toInt(), @intCast(u32, memoryBarriers.len), memoryBarriers.ptr, @intCast(u32, bufferMemoryBarriers.len), bufferMemoryBarriers.ptr, @intCast(u32, imageMemoryBarriers.len), imageMemoryBarriers.ptr);
 }
 
 pub inline fn CmdBeginQuery(commandBuffer: CommandBuffer, queryPool: QueryPool, query: u32, flags: QueryControlFlags) void {
-    vkCmdBeginQuery(commandBuffer.handle, queryPool.handle, query, flags.toInt());
+    vkCmdBeginQuery(commandBuffer, queryPool, query, flags.toInt());
 }
 
-pub inline fn CmdEndQuery(commandBuffer: CommandBuffer, queryPool: QueryPool, query: u32) void {
-    vkCmdEndQuery(commandBuffer.handle, queryPool.handle, query);
-}
-
-pub inline fn CmdResetQueryPool(commandBuffer: CommandBuffer, queryPool: QueryPool, firstQuery: u32, queryCount: u32) void {
-    vkCmdResetQueryPool(commandBuffer.handle, queryPool.handle, firstQuery, queryCount);
-}
+pub const CmdEndQuery = vkCmdEndQuery;
+pub const CmdResetQueryPool = vkCmdResetQueryPool;
 
 pub inline fn CmdWriteTimestamp(commandBuffer: CommandBuffer, pipelineStage: PipelineStageFlags, queryPool: QueryPool, query: u32) void {
-    vkCmdWriteTimestamp(commandBuffer.handle, pipelineStage.toInt(), queryPool.handle, query);
+    vkCmdWriteTimestamp(commandBuffer, pipelineStage.toInt(), queryPool, query);
 }
 
 pub inline fn CmdCopyQueryPoolResults(commandBuffer: CommandBuffer, queryPool: QueryPool, firstQuery: u32, queryCount: u32, dstBuffer: Buffer, dstOffset: DeviceSize, stride: DeviceSize, flags: QueryResultFlags) void {
-    vkCmdCopyQueryPoolResults(commandBuffer.handle, queryPool.handle, firstQuery, queryCount, dstBuffer.handle, dstOffset, stride, flags.toInt());
+    vkCmdCopyQueryPoolResults(commandBuffer, queryPool, firstQuery, queryCount, dstBuffer, dstOffset, stride, flags.toInt());
 }
 
 pub inline fn CmdPushConstants(commandBuffer: CommandBuffer, layout: PipelineLayout, stageFlags: ShaderStageFlags, offset: u32, values: []const u8) void {
-    vkCmdPushConstants(commandBuffer.handle, layout.handle, stageFlags.toInt(), offset, @intCast(u32, values.len), values.ptr);
+    vkCmdPushConstants(commandBuffer, layout, stageFlags.toInt(), offset, @intCast(u32, values.len), values.ptr);
 }
 
 pub inline fn CmdBeginRenderPass(commandBuffer: CommandBuffer, renderPassBegin: RenderPassBeginInfo, contents: SubpassContents) void {
-    vkCmdBeginRenderPass(commandBuffer.handle, &renderPassBegin, contents);
+    vkCmdBeginRenderPass(commandBuffer, &renderPassBegin, contents);
 }
 
-pub inline fn CmdNextSubpass(commandBuffer: CommandBuffer, contents: SubpassContents) void {
-    vkCmdNextSubpass(commandBuffer.handle, contents);
-}
-
-pub inline fn CmdEndRenderPass(commandBuffer: CommandBuffer) void {
-    vkCmdEndRenderPass(commandBuffer.handle);
-}
+pub const CmdNextSubpass = vkCmdNextSubpass;
+pub const CmdEndRenderPass = vkCmdEndRenderPass;
 
 pub inline fn CmdExecuteCommands(commandBuffer: CommandBuffer, commandBuffers: []const CommandBuffer) void {
-    vkCmdExecuteCommands(commandBuffer.handle, @intCast(u32, commandBuffers.len), commandBuffers.ptr);
+    vkCmdExecuteCommands(commandBuffer, @intCast(u32, commandBuffers.len), commandBuffers.ptr);
 }
 
 
@@ -6256,8 +6153,8 @@ pub const VERSION_1_1 = 1;
 // Vulkan 1.1 version number
 pub const API_VERSION_1_1 = MAKE_VERSION(1, 1, 0);// Patch version should always be set to 0
 
-pub const SamplerYcbcrConversion = Handle("SamplerYcbcrConversion", u64);
-pub const DescriptorUpdateTemplate = Handle("DescriptorUpdateTemplate", u64);
+pub const SamplerYcbcrConversion = extern enum(u64) { Null = 0, _ };
+pub const DescriptorUpdateTemplate = extern enum(u64) { Null = 0, _ };
 
 pub const MAX_DEVICE_GROUP_SIZE = 32;
 pub const LUID_SIZE = 8;
@@ -6841,8 +6738,8 @@ pub const MemoryDedicatedRequirements = extern struct {
 pub const MemoryDedicatedAllocateInfo = extern struct {
     sType: StructureType = .MEMORY_DEDICATED_ALLOCATE_INFO,
     pNext: ?*const c_void = null,
-    image: Image = Image{},
-    buffer: Buffer = Buffer{},
+    image: Image = Image.Null,
+    buffer: Buffer = Buffer.Null,
 };
 
 pub const MemoryAllocateFlagsInfo = extern struct {
@@ -7290,19 +7187,19 @@ pub const PhysicalDeviceShaderDrawParameterFeatures = PhysicalDeviceShaderDrawPa
 pub extern fn vkEnumerateInstanceVersion(pApiVersion: *u32) callconv(CallConv) Result;
 
 pub extern fn vkBindBufferMemory2(
-    device: Device.IntType,
+    device: Device,
     bindInfoCount: u32,
     pBindInfos: [*]const BindBufferMemoryInfo,
 ) callconv(CallConv) Result;
 
 pub extern fn vkBindImageMemory2(
-    device: Device.IntType,
+    device: Device,
     bindInfoCount: u32,
     pBindInfos: [*]const BindImageMemoryInfo,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetDeviceGroupPeerMemoryFeatures(
-    device: Device.IntType,
+    device: Device,
     heapIndex: u32,
     localDeviceIndex: u32,
     remoteDeviceIndex: u32,
@@ -7310,12 +7207,12 @@ pub extern fn vkGetDeviceGroupPeerMemoryFeatures(
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdSetDeviceMask(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     deviceMask: u32,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdDispatchBase(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     baseGroupX: u32,
     baseGroupY: u32,
     baseGroupZ: u32,
@@ -7325,135 +7222,135 @@ pub extern fn vkCmdDispatchBase(
 ) callconv(CallConv) void;
 
 pub extern fn vkEnumeratePhysicalDeviceGroups(
-    instance: Instance.IntType,
+    instance: Instance,
     pPhysicalDeviceGroupCount: *u32,
     pPhysicalDeviceGroupProperties: ?[*]PhysicalDeviceGroupProperties,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetImageMemoryRequirements2(
-    device: Device.IntType,
+    device: Device,
     pInfo: *const ImageMemoryRequirementsInfo2,
     pMemoryRequirements: *MemoryRequirements2,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetBufferMemoryRequirements2(
-    device: Device.IntType,
+    device: Device,
     pInfo: *const BufferMemoryRequirementsInfo2,
     pMemoryRequirements: *MemoryRequirements2,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetImageSparseMemoryRequirements2(
-    device: Device.IntType,
+    device: Device,
     pInfo: *const ImageSparseMemoryRequirementsInfo2,
     pSparseMemoryRequirementCount: *u32,
     pSparseMemoryRequirements: ?[*]SparseImageMemoryRequirements2,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetPhysicalDeviceFeatures2(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pFeatures: *PhysicalDeviceFeatures2,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetPhysicalDeviceProperties2(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pProperties: *PhysicalDeviceProperties2,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetPhysicalDeviceFormatProperties2(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     format: Format,
     pFormatProperties: *FormatProperties2,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetPhysicalDeviceImageFormatProperties2(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pImageFormatInfo: *const PhysicalDeviceImageFormatInfo2,
     pImageFormatProperties: *ImageFormatProperties2,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetPhysicalDeviceQueueFamilyProperties2(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pQueueFamilyPropertyCount: *u32,
     pQueueFamilyProperties: ?[*]QueueFamilyProperties2,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetPhysicalDeviceMemoryProperties2(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pMemoryProperties: *PhysicalDeviceMemoryProperties2,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetPhysicalDeviceSparseImageFormatProperties2(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pFormatInfo: *const PhysicalDeviceSparseImageFormatInfo2,
     pPropertyCount: *u32,
     pProperties: ?[*]SparseImageFormatProperties2,
 ) callconv(CallConv) void;
 
 pub extern fn vkTrimCommandPool(
-    device: Device.IntType,
-    commandPool: CommandPool.IntType,
+    device: Device,
+    commandPool: CommandPool,
     flags: CommandPoolTrimFlags.IntType,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetDeviceQueue2(
-    device: Device.IntType,
+    device: Device,
     pQueueInfo: *const DeviceQueueInfo2,
     pQueue: *Queue,
 ) callconv(CallConv) void;
 
 pub extern fn vkCreateSamplerYcbcrConversion(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const SamplerYcbcrConversionCreateInfo,
     pAllocator: ?*const AllocationCallbacks,
     pYcbcrConversion: *SamplerYcbcrConversion,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroySamplerYcbcrConversion(
-    device: Device.IntType,
-    ycbcrConversion: SamplerYcbcrConversion.IntType,
+    device: Device,
+    ycbcrConversion: SamplerYcbcrConversion,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkCreateDescriptorUpdateTemplate(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const DescriptorUpdateTemplateCreateInfo,
     pAllocator: ?*const AllocationCallbacks,
     pDescriptorUpdateTemplate: *DescriptorUpdateTemplate,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyDescriptorUpdateTemplate(
-    device: Device.IntType,
-    descriptorUpdateTemplate: DescriptorUpdateTemplate.IntType,
+    device: Device,
+    descriptorUpdateTemplate: DescriptorUpdateTemplate,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkUpdateDescriptorSetWithTemplate(
-    device: Device.IntType,
-    descriptorSet: DescriptorSet.IntType,
-    descriptorUpdateTemplate: DescriptorUpdateTemplate.IntType,
+    device: Device,
+    descriptorSet: DescriptorSet,
+    descriptorUpdateTemplate: DescriptorUpdateTemplate,
     pData: ?*const c_void,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetPhysicalDeviceExternalBufferProperties(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pExternalBufferInfo: *const PhysicalDeviceExternalBufferInfo,
     pExternalBufferProperties: *ExternalBufferProperties,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetPhysicalDeviceExternalFenceProperties(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pExternalFenceInfo: *const PhysicalDeviceExternalFenceInfo,
     pExternalFenceProperties: *ExternalFenceProperties,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetPhysicalDeviceExternalSemaphoreProperties(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pExternalSemaphoreInfo: *const PhysicalDeviceExternalSemaphoreInfo,
     pExternalSemaphoreProperties: *ExternalSemaphoreProperties,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetDescriptorSetLayoutSupport(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const DescriptorSetLayoutCreateInfo,
     pSupport: *DescriptorSetLayoutSupport,
 ) callconv(CallConv) void;
@@ -7468,7 +7365,7 @@ pub inline fn EnumerateInstanceVersion() error{VK_UNDOCUMENTED_ERROR}!u32 {
 }
 
 pub inline fn BindBufferMemory2(device: Device, bindInfos: []const BindBufferMemoryInfo) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_INVALID_OPAQUE_CAPTURE_ADDRESS,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkBindBufferMemory2(device.handle, @intCast(u32, bindInfos.len), bindInfos.ptr);
+    const result = vkBindBufferMemory2(device, @intCast(u32, bindInfos.len), bindInfos.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -7480,7 +7377,7 @@ pub inline fn BindBufferMemory2(device: Device, bindInfos: []const BindBufferMem
 }
 
 pub inline fn BindImageMemory2(device: Device, bindInfos: []const BindImageMemoryInfo) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkBindImageMemory2(device.handle, @intCast(u32, bindInfos.len), bindInfos.ptr);
+    const result = vkBindImageMemory2(device, @intCast(u32, bindInfos.len), bindInfos.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -7492,17 +7389,12 @@ pub inline fn BindImageMemory2(device: Device, bindInfos: []const BindImageMemor
 
 pub inline fn GetDeviceGroupPeerMemoryFeatures(device: Device, heapIndex: u32, localDeviceIndex: u32, remoteDeviceIndex: u32) PeerMemoryFeatureFlags {
     var out_peerMemoryFeatures: PeerMemoryFeatureFlags align(4) = undefined;
-    vkGetDeviceGroupPeerMemoryFeatures(device.handle, heapIndex, localDeviceIndex, remoteDeviceIndex, &out_peerMemoryFeatures);
+    vkGetDeviceGroupPeerMemoryFeatures(device, heapIndex, localDeviceIndex, remoteDeviceIndex, &out_peerMemoryFeatures);
     return out_peerMemoryFeatures;
 }
 
-pub inline fn CmdSetDeviceMask(commandBuffer: CommandBuffer, deviceMask: u32) void {
-    vkCmdSetDeviceMask(commandBuffer.handle, deviceMask);
-}
-
-pub inline fn CmdDispatchBase(commandBuffer: CommandBuffer, baseGroupX: u32, baseGroupY: u32, baseGroupZ: u32, groupCountX: u32, groupCountY: u32, groupCountZ: u32) void {
-    vkCmdDispatchBase(commandBuffer.handle, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
-}
+pub const CmdSetDeviceMask = vkCmdSetDeviceMask;
+pub const CmdDispatchBase = vkCmdDispatchBase;
 
 pub const EnumeratePhysicalDeviceGroupsResult = struct {
     result: Result,
@@ -7511,7 +7403,7 @@ pub const EnumeratePhysicalDeviceGroupsResult = struct {
 pub inline fn EnumeratePhysicalDeviceGroups(instance: Instance, physicalDeviceGroupProperties: []PhysicalDeviceGroupProperties) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_INITIALIZATION_FAILED,VK_UNDOCUMENTED_ERROR}!EnumeratePhysicalDeviceGroupsResult {
     var returnValues: EnumeratePhysicalDeviceGroupsResult = undefined;
     var physicalDeviceGroupCount: u32 = @intCast(u32, physicalDeviceGroupProperties.len);
-    const result = vkEnumeratePhysicalDeviceGroups(instance.handle, &physicalDeviceGroupCount, physicalDeviceGroupProperties.ptr);
+    const result = vkEnumeratePhysicalDeviceGroups(instance, &physicalDeviceGroupCount, physicalDeviceGroupProperties.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -7526,7 +7418,7 @@ pub inline fn EnumeratePhysicalDeviceGroups(instance: Instance, physicalDeviceGr
 }
 pub inline fn EnumeratePhysicalDeviceGroupsCount(instance: Instance) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_INITIALIZATION_FAILED,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_physicalDeviceGroupCount: u32 = undefined;
-    const result = vkEnumeratePhysicalDeviceGroups(instance.handle, &out_physicalDeviceGroupCount, null);
+    const result = vkEnumeratePhysicalDeviceGroups(instance, &out_physicalDeviceGroupCount, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -7540,50 +7432,50 @@ pub inline fn EnumeratePhysicalDeviceGroupsCount(instance: Instance) error{VK_OU
 
 pub inline fn GetImageMemoryRequirements2(device: Device, info: ImageMemoryRequirementsInfo2) MemoryRequirements2 {
     var out_memoryRequirements: MemoryRequirements2 = undefined;
-    vkGetImageMemoryRequirements2(device.handle, &info, &out_memoryRequirements);
+    vkGetImageMemoryRequirements2(device, &info, &out_memoryRequirements);
     return out_memoryRequirements;
 }
 
 pub inline fn GetBufferMemoryRequirements2(device: Device, info: BufferMemoryRequirementsInfo2) MemoryRequirements2 {
     var out_memoryRequirements: MemoryRequirements2 = undefined;
-    vkGetBufferMemoryRequirements2(device.handle, &info, &out_memoryRequirements);
+    vkGetBufferMemoryRequirements2(device, &info, &out_memoryRequirements);
     return out_memoryRequirements;
 }
 
 pub inline fn GetImageSparseMemoryRequirements2(device: Device, info: ImageSparseMemoryRequirementsInfo2, sparseMemoryRequirements: []SparseImageMemoryRequirements2) []SparseImageMemoryRequirements2 {
     var out_sparseMemoryRequirements: []SparseImageMemoryRequirements2 = undefined;
     var sparseMemoryRequirementCount: u32 = @intCast(u32, sparseMemoryRequirements.len);
-    vkGetImageSparseMemoryRequirements2(device.handle, &info, &sparseMemoryRequirementCount, sparseMemoryRequirements.ptr);
+    vkGetImageSparseMemoryRequirements2(device, &info, &sparseMemoryRequirementCount, sparseMemoryRequirements.ptr);
     out_sparseMemoryRequirements = sparseMemoryRequirements[0..sparseMemoryRequirementCount];
     return out_sparseMemoryRequirements;
 }
 pub inline fn GetImageSparseMemoryRequirements2Count(device: Device, info: ImageSparseMemoryRequirementsInfo2) u32 {
     var out_sparseMemoryRequirementCount: u32 = undefined;
-    vkGetImageSparseMemoryRequirements2(device.handle, &info, &out_sparseMemoryRequirementCount, null);
+    vkGetImageSparseMemoryRequirements2(device, &info, &out_sparseMemoryRequirementCount, null);
     return out_sparseMemoryRequirementCount;
 }
 
 pub inline fn GetPhysicalDeviceFeatures2(physicalDevice: PhysicalDevice) PhysicalDeviceFeatures2 {
     var out_features: PhysicalDeviceFeatures2 = undefined;
-    vkGetPhysicalDeviceFeatures2(physicalDevice.handle, &out_features);
+    vkGetPhysicalDeviceFeatures2(physicalDevice, &out_features);
     return out_features;
 }
 
 pub inline fn GetPhysicalDeviceProperties2(physicalDevice: PhysicalDevice) PhysicalDeviceProperties2 {
     var out_properties: PhysicalDeviceProperties2 = undefined;
-    vkGetPhysicalDeviceProperties2(physicalDevice.handle, &out_properties);
+    vkGetPhysicalDeviceProperties2(physicalDevice, &out_properties);
     return out_properties;
 }
 
 pub inline fn GetPhysicalDeviceFormatProperties2(physicalDevice: PhysicalDevice, format: Format) FormatProperties2 {
     var out_formatProperties: FormatProperties2 = undefined;
-    vkGetPhysicalDeviceFormatProperties2(physicalDevice.handle, format, &out_formatProperties);
+    vkGetPhysicalDeviceFormatProperties2(physicalDevice, format, &out_formatProperties);
     return out_formatProperties;
 }
 
 pub inline fn GetPhysicalDeviceImageFormatProperties2(physicalDevice: PhysicalDevice, imageFormatInfo: PhysicalDeviceImageFormatInfo2) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_FORMAT_NOT_SUPPORTED,VK_UNDOCUMENTED_ERROR}!ImageFormatProperties2 {
     var out_imageFormatProperties: ImageFormatProperties2 = undefined;
-    const result = vkGetPhysicalDeviceImageFormatProperties2(physicalDevice.handle, &imageFormatInfo, &out_imageFormatProperties);
+    const result = vkGetPhysicalDeviceImageFormatProperties2(physicalDevice, &imageFormatInfo, &out_imageFormatProperties);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -7598,48 +7490,48 @@ pub inline fn GetPhysicalDeviceImageFormatProperties2(physicalDevice: PhysicalDe
 pub inline fn GetPhysicalDeviceQueueFamilyProperties2(physicalDevice: PhysicalDevice, queueFamilyProperties: []QueueFamilyProperties2) []QueueFamilyProperties2 {
     var out_queueFamilyProperties: []QueueFamilyProperties2 = undefined;
     var queueFamilyPropertyCount: u32 = @intCast(u32, queueFamilyProperties.len);
-    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice.handle, &queueFamilyPropertyCount, queueFamilyProperties.ptr);
+    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &queueFamilyPropertyCount, queueFamilyProperties.ptr);
     out_queueFamilyProperties = queueFamilyProperties[0..queueFamilyPropertyCount];
     return out_queueFamilyProperties;
 }
 pub inline fn GetPhysicalDeviceQueueFamilyProperties2Count(physicalDevice: PhysicalDevice) u32 {
     var out_queueFamilyPropertyCount: u32 = undefined;
-    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice.handle, &out_queueFamilyPropertyCount, null);
+    vkGetPhysicalDeviceQueueFamilyProperties2(physicalDevice, &out_queueFamilyPropertyCount, null);
     return out_queueFamilyPropertyCount;
 }
 
 pub inline fn GetPhysicalDeviceMemoryProperties2(physicalDevice: PhysicalDevice) PhysicalDeviceMemoryProperties2 {
     var out_memoryProperties: PhysicalDeviceMemoryProperties2 = undefined;
-    vkGetPhysicalDeviceMemoryProperties2(physicalDevice.handle, &out_memoryProperties);
+    vkGetPhysicalDeviceMemoryProperties2(physicalDevice, &out_memoryProperties);
     return out_memoryProperties;
 }
 
 pub inline fn GetPhysicalDeviceSparseImageFormatProperties2(physicalDevice: PhysicalDevice, formatInfo: PhysicalDeviceSparseImageFormatInfo2, properties: []SparseImageFormatProperties2) []SparseImageFormatProperties2 {
     var out_properties: []SparseImageFormatProperties2 = undefined;
     var propertyCount: u32 = @intCast(u32, properties.len);
-    vkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice.handle, &formatInfo, &propertyCount, properties.ptr);
+    vkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice, &formatInfo, &propertyCount, properties.ptr);
     out_properties = properties[0..propertyCount];
     return out_properties;
 }
 pub inline fn GetPhysicalDeviceSparseImageFormatProperties2Count(physicalDevice: PhysicalDevice, formatInfo: PhysicalDeviceSparseImageFormatInfo2) u32 {
     var out_propertyCount: u32 = undefined;
-    vkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice.handle, &formatInfo, &out_propertyCount, null);
+    vkGetPhysicalDeviceSparseImageFormatProperties2(physicalDevice, &formatInfo, &out_propertyCount, null);
     return out_propertyCount;
 }
 
 pub inline fn TrimCommandPool(device: Device, commandPool: CommandPool, flags: CommandPoolTrimFlags) void {
-    vkTrimCommandPool(device.handle, commandPool.handle, flags.toInt());
+    vkTrimCommandPool(device, commandPool, flags.toInt());
 }
 
 pub inline fn GetDeviceQueue2(device: Device, queueInfo: DeviceQueueInfo2) Queue {
     var out_queue: Queue = undefined;
-    vkGetDeviceQueue2(device.handle, &queueInfo, &out_queue);
+    vkGetDeviceQueue2(device, &queueInfo, &out_queue);
     return out_queue;
 }
 
 pub inline fn CreateSamplerYcbcrConversion(device: Device, createInfo: SamplerYcbcrConversionCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!SamplerYcbcrConversion {
     var out_ycbcrConversion: SamplerYcbcrConversion = undefined;
-    const result = vkCreateSamplerYcbcrConversion(device.handle, &createInfo, pAllocator, &out_ycbcrConversion);
+    const result = vkCreateSamplerYcbcrConversion(device, &createInfo, pAllocator, &out_ycbcrConversion);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -7650,13 +7542,11 @@ pub inline fn CreateSamplerYcbcrConversion(device: Device, createInfo: SamplerYc
     return out_ycbcrConversion;
 }
 
-pub inline fn DestroySamplerYcbcrConversion(device: Device, ycbcrConversion: SamplerYcbcrConversion, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroySamplerYcbcrConversion(device.handle, ycbcrConversion.handle, pAllocator);
-}
+pub const DestroySamplerYcbcrConversion = vkDestroySamplerYcbcrConversion;
 
 pub inline fn CreateDescriptorUpdateTemplate(device: Device, createInfo: DescriptorUpdateTemplateCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!DescriptorUpdateTemplate {
     var out_descriptorUpdateTemplate: DescriptorUpdateTemplate = undefined;
-    const result = vkCreateDescriptorUpdateTemplate(device.handle, &createInfo, pAllocator, &out_descriptorUpdateTemplate);
+    const result = vkCreateDescriptorUpdateTemplate(device, &createInfo, pAllocator, &out_descriptorUpdateTemplate);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -7667,35 +7557,30 @@ pub inline fn CreateDescriptorUpdateTemplate(device: Device, createInfo: Descrip
     return out_descriptorUpdateTemplate;
 }
 
-pub inline fn DestroyDescriptorUpdateTemplate(device: Device, descriptorUpdateTemplate: DescriptorUpdateTemplate, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyDescriptorUpdateTemplate(device.handle, descriptorUpdateTemplate.handle, pAllocator);
-}
-
-pub inline fn UpdateDescriptorSetWithTemplate(device: Device, descriptorSet: DescriptorSet, descriptorUpdateTemplate: DescriptorUpdateTemplate, pData: ?*const c_void) void {
-    vkUpdateDescriptorSetWithTemplate(device.handle, descriptorSet.handle, descriptorUpdateTemplate.handle, pData);
-}
+pub const DestroyDescriptorUpdateTemplate = vkDestroyDescriptorUpdateTemplate;
+pub const UpdateDescriptorSetWithTemplate = vkUpdateDescriptorSetWithTemplate;
 
 pub inline fn GetPhysicalDeviceExternalBufferProperties(physicalDevice: PhysicalDevice, externalBufferInfo: PhysicalDeviceExternalBufferInfo) ExternalBufferProperties {
     var out_externalBufferProperties: ExternalBufferProperties = undefined;
-    vkGetPhysicalDeviceExternalBufferProperties(physicalDevice.handle, &externalBufferInfo, &out_externalBufferProperties);
+    vkGetPhysicalDeviceExternalBufferProperties(physicalDevice, &externalBufferInfo, &out_externalBufferProperties);
     return out_externalBufferProperties;
 }
 
 pub inline fn GetPhysicalDeviceExternalFenceProperties(physicalDevice: PhysicalDevice, externalFenceInfo: PhysicalDeviceExternalFenceInfo) ExternalFenceProperties {
     var out_externalFenceProperties: ExternalFenceProperties = undefined;
-    vkGetPhysicalDeviceExternalFenceProperties(physicalDevice.handle, &externalFenceInfo, &out_externalFenceProperties);
+    vkGetPhysicalDeviceExternalFenceProperties(physicalDevice, &externalFenceInfo, &out_externalFenceProperties);
     return out_externalFenceProperties;
 }
 
 pub inline fn GetPhysicalDeviceExternalSemaphoreProperties(physicalDevice: PhysicalDevice, externalSemaphoreInfo: PhysicalDeviceExternalSemaphoreInfo) ExternalSemaphoreProperties {
     var out_externalSemaphoreProperties: ExternalSemaphoreProperties = undefined;
-    vkGetPhysicalDeviceExternalSemaphoreProperties(physicalDevice.handle, &externalSemaphoreInfo, &out_externalSemaphoreProperties);
+    vkGetPhysicalDeviceExternalSemaphoreProperties(physicalDevice, &externalSemaphoreInfo, &out_externalSemaphoreProperties);
     return out_externalSemaphoreProperties;
 }
 
 pub inline fn GetDescriptorSetLayoutSupport(device: Device, createInfo: DescriptorSetLayoutCreateInfo) DescriptorSetLayoutSupport {
     var out_support: DescriptorSetLayoutSupport = undefined;
-    vkGetDescriptorSetLayoutSupport(device.handle, &createInfo, &out_support);
+    vkGetDescriptorSetLayoutSupport(device, &createInfo, &out_support);
     return out_support;
 }
 
@@ -8459,99 +8344,94 @@ pub const DeviceMemoryOpaqueCaptureAddressInfo = extern struct {
 };
 
 pub extern fn vkCmdDrawIndirectCount(
-    commandBuffer: CommandBuffer.IntType,
-    buffer: Buffer.IntType,
+    commandBuffer: CommandBuffer,
+    buffer: Buffer,
     offset: DeviceSize,
-    countBuffer: Buffer.IntType,
+    countBuffer: Buffer,
     countBufferOffset: DeviceSize,
     maxDrawCount: u32,
     stride: u32,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdDrawIndexedIndirectCount(
-    commandBuffer: CommandBuffer.IntType,
-    buffer: Buffer.IntType,
+    commandBuffer: CommandBuffer,
+    buffer: Buffer,
     offset: DeviceSize,
-    countBuffer: Buffer.IntType,
+    countBuffer: Buffer,
     countBufferOffset: DeviceSize,
     maxDrawCount: u32,
     stride: u32,
 ) callconv(CallConv) void;
 
 pub extern fn vkCreateRenderPass2(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const RenderPassCreateInfo2,
     pAllocator: ?*const AllocationCallbacks,
     pRenderPass: *RenderPass,
 ) callconv(CallConv) Result;
 
 pub extern fn vkCmdBeginRenderPass2(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pRenderPassBegin: *const RenderPassBeginInfo,
     pSubpassBeginInfo: *const SubpassBeginInfo,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdNextSubpass2(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pSubpassBeginInfo: *const SubpassBeginInfo,
     pSubpassEndInfo: *const SubpassEndInfo,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdEndRenderPass2(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pSubpassEndInfo: *const SubpassEndInfo,
 ) callconv(CallConv) void;
 
 pub extern fn vkResetQueryPool(
-    device: Device.IntType,
-    queryPool: QueryPool.IntType,
+    device: Device,
+    queryPool: QueryPool,
     firstQuery: u32,
     queryCount: u32,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetSemaphoreCounterValue(
-    device: Device.IntType,
-    semaphore: Semaphore.IntType,
+    device: Device,
+    semaphore: Semaphore,
     pValue: *u64,
 ) callconv(CallConv) Result;
 
 pub extern fn vkWaitSemaphores(
-    device: Device.IntType,
+    device: Device,
     pWaitInfo: *const SemaphoreWaitInfo,
     timeout: u64,
 ) callconv(CallConv) Result;
 
 pub extern fn vkSignalSemaphore(
-    device: Device.IntType,
+    device: Device,
     pSignalInfo: *const SemaphoreSignalInfo,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetBufferDeviceAddress(
-    device: Device.IntType,
+    device: Device,
     pInfo: *const BufferDeviceAddressInfo,
 ) callconv(CallConv) DeviceAddress;
 
 pub extern fn vkGetBufferOpaqueCaptureAddress(
-    device: Device.IntType,
+    device: Device,
     pInfo: *const BufferDeviceAddressInfo,
 ) callconv(CallConv) u64;
 
 pub extern fn vkGetDeviceMemoryOpaqueCaptureAddress(
-    device: Device.IntType,
+    device: Device,
     pInfo: *const DeviceMemoryOpaqueCaptureAddressInfo,
 ) callconv(CallConv) u64;
 
-pub inline fn CmdDrawIndirectCount(commandBuffer: CommandBuffer, buffer: Buffer, offset: DeviceSize, countBuffer: Buffer, countBufferOffset: DeviceSize, maxDrawCount: u32, stride: u32) void {
-    vkCmdDrawIndirectCount(commandBuffer.handle, buffer.handle, offset, countBuffer.handle, countBufferOffset, maxDrawCount, stride);
-}
-
-pub inline fn CmdDrawIndexedIndirectCount(commandBuffer: CommandBuffer, buffer: Buffer, offset: DeviceSize, countBuffer: Buffer, countBufferOffset: DeviceSize, maxDrawCount: u32, stride: u32) void {
-    vkCmdDrawIndexedIndirectCount(commandBuffer.handle, buffer.handle, offset, countBuffer.handle, countBufferOffset, maxDrawCount, stride);
-}
+pub const CmdDrawIndirectCount = vkCmdDrawIndirectCount;
+pub const CmdDrawIndexedIndirectCount = vkCmdDrawIndexedIndirectCount;
 
 pub inline fn CreateRenderPass2(device: Device, createInfo: RenderPassCreateInfo2, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!RenderPass {
     var out_renderPass: RenderPass = undefined;
-    const result = vkCreateRenderPass2(device.handle, &createInfo, pAllocator, &out_renderPass);
+    const result = vkCreateRenderPass2(device, &createInfo, pAllocator, &out_renderPass);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -8563,24 +8443,22 @@ pub inline fn CreateRenderPass2(device: Device, createInfo: RenderPassCreateInfo
 }
 
 pub inline fn CmdBeginRenderPass2(commandBuffer: CommandBuffer, renderPassBegin: RenderPassBeginInfo, subpassBeginInfo: SubpassBeginInfo) void {
-    vkCmdBeginRenderPass2(commandBuffer.handle, &renderPassBegin, &subpassBeginInfo);
+    vkCmdBeginRenderPass2(commandBuffer, &renderPassBegin, &subpassBeginInfo);
 }
 
 pub inline fn CmdNextSubpass2(commandBuffer: CommandBuffer, subpassBeginInfo: SubpassBeginInfo, subpassEndInfo: SubpassEndInfo) void {
-    vkCmdNextSubpass2(commandBuffer.handle, &subpassBeginInfo, &subpassEndInfo);
+    vkCmdNextSubpass2(commandBuffer, &subpassBeginInfo, &subpassEndInfo);
 }
 
 pub inline fn CmdEndRenderPass2(commandBuffer: CommandBuffer, subpassEndInfo: SubpassEndInfo) void {
-    vkCmdEndRenderPass2(commandBuffer.handle, &subpassEndInfo);
+    vkCmdEndRenderPass2(commandBuffer, &subpassEndInfo);
 }
 
-pub inline fn ResetQueryPool(device: Device, queryPool: QueryPool, firstQuery: u32, queryCount: u32) void {
-    vkResetQueryPool(device.handle, queryPool.handle, firstQuery, queryCount);
-}
+pub const ResetQueryPool = vkResetQueryPool;
 
 pub inline fn GetSemaphoreCounterValue(device: Device, semaphore: Semaphore) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_DEVICE_LOST,VK_UNDOCUMENTED_ERROR}!u64 {
     var out_value: u64 = undefined;
-    const result = vkGetSemaphoreCounterValue(device.handle, semaphore.handle, &out_value);
+    const result = vkGetSemaphoreCounterValue(device, semaphore, &out_value);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -8593,7 +8471,7 @@ pub inline fn GetSemaphoreCounterValue(device: Device, semaphore: Semaphore) err
 }
 
 pub inline fn WaitSemaphores(device: Device, waitInfo: SemaphoreWaitInfo, timeout: u64) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_DEVICE_LOST,VK_UNDOCUMENTED_ERROR}!Result {
-    const result = vkWaitSemaphores(device.handle, &waitInfo, timeout);
+    const result = vkWaitSemaphores(device, &waitInfo, timeout);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -8606,7 +8484,7 @@ pub inline fn WaitSemaphores(device: Device, waitInfo: SemaphoreWaitInfo, timeou
 }
 
 pub inline fn SignalSemaphore(device: Device, signalInfo: SemaphoreSignalInfo) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkSignalSemaphore(device.handle, &signalInfo);
+    const result = vkSignalSemaphore(device, &signalInfo);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -8617,23 +8495,23 @@ pub inline fn SignalSemaphore(device: Device, signalInfo: SemaphoreSignalInfo) e
 }
 
 pub inline fn GetBufferDeviceAddress(device: Device, info: BufferDeviceAddressInfo) DeviceAddress {
-    const result = vkGetBufferDeviceAddress(device.handle, &info);
+    const result = vkGetBufferDeviceAddress(device, &info);
     return result;
 }
 
 pub inline fn GetBufferOpaqueCaptureAddress(device: Device, info: BufferDeviceAddressInfo) u64 {
-    const result = vkGetBufferOpaqueCaptureAddress(device.handle, &info);
+    const result = vkGetBufferOpaqueCaptureAddress(device, &info);
     return result;
 }
 
 pub inline fn GetDeviceMemoryOpaqueCaptureAddress(device: Device, info: DeviceMemoryOpaqueCaptureAddressInfo) u64 {
-    const result = vkGetDeviceMemoryOpaqueCaptureAddress(device.handle, &info);
+    const result = vkGetDeviceMemoryOpaqueCaptureAddress(device, &info);
     return result;
 }
 
 
 pub const KHR_surface = 1;
-pub const SurfaceKHR = Handle("SurfaceKHR", u64);
+pub const SurfaceKHR = extern enum(u64) { Null = 0, _ };
 
 pub const KHR_SURFACE_SPEC_VERSION = 25;
 pub const KHR_SURFACE_EXTENSION_NAME = "VK_KHR_surface";
@@ -8765,45 +8643,43 @@ pub const SurfaceFormatKHR = extern struct {
 };
 
 pub extern fn vkDestroySurfaceKHR(
-    instance: Instance.IntType,
-    surface: SurfaceKHR.IntType,
+    instance: Instance,
+    surface: SurfaceKHR,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetPhysicalDeviceSurfaceSupportKHR(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     queueFamilyIndex: u32,
-    surface: SurfaceKHR.IntType,
+    surface: SurfaceKHR,
     pSupported: *Bool32,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
-    physicalDevice: PhysicalDevice.IntType,
-    surface: SurfaceKHR.IntType,
+    physicalDevice: PhysicalDevice,
+    surface: SurfaceKHR,
     pSurfaceCapabilities: *SurfaceCapabilitiesKHR,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetPhysicalDeviceSurfaceFormatsKHR(
-    physicalDevice: PhysicalDevice.IntType,
-    surface: SurfaceKHR.IntType,
+    physicalDevice: PhysicalDevice,
+    surface: SurfaceKHR,
     pSurfaceFormatCount: *u32,
     pSurfaceFormats: ?[*]SurfaceFormatKHR,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetPhysicalDeviceSurfacePresentModesKHR(
-    physicalDevice: PhysicalDevice.IntType,
-    surface: SurfaceKHR.IntType,
+    physicalDevice: PhysicalDevice,
+    surface: SurfaceKHR,
     pPresentModeCount: *u32,
     pPresentModes: ?[*]PresentModeKHR,
 ) callconv(CallConv) Result;
 
-pub inline fn DestroySurfaceKHR(instance: Instance, surface: SurfaceKHR, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroySurfaceKHR(instance.handle, surface.handle, pAllocator);
-}
+pub const DestroySurfaceKHR = vkDestroySurfaceKHR;
 
 pub inline fn GetPhysicalDeviceSurfaceSupportKHR(physicalDevice: PhysicalDevice, queueFamilyIndex: u32, surface: SurfaceKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_SURFACE_LOST_KHR,VK_UNDOCUMENTED_ERROR}!Bool32 {
     var out_supported: Bool32 = undefined;
-    const result = vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice.handle, queueFamilyIndex, surface.handle, &out_supported);
+    const result = vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, queueFamilyIndex, surface, &out_supported);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -8817,7 +8693,7 @@ pub inline fn GetPhysicalDeviceSurfaceSupportKHR(physicalDevice: PhysicalDevice,
 
 pub inline fn GetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice: PhysicalDevice, surface: SurfaceKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_SURFACE_LOST_KHR,VK_UNDOCUMENTED_ERROR}!SurfaceCapabilitiesKHR {
     var out_surfaceCapabilities: SurfaceCapabilitiesKHR = undefined;
-    const result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice.handle, surface.handle, &out_surfaceCapabilities);
+    const result = vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physicalDevice, surface, &out_surfaceCapabilities);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -8836,7 +8712,7 @@ pub const GetPhysicalDeviceSurfaceFormatsKHRResult = struct {
 pub inline fn GetPhysicalDeviceSurfaceFormatsKHR(physicalDevice: PhysicalDevice, surface: SurfaceKHR, surfaceFormats: []SurfaceFormatKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_SURFACE_LOST_KHR,VK_UNDOCUMENTED_ERROR}!GetPhysicalDeviceSurfaceFormatsKHRResult {
     var returnValues: GetPhysicalDeviceSurfaceFormatsKHRResult = undefined;
     var surfaceFormatCount: u32 = @intCast(u32, surfaceFormats.len);
-    const result = vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice.handle, surface.handle, &surfaceFormatCount, surfaceFormats.ptr);
+    const result = vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &surfaceFormatCount, surfaceFormats.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -8851,7 +8727,7 @@ pub inline fn GetPhysicalDeviceSurfaceFormatsKHR(physicalDevice: PhysicalDevice,
 }
 pub inline fn GetPhysicalDeviceSurfaceFormatsCountKHR(physicalDevice: PhysicalDevice, surface: SurfaceKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_SURFACE_LOST_KHR,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_surfaceFormatCount: u32 = undefined;
-    const result = vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice.handle, surface.handle, &out_surfaceFormatCount, null);
+    const result = vkGetPhysicalDeviceSurfaceFormatsKHR(physicalDevice, surface, &out_surfaceFormatCount, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -8870,7 +8746,7 @@ pub const GetPhysicalDeviceSurfacePresentModesKHRResult = struct {
 pub inline fn GetPhysicalDeviceSurfacePresentModesKHR(physicalDevice: PhysicalDevice, surface: SurfaceKHR, presentModes: []PresentModeKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_SURFACE_LOST_KHR,VK_UNDOCUMENTED_ERROR}!GetPhysicalDeviceSurfacePresentModesKHRResult {
     var returnValues: GetPhysicalDeviceSurfacePresentModesKHRResult = undefined;
     var presentModeCount: u32 = @intCast(u32, presentModes.len);
-    const result = vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice.handle, surface.handle, &presentModeCount, presentModes.ptr);
+    const result = vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &presentModeCount, presentModes.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -8885,7 +8761,7 @@ pub inline fn GetPhysicalDeviceSurfacePresentModesKHR(physicalDevice: PhysicalDe
 }
 pub inline fn GetPhysicalDeviceSurfacePresentModesCountKHR(physicalDevice: PhysicalDevice, surface: SurfaceKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_SURFACE_LOST_KHR,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_presentModeCount: u32 = undefined;
-    const result = vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice.handle, surface.handle, &out_presentModeCount, null);
+    const result = vkGetPhysicalDeviceSurfacePresentModesKHR(physicalDevice, surface, &out_presentModeCount, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -8899,7 +8775,7 @@ pub inline fn GetPhysicalDeviceSurfacePresentModesCountKHR(physicalDevice: Physi
 
 
 pub const KHR_swapchain = 1;
-pub const SwapchainKHR = Handle("SwapchainKHR", u64);
+pub const SwapchainKHR = extern enum(u64) { Null = 0, _ };
 
 pub const KHR_SWAPCHAIN_SPEC_VERSION = 70;
 pub const KHR_SWAPCHAIN_EXTENSION_NAME = "VK_KHR_swapchain";
@@ -8996,7 +8872,7 @@ pub const SwapchainCreateInfoKHR = extern struct {
     compositeAlpha: CompositeAlphaFlagsKHR align(4),
     presentMode: PresentModeKHR,
     clipped: Bool32,
-    oldSwapchain: SwapchainKHR = SwapchainKHR{},
+    oldSwapchain: SwapchainKHR = SwapchainKHR.Null,
 };
 
 pub const PresentInfoKHR = extern struct {
@@ -9013,7 +8889,7 @@ pub const PresentInfoKHR = extern struct {
 pub const ImageSwapchainCreateInfoKHR = extern struct {
     sType: StructureType = .IMAGE_SWAPCHAIN_CREATE_INFO_KHR,
     pNext: ?*const c_void = null,
-    swapchain: SwapchainKHR = SwapchainKHR{},
+    swapchain: SwapchainKHR = SwapchainKHR.Null,
 };
 
 pub const BindImageMemorySwapchainInfoKHR = extern struct {
@@ -9028,8 +8904,8 @@ pub const AcquireNextImageInfoKHR = extern struct {
     pNext: ?*const c_void = null,
     swapchain: SwapchainKHR,
     timeout: u64,
-    semaphore: Semaphore = Semaphore{},
-    fence: Fence = Fence{},
+    semaphore: Semaphore = Semaphore.Null,
+    fence: Fence = Fence.Null,
     deviceMask: u32,
 };
 
@@ -9055,66 +8931,66 @@ pub const DeviceGroupSwapchainCreateInfoKHR = extern struct {
 };
 
 pub extern fn vkCreateSwapchainKHR(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const SwapchainCreateInfoKHR,
     pAllocator: ?*const AllocationCallbacks,
     pSwapchain: *SwapchainKHR,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroySwapchainKHR(
-    device: Device.IntType,
-    swapchain: SwapchainKHR.IntType,
+    device: Device,
+    swapchain: SwapchainKHR,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetSwapchainImagesKHR(
-    device: Device.IntType,
-    swapchain: SwapchainKHR.IntType,
+    device: Device,
+    swapchain: SwapchainKHR,
     pSwapchainImageCount: *u32,
     pSwapchainImages: ?[*]Image,
 ) callconv(CallConv) Result;
 
 pub extern fn vkAcquireNextImageKHR(
-    device: Device.IntType,
-    swapchain: SwapchainKHR.IntType,
+    device: Device,
+    swapchain: SwapchainKHR,
     timeout: u64,
-    semaphore: Semaphore.IntType,
-    fence: Fence.IntType,
+    semaphore: Semaphore,
+    fence: Fence,
     pImageIndex: *u32,
 ) callconv(CallConv) Result;
 
 pub extern fn vkQueuePresentKHR(
-    queue: Queue.IntType,
+    queue: Queue,
     pPresentInfo: *const PresentInfoKHR,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetDeviceGroupPresentCapabilitiesKHR(
-    device: Device.IntType,
+    device: Device,
     pDeviceGroupPresentCapabilities: *DeviceGroupPresentCapabilitiesKHR,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetDeviceGroupSurfacePresentModesKHR(
-    device: Device.IntType,
-    surface: SurfaceKHR.IntType,
+    device: Device,
+    surface: SurfaceKHR,
     pModes: *align(4) DeviceGroupPresentModeFlagsKHR,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetPhysicalDevicePresentRectanglesKHR(
-    physicalDevice: PhysicalDevice.IntType,
-    surface: SurfaceKHR.IntType,
+    physicalDevice: PhysicalDevice,
+    surface: SurfaceKHR,
     pRectCount: *u32,
     pRects: ?[*]Rect2D,
 ) callconv(CallConv) Result;
 
 pub extern fn vkAcquireNextImage2KHR(
-    device: Device.IntType,
+    device: Device,
     pAcquireInfo: *const AcquireNextImageInfoKHR,
     pImageIndex: *u32,
 ) callconv(CallConv) Result;
 
 pub inline fn CreateSwapchainKHR(device: Device, createInfo: SwapchainCreateInfoKHR, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_DEVICE_LOST,VK_SURFACE_LOST_KHR,VK_NATIVE_WINDOW_IN_USE_KHR,VK_INITIALIZATION_FAILED,VK_UNDOCUMENTED_ERROR}!SwapchainKHR {
     var out_swapchain: SwapchainKHR = undefined;
-    const result = vkCreateSwapchainKHR(device.handle, &createInfo, pAllocator, &out_swapchain);
+    const result = vkCreateSwapchainKHR(device, &createInfo, pAllocator, &out_swapchain);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -9129,9 +9005,7 @@ pub inline fn CreateSwapchainKHR(device: Device, createInfo: SwapchainCreateInfo
     return out_swapchain;
 }
 
-pub inline fn DestroySwapchainKHR(device: Device, swapchain: SwapchainKHR, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroySwapchainKHR(device.handle, swapchain.handle, pAllocator);
-}
+pub const DestroySwapchainKHR = vkDestroySwapchainKHR;
 
 pub const GetSwapchainImagesKHRResult = struct {
     result: Result,
@@ -9140,7 +9014,7 @@ pub const GetSwapchainImagesKHRResult = struct {
 pub inline fn GetSwapchainImagesKHR(device: Device, swapchain: SwapchainKHR, swapchainImages: []Image) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!GetSwapchainImagesKHRResult {
     var returnValues: GetSwapchainImagesKHRResult = undefined;
     var swapchainImageCount: u32 = @intCast(u32, swapchainImages.len);
-    const result = vkGetSwapchainImagesKHR(device.handle, swapchain.handle, &swapchainImageCount, swapchainImages.ptr);
+    const result = vkGetSwapchainImagesKHR(device, swapchain, &swapchainImageCount, swapchainImages.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -9154,7 +9028,7 @@ pub inline fn GetSwapchainImagesKHR(device: Device, swapchain: SwapchainKHR, swa
 }
 pub inline fn GetSwapchainImagesCountKHR(device: Device, swapchain: SwapchainKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_swapchainImageCount: u32 = undefined;
-    const result = vkGetSwapchainImagesKHR(device.handle, swapchain.handle, &out_swapchainImageCount, null);
+    const result = vkGetSwapchainImagesKHR(device, swapchain, &out_swapchainImageCount, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -9171,7 +9045,7 @@ pub const AcquireNextImageKHRResult = struct {
 };
 pub inline fn AcquireNextImageKHR(device: Device, swapchain: SwapchainKHR, timeout: u64, semaphore: Semaphore, fence: Fence) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_DEVICE_LOST,VK_OUT_OF_DATE_KHR,VK_SURFACE_LOST_KHR,VK_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT,VK_UNDOCUMENTED_ERROR}!AcquireNextImageKHRResult {
     var returnValues: AcquireNextImageKHRResult = undefined;
-    const result = vkAcquireNextImageKHR(device.handle, swapchain.handle, timeout, semaphore.handle, fence.handle, &returnValues.imageIndex);
+    const result = vkAcquireNextImageKHR(device, swapchain, timeout, semaphore, fence, &returnValues.imageIndex);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -9188,7 +9062,7 @@ pub inline fn AcquireNextImageKHR(device: Device, swapchain: SwapchainKHR, timeo
 }
 
 pub inline fn QueuePresentKHR(queue: Queue, presentInfo: PresentInfoKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_DEVICE_LOST,VK_OUT_OF_DATE_KHR,VK_SURFACE_LOST_KHR,VK_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT,VK_UNDOCUMENTED_ERROR}!Result {
-    const result = vkQueuePresentKHR(queue.handle, &presentInfo);
+    const result = vkQueuePresentKHR(queue, &presentInfo);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -9205,7 +9079,7 @@ pub inline fn QueuePresentKHR(queue: Queue, presentInfo: PresentInfoKHR) error{V
 
 pub inline fn GetDeviceGroupPresentCapabilitiesKHR(device: Device) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!DeviceGroupPresentCapabilitiesKHR {
     var out_deviceGroupPresentCapabilities: DeviceGroupPresentCapabilitiesKHR = undefined;
-    const result = vkGetDeviceGroupPresentCapabilitiesKHR(device.handle, &out_deviceGroupPresentCapabilities);
+    const result = vkGetDeviceGroupPresentCapabilitiesKHR(device, &out_deviceGroupPresentCapabilities);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -9218,7 +9092,7 @@ pub inline fn GetDeviceGroupPresentCapabilitiesKHR(device: Device) error{VK_OUT_
 
 pub inline fn GetDeviceGroupSurfacePresentModesKHR(device: Device, surface: SurfaceKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_SURFACE_LOST_KHR,VK_UNDOCUMENTED_ERROR}!DeviceGroupPresentModeFlagsKHR {
     var out_modes: DeviceGroupPresentModeFlagsKHR align(4) = undefined;
-    const result = vkGetDeviceGroupSurfacePresentModesKHR(device.handle, surface.handle, &out_modes);
+    const result = vkGetDeviceGroupSurfacePresentModesKHR(device, surface, &out_modes);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -9237,7 +9111,7 @@ pub const GetPhysicalDevicePresentRectanglesKHRResult = struct {
 pub inline fn GetPhysicalDevicePresentRectanglesKHR(physicalDevice: PhysicalDevice, surface: SurfaceKHR, rects: []Rect2D) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!GetPhysicalDevicePresentRectanglesKHRResult {
     var returnValues: GetPhysicalDevicePresentRectanglesKHRResult = undefined;
     var rectCount: u32 = @intCast(u32, rects.len);
-    const result = vkGetPhysicalDevicePresentRectanglesKHR(physicalDevice.handle, surface.handle, &rectCount, rects.ptr);
+    const result = vkGetPhysicalDevicePresentRectanglesKHR(physicalDevice, surface, &rectCount, rects.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -9251,7 +9125,7 @@ pub inline fn GetPhysicalDevicePresentRectanglesKHR(physicalDevice: PhysicalDevi
 }
 pub inline fn GetPhysicalDevicePresentRectanglesCountKHR(physicalDevice: PhysicalDevice, surface: SurfaceKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_rectCount: u32 = undefined;
-    const result = vkGetPhysicalDevicePresentRectanglesKHR(physicalDevice.handle, surface.handle, &out_rectCount, null);
+    const result = vkGetPhysicalDevicePresentRectanglesKHR(physicalDevice, surface, &out_rectCount, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -9268,7 +9142,7 @@ pub const AcquireNextImage2KHRResult = struct {
 };
 pub inline fn AcquireNextImage2KHR(device: Device, acquireInfo: AcquireNextImageInfoKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_DEVICE_LOST,VK_OUT_OF_DATE_KHR,VK_SURFACE_LOST_KHR,VK_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT,VK_UNDOCUMENTED_ERROR}!AcquireNextImage2KHRResult {
     var returnValues: AcquireNextImage2KHRResult = undefined;
-    const result = vkAcquireNextImage2KHR(device.handle, &acquireInfo, &returnValues.imageIndex);
+    const result = vkAcquireNextImage2KHR(device, &acquireInfo, &returnValues.imageIndex);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -9286,8 +9160,8 @@ pub inline fn AcquireNextImage2KHR(device: Device, acquireInfo: AcquireNextImage
 
 
 pub const KHR_display = 1;
-pub const DisplayKHR = Handle("DisplayKHR", u64);
-pub const DisplayModeKHR = Handle("DisplayModeKHR", u64);
+pub const DisplayKHR = extern enum(u64) { Null = 0, _ };
+pub const DisplayModeKHR = extern enum(u64) { Null = 0, _ };
 
 pub const KHR_DISPLAY_SPEC_VERSION = 23;
 pub const KHR_DISPLAY_EXTENSION_NAME = "VK_KHR_display";
@@ -9397,48 +9271,48 @@ pub const DisplaySurfaceCreateInfoKHR = extern struct {
 };
 
 pub extern fn vkGetPhysicalDeviceDisplayPropertiesKHR(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pPropertyCount: *u32,
     pProperties: ?[*]DisplayPropertiesKHR,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetPhysicalDeviceDisplayPlanePropertiesKHR(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pPropertyCount: *u32,
     pProperties: ?[*]DisplayPlanePropertiesKHR,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetDisplayPlaneSupportedDisplaysKHR(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     planeIndex: u32,
     pDisplayCount: *u32,
     pDisplays: ?[*]DisplayKHR,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetDisplayModePropertiesKHR(
-    physicalDevice: PhysicalDevice.IntType,
-    display: DisplayKHR.IntType,
+    physicalDevice: PhysicalDevice,
+    display: DisplayKHR,
     pPropertyCount: *u32,
     pProperties: ?[*]DisplayModePropertiesKHR,
 ) callconv(CallConv) Result;
 
 pub extern fn vkCreateDisplayModeKHR(
-    physicalDevice: PhysicalDevice.IntType,
-    display: DisplayKHR.IntType,
+    physicalDevice: PhysicalDevice,
+    display: DisplayKHR,
     pCreateInfo: *const DisplayModeCreateInfoKHR,
     pAllocator: ?*const AllocationCallbacks,
     pMode: *DisplayModeKHR,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetDisplayPlaneCapabilitiesKHR(
-    physicalDevice: PhysicalDevice.IntType,
-    mode: DisplayModeKHR.IntType,
+    physicalDevice: PhysicalDevice,
+    mode: DisplayModeKHR,
     planeIndex: u32,
     pCapabilities: *DisplayPlaneCapabilitiesKHR,
 ) callconv(CallConv) Result;
 
 pub extern fn vkCreateDisplayPlaneSurfaceKHR(
-    instance: Instance.IntType,
+    instance: Instance,
     pCreateInfo: *const DisplaySurfaceCreateInfoKHR,
     pAllocator: ?*const AllocationCallbacks,
     pSurface: *SurfaceKHR,
@@ -9451,7 +9325,7 @@ pub const GetPhysicalDeviceDisplayPropertiesKHRResult = struct {
 pub inline fn GetPhysicalDeviceDisplayPropertiesKHR(physicalDevice: PhysicalDevice, properties: []DisplayPropertiesKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!GetPhysicalDeviceDisplayPropertiesKHRResult {
     var returnValues: GetPhysicalDeviceDisplayPropertiesKHRResult = undefined;
     var propertyCount: u32 = @intCast(u32, properties.len);
-    const result = vkGetPhysicalDeviceDisplayPropertiesKHR(physicalDevice.handle, &propertyCount, properties.ptr);
+    const result = vkGetPhysicalDeviceDisplayPropertiesKHR(physicalDevice, &propertyCount, properties.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -9465,7 +9339,7 @@ pub inline fn GetPhysicalDeviceDisplayPropertiesKHR(physicalDevice: PhysicalDevi
 }
 pub inline fn GetPhysicalDeviceDisplayPropertiesCountKHR(physicalDevice: PhysicalDevice) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_propertyCount: u32 = undefined;
-    const result = vkGetPhysicalDeviceDisplayPropertiesKHR(physicalDevice.handle, &out_propertyCount, null);
+    const result = vkGetPhysicalDeviceDisplayPropertiesKHR(physicalDevice, &out_propertyCount, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -9483,7 +9357,7 @@ pub const GetPhysicalDeviceDisplayPlanePropertiesKHRResult = struct {
 pub inline fn GetPhysicalDeviceDisplayPlanePropertiesKHR(physicalDevice: PhysicalDevice, properties: []DisplayPlanePropertiesKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!GetPhysicalDeviceDisplayPlanePropertiesKHRResult {
     var returnValues: GetPhysicalDeviceDisplayPlanePropertiesKHRResult = undefined;
     var propertyCount: u32 = @intCast(u32, properties.len);
-    const result = vkGetPhysicalDeviceDisplayPlanePropertiesKHR(physicalDevice.handle, &propertyCount, properties.ptr);
+    const result = vkGetPhysicalDeviceDisplayPlanePropertiesKHR(physicalDevice, &propertyCount, properties.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -9497,7 +9371,7 @@ pub inline fn GetPhysicalDeviceDisplayPlanePropertiesKHR(physicalDevice: Physica
 }
 pub inline fn GetPhysicalDeviceDisplayPlanePropertiesCountKHR(physicalDevice: PhysicalDevice) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_propertyCount: u32 = undefined;
-    const result = vkGetPhysicalDeviceDisplayPlanePropertiesKHR(physicalDevice.handle, &out_propertyCount, null);
+    const result = vkGetPhysicalDeviceDisplayPlanePropertiesKHR(physicalDevice, &out_propertyCount, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -9515,7 +9389,7 @@ pub const GetDisplayPlaneSupportedDisplaysKHRResult = struct {
 pub inline fn GetDisplayPlaneSupportedDisplaysKHR(physicalDevice: PhysicalDevice, planeIndex: u32, displays: []DisplayKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!GetDisplayPlaneSupportedDisplaysKHRResult {
     var returnValues: GetDisplayPlaneSupportedDisplaysKHRResult = undefined;
     var displayCount: u32 = @intCast(u32, displays.len);
-    const result = vkGetDisplayPlaneSupportedDisplaysKHR(physicalDevice.handle, planeIndex, &displayCount, displays.ptr);
+    const result = vkGetDisplayPlaneSupportedDisplaysKHR(physicalDevice, planeIndex, &displayCount, displays.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -9529,7 +9403,7 @@ pub inline fn GetDisplayPlaneSupportedDisplaysKHR(physicalDevice: PhysicalDevice
 }
 pub inline fn GetDisplayPlaneSupportedDisplaysCountKHR(physicalDevice: PhysicalDevice, planeIndex: u32) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_displayCount: u32 = undefined;
-    const result = vkGetDisplayPlaneSupportedDisplaysKHR(physicalDevice.handle, planeIndex, &out_displayCount, null);
+    const result = vkGetDisplayPlaneSupportedDisplaysKHR(physicalDevice, planeIndex, &out_displayCount, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -9547,7 +9421,7 @@ pub const GetDisplayModePropertiesKHRResult = struct {
 pub inline fn GetDisplayModePropertiesKHR(physicalDevice: PhysicalDevice, display: DisplayKHR, properties: []DisplayModePropertiesKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!GetDisplayModePropertiesKHRResult {
     var returnValues: GetDisplayModePropertiesKHRResult = undefined;
     var propertyCount: u32 = @intCast(u32, properties.len);
-    const result = vkGetDisplayModePropertiesKHR(physicalDevice.handle, display.handle, &propertyCount, properties.ptr);
+    const result = vkGetDisplayModePropertiesKHR(physicalDevice, display, &propertyCount, properties.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -9561,7 +9435,7 @@ pub inline fn GetDisplayModePropertiesKHR(physicalDevice: PhysicalDevice, displa
 }
 pub inline fn GetDisplayModePropertiesCountKHR(physicalDevice: PhysicalDevice, display: DisplayKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_propertyCount: u32 = undefined;
-    const result = vkGetDisplayModePropertiesKHR(physicalDevice.handle, display.handle, &out_propertyCount, null);
+    const result = vkGetDisplayModePropertiesKHR(physicalDevice, display, &out_propertyCount, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -9574,7 +9448,7 @@ pub inline fn GetDisplayModePropertiesCountKHR(physicalDevice: PhysicalDevice, d
 
 pub inline fn CreateDisplayModeKHR(physicalDevice: PhysicalDevice, display: DisplayKHR, createInfo: DisplayModeCreateInfoKHR, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_INITIALIZATION_FAILED,VK_UNDOCUMENTED_ERROR}!DisplayModeKHR {
     var out_mode: DisplayModeKHR = undefined;
-    const result = vkCreateDisplayModeKHR(physicalDevice.handle, display.handle, &createInfo, pAllocator, &out_mode);
+    const result = vkCreateDisplayModeKHR(physicalDevice, display, &createInfo, pAllocator, &out_mode);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -9588,7 +9462,7 @@ pub inline fn CreateDisplayModeKHR(physicalDevice: PhysicalDevice, display: Disp
 
 pub inline fn GetDisplayPlaneCapabilitiesKHR(physicalDevice: PhysicalDevice, mode: DisplayModeKHR, planeIndex: u32) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!DisplayPlaneCapabilitiesKHR {
     var out_capabilities: DisplayPlaneCapabilitiesKHR = undefined;
-    const result = vkGetDisplayPlaneCapabilitiesKHR(physicalDevice.handle, mode.handle, planeIndex, &out_capabilities);
+    const result = vkGetDisplayPlaneCapabilitiesKHR(physicalDevice, mode, planeIndex, &out_capabilities);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -9601,7 +9475,7 @@ pub inline fn GetDisplayPlaneCapabilitiesKHR(physicalDevice: PhysicalDevice, mod
 
 pub inline fn CreateDisplayPlaneSurfaceKHR(instance: Instance, createInfo: DisplaySurfaceCreateInfoKHR, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!SurfaceKHR {
     var out_surface: SurfaceKHR = undefined;
-    const result = vkCreateDisplayPlaneSurfaceKHR(instance.handle, &createInfo, pAllocator, &out_surface);
+    const result = vkCreateDisplayPlaneSurfaceKHR(instance, &createInfo, pAllocator, &out_surface);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -9626,7 +9500,7 @@ pub const DisplayPresentInfoKHR = extern struct {
 };
 
 pub extern fn vkCreateSharedSwapchainsKHR(
-    device: Device.IntType,
+    device: Device,
     swapchainCount: u32,
     pCreateInfos: [*]const SwapchainCreateInfoKHR,
     pAllocator: ?*const AllocationCallbacks,
@@ -9635,7 +9509,7 @@ pub extern fn vkCreateSharedSwapchainsKHR(
 
 pub inline fn CreateSharedSwapchainsKHR(device: Device, createInfos: []const SwapchainCreateInfoKHR, pAllocator: ?*const AllocationCallbacks, swapchains: []SwapchainKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_INCOMPATIBLE_DISPLAY_KHR,VK_DEVICE_LOST,VK_SURFACE_LOST_KHR,VK_UNDOCUMENTED_ERROR}!void {
     assert(swapchains.len >= createInfos.len);
-    const result = vkCreateSharedSwapchainsKHR(device.handle, @intCast(u32, createInfos.len), createInfos.ptr, pAllocator, swapchains.ptr);
+    const result = vkCreateSharedSwapchainsKHR(device, @intCast(u32, createInfos.len), createInfos.ptr, pAllocator, swapchains.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -9678,40 +9552,40 @@ pub const SparseImageFormatProperties2KHR = SparseImageFormatProperties2;
 pub const PhysicalDeviceSparseImageFormatInfo2KHR = PhysicalDeviceSparseImageFormatInfo2;
 
 pub extern fn vkGetPhysicalDeviceFeatures2KHR(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pFeatures: *PhysicalDeviceFeatures2,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetPhysicalDeviceProperties2KHR(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pProperties: *PhysicalDeviceProperties2,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetPhysicalDeviceFormatProperties2KHR(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     format: Format,
     pFormatProperties: *FormatProperties2,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetPhysicalDeviceImageFormatProperties2KHR(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pImageFormatInfo: *const PhysicalDeviceImageFormatInfo2,
     pImageFormatProperties: *ImageFormatProperties2,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetPhysicalDeviceQueueFamilyProperties2KHR(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pQueueFamilyPropertyCount: *u32,
     pQueueFamilyProperties: ?[*]QueueFamilyProperties2,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetPhysicalDeviceMemoryProperties2KHR(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pMemoryProperties: *PhysicalDeviceMemoryProperties2,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetPhysicalDeviceSparseImageFormatProperties2KHR(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pFormatInfo: *const PhysicalDeviceSparseImageFormatInfo2,
     pPropertyCount: *u32,
     pProperties: ?[*]SparseImageFormatProperties2,
@@ -9719,25 +9593,25 @@ pub extern fn vkGetPhysicalDeviceSparseImageFormatProperties2KHR(
 
 pub inline fn GetPhysicalDeviceFeatures2KHR(physicalDevice: PhysicalDevice) PhysicalDeviceFeatures2 {
     var out_features: PhysicalDeviceFeatures2 = undefined;
-    vkGetPhysicalDeviceFeatures2KHR(physicalDevice.handle, &out_features);
+    vkGetPhysicalDeviceFeatures2KHR(physicalDevice, &out_features);
     return out_features;
 }
 
 pub inline fn GetPhysicalDeviceProperties2KHR(physicalDevice: PhysicalDevice) PhysicalDeviceProperties2 {
     var out_properties: PhysicalDeviceProperties2 = undefined;
-    vkGetPhysicalDeviceProperties2KHR(physicalDevice.handle, &out_properties);
+    vkGetPhysicalDeviceProperties2KHR(physicalDevice, &out_properties);
     return out_properties;
 }
 
 pub inline fn GetPhysicalDeviceFormatProperties2KHR(physicalDevice: PhysicalDevice, format: Format) FormatProperties2 {
     var out_formatProperties: FormatProperties2 = undefined;
-    vkGetPhysicalDeviceFormatProperties2KHR(physicalDevice.handle, format, &out_formatProperties);
+    vkGetPhysicalDeviceFormatProperties2KHR(physicalDevice, format, &out_formatProperties);
     return out_formatProperties;
 }
 
 pub inline fn GetPhysicalDeviceImageFormatProperties2KHR(physicalDevice: PhysicalDevice, imageFormatInfo: PhysicalDeviceImageFormatInfo2) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_FORMAT_NOT_SUPPORTED,VK_UNDOCUMENTED_ERROR}!ImageFormatProperties2 {
     var out_imageFormatProperties: ImageFormatProperties2 = undefined;
-    const result = vkGetPhysicalDeviceImageFormatProperties2KHR(physicalDevice.handle, &imageFormatInfo, &out_imageFormatProperties);
+    const result = vkGetPhysicalDeviceImageFormatProperties2KHR(physicalDevice, &imageFormatInfo, &out_imageFormatProperties);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -9752,32 +9626,32 @@ pub inline fn GetPhysicalDeviceImageFormatProperties2KHR(physicalDevice: Physica
 pub inline fn GetPhysicalDeviceQueueFamilyProperties2KHR(physicalDevice: PhysicalDevice, queueFamilyProperties: []QueueFamilyProperties2) []QueueFamilyProperties2 {
     var out_queueFamilyProperties: []QueueFamilyProperties2 = undefined;
     var queueFamilyPropertyCount: u32 = @intCast(u32, queueFamilyProperties.len);
-    vkGetPhysicalDeviceQueueFamilyProperties2KHR(physicalDevice.handle, &queueFamilyPropertyCount, queueFamilyProperties.ptr);
+    vkGetPhysicalDeviceQueueFamilyProperties2KHR(physicalDevice, &queueFamilyPropertyCount, queueFamilyProperties.ptr);
     out_queueFamilyProperties = queueFamilyProperties[0..queueFamilyPropertyCount];
     return out_queueFamilyProperties;
 }
 pub inline fn GetPhysicalDeviceQueueFamilyProperties2CountKHR(physicalDevice: PhysicalDevice) u32 {
     var out_queueFamilyPropertyCount: u32 = undefined;
-    vkGetPhysicalDeviceQueueFamilyProperties2KHR(physicalDevice.handle, &out_queueFamilyPropertyCount, null);
+    vkGetPhysicalDeviceQueueFamilyProperties2KHR(physicalDevice, &out_queueFamilyPropertyCount, null);
     return out_queueFamilyPropertyCount;
 }
 
 pub inline fn GetPhysicalDeviceMemoryProperties2KHR(physicalDevice: PhysicalDevice) PhysicalDeviceMemoryProperties2 {
     var out_memoryProperties: PhysicalDeviceMemoryProperties2 = undefined;
-    vkGetPhysicalDeviceMemoryProperties2KHR(physicalDevice.handle, &out_memoryProperties);
+    vkGetPhysicalDeviceMemoryProperties2KHR(physicalDevice, &out_memoryProperties);
     return out_memoryProperties;
 }
 
 pub inline fn GetPhysicalDeviceSparseImageFormatProperties2KHR(physicalDevice: PhysicalDevice, formatInfo: PhysicalDeviceSparseImageFormatInfo2, properties: []SparseImageFormatProperties2) []SparseImageFormatProperties2 {
     var out_properties: []SparseImageFormatProperties2 = undefined;
     var propertyCount: u32 = @intCast(u32, properties.len);
-    vkGetPhysicalDeviceSparseImageFormatProperties2KHR(physicalDevice.handle, &formatInfo, &propertyCount, properties.ptr);
+    vkGetPhysicalDeviceSparseImageFormatProperties2KHR(physicalDevice, &formatInfo, &propertyCount, properties.ptr);
     out_properties = properties[0..propertyCount];
     return out_properties;
 }
 pub inline fn GetPhysicalDeviceSparseImageFormatProperties2CountKHR(physicalDevice: PhysicalDevice, formatInfo: PhysicalDeviceSparseImageFormatInfo2) u32 {
     var out_propertyCount: u32 = undefined;
-    vkGetPhysicalDeviceSparseImageFormatProperties2KHR(physicalDevice.handle, &formatInfo, &out_propertyCount, null);
+    vkGetPhysicalDeviceSparseImageFormatProperties2KHR(physicalDevice, &formatInfo, &out_propertyCount, null);
     return out_propertyCount;
 }
 
@@ -9798,7 +9672,7 @@ pub const BindBufferMemoryDeviceGroupInfoKHR = BindBufferMemoryDeviceGroupInfo;
 pub const BindImageMemoryDeviceGroupInfoKHR = BindImageMemoryDeviceGroupInfo;
 
 pub extern fn vkGetDeviceGroupPeerMemoryFeaturesKHR(
-    device: Device.IntType,
+    device: Device,
     heapIndex: u32,
     localDeviceIndex: u32,
     remoteDeviceIndex: u32,
@@ -9806,12 +9680,12 @@ pub extern fn vkGetDeviceGroupPeerMemoryFeaturesKHR(
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdSetDeviceMaskKHR(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     deviceMask: u32,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdDispatchBaseKHR(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     baseGroupX: u32,
     baseGroupY: u32,
     baseGroupZ: u32,
@@ -9822,17 +9696,12 @@ pub extern fn vkCmdDispatchBaseKHR(
 
 pub inline fn GetDeviceGroupPeerMemoryFeaturesKHR(device: Device, heapIndex: u32, localDeviceIndex: u32, remoteDeviceIndex: u32) PeerMemoryFeatureFlags {
     var out_peerMemoryFeatures: PeerMemoryFeatureFlags align(4) = undefined;
-    vkGetDeviceGroupPeerMemoryFeaturesKHR(device.handle, heapIndex, localDeviceIndex, remoteDeviceIndex, &out_peerMemoryFeatures);
+    vkGetDeviceGroupPeerMemoryFeaturesKHR(device, heapIndex, localDeviceIndex, remoteDeviceIndex, &out_peerMemoryFeatures);
     return out_peerMemoryFeatures;
 }
 
-pub inline fn CmdSetDeviceMaskKHR(commandBuffer: CommandBuffer, deviceMask: u32) void {
-    vkCmdSetDeviceMaskKHR(commandBuffer.handle, deviceMask);
-}
-
-pub inline fn CmdDispatchBaseKHR(commandBuffer: CommandBuffer, baseGroupX: u32, baseGroupY: u32, baseGroupZ: u32, groupCountX: u32, groupCountY: u32, groupCountZ: u32) void {
-    vkCmdDispatchBaseKHR(commandBuffer.handle, baseGroupX, baseGroupY, baseGroupZ, groupCountX, groupCountY, groupCountZ);
-}
+pub const CmdSetDeviceMaskKHR = vkCmdSetDeviceMaskKHR;
+pub const CmdDispatchBaseKHR = vkCmdDispatchBaseKHR;
 
 
 pub const KHR_shader_draw_parameters = 1;
@@ -9847,13 +9716,13 @@ pub const KHR_MAINTENANCE1_EXTENSION_NAME = "VK_KHR_maintenance1";
 pub const CommandPoolTrimFlagsKHR = CommandPoolTrimFlags;
 
 pub extern fn vkTrimCommandPoolKHR(
-    device: Device.IntType,
-    commandPool: CommandPool.IntType,
+    device: Device,
+    commandPool: CommandPool,
     flags: CommandPoolTrimFlags.IntType,
 ) callconv(CallConv) void;
 
 pub inline fn TrimCommandPoolKHR(device: Device, commandPool: CommandPool, flags: CommandPoolTrimFlags) void {
-    vkTrimCommandPoolKHR(device.handle, commandPool.handle, flags.toInt());
+    vkTrimCommandPoolKHR(device, commandPool, flags.toInt());
 }
 
 
@@ -9866,7 +9735,7 @@ pub const PhysicalDeviceGroupPropertiesKHR = PhysicalDeviceGroupProperties;
 pub const DeviceGroupDeviceCreateInfoKHR = DeviceGroupDeviceCreateInfo;
 
 pub extern fn vkEnumeratePhysicalDeviceGroupsKHR(
-    instance: Instance.IntType,
+    instance: Instance,
     pPhysicalDeviceGroupCount: *u32,
     pPhysicalDeviceGroupProperties: ?[*]PhysicalDeviceGroupProperties,
 ) callconv(CallConv) Result;
@@ -9878,7 +9747,7 @@ pub const EnumeratePhysicalDeviceGroupsKHRResult = struct {
 pub inline fn EnumeratePhysicalDeviceGroupsKHR(instance: Instance, physicalDeviceGroupProperties: []PhysicalDeviceGroupProperties) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_INITIALIZATION_FAILED,VK_UNDOCUMENTED_ERROR}!EnumeratePhysicalDeviceGroupsKHRResult {
     var returnValues: EnumeratePhysicalDeviceGroupsKHRResult = undefined;
     var physicalDeviceGroupCount: u32 = @intCast(u32, physicalDeviceGroupProperties.len);
-    const result = vkEnumeratePhysicalDeviceGroupsKHR(instance.handle, &physicalDeviceGroupCount, physicalDeviceGroupProperties.ptr);
+    const result = vkEnumeratePhysicalDeviceGroupsKHR(instance, &physicalDeviceGroupCount, physicalDeviceGroupProperties.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -9893,7 +9762,7 @@ pub inline fn EnumeratePhysicalDeviceGroupsKHR(instance: Instance, physicalDevic
 }
 pub inline fn EnumeratePhysicalDeviceGroupsCountKHR(instance: Instance) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_INITIALIZATION_FAILED,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_physicalDeviceGroupCount: u32 = undefined;
-    const result = vkEnumeratePhysicalDeviceGroupsKHR(instance.handle, &out_physicalDeviceGroupCount, null);
+    const result = vkEnumeratePhysicalDeviceGroupsKHR(instance, &out_physicalDeviceGroupCount, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -9922,14 +9791,14 @@ pub const ExternalBufferPropertiesKHR = ExternalBufferProperties;
 pub const PhysicalDeviceIDPropertiesKHR = PhysicalDeviceIDProperties;
 
 pub extern fn vkGetPhysicalDeviceExternalBufferPropertiesKHR(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pExternalBufferInfo: *const PhysicalDeviceExternalBufferInfo,
     pExternalBufferProperties: *ExternalBufferProperties,
 ) callconv(CallConv) void;
 
 pub inline fn GetPhysicalDeviceExternalBufferPropertiesKHR(physicalDevice: PhysicalDevice, externalBufferInfo: PhysicalDeviceExternalBufferInfo) ExternalBufferProperties {
     var out_externalBufferProperties: ExternalBufferProperties = undefined;
-    vkGetPhysicalDeviceExternalBufferPropertiesKHR(physicalDevice.handle, &externalBufferInfo, &out_externalBufferProperties);
+    vkGetPhysicalDeviceExternalBufferPropertiesKHR(physicalDevice, &externalBufferInfo, &out_externalBufferProperties);
     return out_externalBufferProperties;
 }
 
@@ -9969,13 +9838,13 @@ pub const MemoryGetFdInfoKHR = extern struct {
 };
 
 pub extern fn vkGetMemoryFdKHR(
-    device: Device.IntType,
+    device: Device,
     pGetFdInfo: *const MemoryGetFdInfoKHR,
     pFd: *c_int,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetMemoryFdPropertiesKHR(
-    device: Device.IntType,
+    device: Device,
     handleType: ExternalMemoryHandleTypeFlags.IntType,
     fd: c_int,
     pMemoryFdProperties: *MemoryFdPropertiesKHR,
@@ -9983,7 +9852,7 @@ pub extern fn vkGetMemoryFdPropertiesKHR(
 
 pub inline fn GetMemoryFdKHR(device: Device, getFdInfo: MemoryGetFdInfoKHR) error{VK_TOO_MANY_OBJECTS,VK_OUT_OF_HOST_MEMORY,VK_UNDOCUMENTED_ERROR}!c_int {
     var out_fd: c_int = undefined;
-    const result = vkGetMemoryFdKHR(device.handle, &getFdInfo, &out_fd);
+    const result = vkGetMemoryFdKHR(device, &getFdInfo, &out_fd);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_TOO_MANY_OBJECTS => error.VK_TOO_MANY_OBJECTS,
@@ -9996,7 +9865,7 @@ pub inline fn GetMemoryFdKHR(device: Device, getFdInfo: MemoryGetFdInfoKHR) erro
 
 pub inline fn GetMemoryFdPropertiesKHR(device: Device, handleType: ExternalMemoryHandleTypeFlags, fd: c_int) error{VK_INVALID_EXTERNAL_HANDLE,VK_UNDOCUMENTED_ERROR}!MemoryFdPropertiesKHR {
     var out_memoryFdProperties: MemoryFdPropertiesKHR = undefined;
-    const result = vkGetMemoryFdPropertiesKHR(device.handle, handleType.toInt(), fd, &out_memoryFdProperties);
+    const result = vkGetMemoryFdPropertiesKHR(device, handleType.toInt(), fd, &out_memoryFdProperties);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_INVALID_EXTERNAL_HANDLE => error.VK_INVALID_EXTERNAL_HANDLE,
@@ -10018,14 +9887,14 @@ pub const PhysicalDeviceExternalSemaphoreInfoKHR = PhysicalDeviceExternalSemapho
 pub const ExternalSemaphorePropertiesKHR = ExternalSemaphoreProperties;
 
 pub extern fn vkGetPhysicalDeviceExternalSemaphorePropertiesKHR(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pExternalSemaphoreInfo: *const PhysicalDeviceExternalSemaphoreInfo,
     pExternalSemaphoreProperties: *ExternalSemaphoreProperties,
 ) callconv(CallConv) void;
 
 pub inline fn GetPhysicalDeviceExternalSemaphorePropertiesKHR(physicalDevice: PhysicalDevice, externalSemaphoreInfo: PhysicalDeviceExternalSemaphoreInfo) ExternalSemaphoreProperties {
     var out_externalSemaphoreProperties: ExternalSemaphoreProperties = undefined;
-    vkGetPhysicalDeviceExternalSemaphorePropertiesKHR(physicalDevice.handle, &externalSemaphoreInfo, &out_externalSemaphoreProperties);
+    vkGetPhysicalDeviceExternalSemaphorePropertiesKHR(physicalDevice, &externalSemaphoreInfo, &out_externalSemaphoreProperties);
     return out_externalSemaphoreProperties;
 }
 
@@ -10060,18 +9929,18 @@ pub const SemaphoreGetFdInfoKHR = extern struct {
 };
 
 pub extern fn vkImportSemaphoreFdKHR(
-    device: Device.IntType,
+    device: Device,
     pImportSemaphoreFdInfo: *const ImportSemaphoreFdInfoKHR,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetSemaphoreFdKHR(
-    device: Device.IntType,
+    device: Device,
     pGetFdInfo: *const SemaphoreGetFdInfoKHR,
     pFd: *c_int,
 ) callconv(CallConv) Result;
 
 pub inline fn ImportSemaphoreFdKHR(device: Device, importSemaphoreFdInfo: ImportSemaphoreFdInfoKHR) error{VK_OUT_OF_HOST_MEMORY,VK_INVALID_EXTERNAL_HANDLE,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkImportSemaphoreFdKHR(device.handle, &importSemaphoreFdInfo);
+    const result = vkImportSemaphoreFdKHR(device, &importSemaphoreFdInfo);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -10083,7 +9952,7 @@ pub inline fn ImportSemaphoreFdKHR(device: Device, importSemaphoreFdInfo: Import
 
 pub inline fn GetSemaphoreFdKHR(device: Device, getFdInfo: SemaphoreGetFdInfoKHR) error{VK_TOO_MANY_OBJECTS,VK_OUT_OF_HOST_MEMORY,VK_UNDOCUMENTED_ERROR}!c_int {
     var out_fd: c_int = undefined;
-    const result = vkGetSemaphoreFdKHR(device.handle, &getFdInfo, &out_fd);
+    const result = vkGetSemaphoreFdKHR(device, &getFdInfo, &out_fd);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_TOO_MANY_OBJECTS => error.VK_TOO_MANY_OBJECTS,
@@ -10106,29 +9975,27 @@ pub const PhysicalDevicePushDescriptorPropertiesKHR = extern struct {
 };
 
 pub extern fn vkCmdPushDescriptorSetKHR(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pipelineBindPoint: PipelineBindPoint,
-    layout: PipelineLayout.IntType,
+    layout: PipelineLayout,
     set: u32,
     descriptorWriteCount: u32,
     pDescriptorWrites: [*]const WriteDescriptorSet,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdPushDescriptorSetWithTemplateKHR(
-    commandBuffer: CommandBuffer.IntType,
-    descriptorUpdateTemplate: DescriptorUpdateTemplate.IntType,
-    layout: PipelineLayout.IntType,
+    commandBuffer: CommandBuffer,
+    descriptorUpdateTemplate: DescriptorUpdateTemplate,
+    layout: PipelineLayout,
     set: u32,
     pData: ?*const c_void,
 ) callconv(CallConv) void;
 
 pub inline fn CmdPushDescriptorSetKHR(commandBuffer: CommandBuffer, pipelineBindPoint: PipelineBindPoint, layout: PipelineLayout, set: u32, descriptorWrites: []const WriteDescriptorSet) void {
-    vkCmdPushDescriptorSetKHR(commandBuffer.handle, pipelineBindPoint, layout.handle, set, @intCast(u32, descriptorWrites.len), descriptorWrites.ptr);
+    vkCmdPushDescriptorSetKHR(commandBuffer, pipelineBindPoint, layout, set, @intCast(u32, descriptorWrites.len), descriptorWrites.ptr);
 }
 
-pub inline fn CmdPushDescriptorSetWithTemplateKHR(commandBuffer: CommandBuffer, descriptorUpdateTemplate: DescriptorUpdateTemplate, layout: PipelineLayout, set: u32, pData: ?*const c_void) void {
-    vkCmdPushDescriptorSetWithTemplateKHR(commandBuffer.handle, descriptorUpdateTemplate.handle, layout.handle, set, pData);
-}
+pub const CmdPushDescriptorSetWithTemplateKHR = vkCmdPushDescriptorSetWithTemplateKHR;
 
 
 pub const KHR_shader_float16_int8 = 1;
@@ -10183,28 +10050,28 @@ pub const DescriptorUpdateTemplateEntryKHR = DescriptorUpdateTemplateEntry;
 pub const DescriptorUpdateTemplateCreateInfoKHR = DescriptorUpdateTemplateCreateInfo;
 
 pub extern fn vkCreateDescriptorUpdateTemplateKHR(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const DescriptorUpdateTemplateCreateInfo,
     pAllocator: ?*const AllocationCallbacks,
     pDescriptorUpdateTemplate: *DescriptorUpdateTemplate,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyDescriptorUpdateTemplateKHR(
-    device: Device.IntType,
-    descriptorUpdateTemplate: DescriptorUpdateTemplate.IntType,
+    device: Device,
+    descriptorUpdateTemplate: DescriptorUpdateTemplate,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkUpdateDescriptorSetWithTemplateKHR(
-    device: Device.IntType,
-    descriptorSet: DescriptorSet.IntType,
-    descriptorUpdateTemplate: DescriptorUpdateTemplate.IntType,
+    device: Device,
+    descriptorSet: DescriptorSet,
+    descriptorUpdateTemplate: DescriptorUpdateTemplate,
     pData: ?*const c_void,
 ) callconv(CallConv) void;
 
 pub inline fn CreateDescriptorUpdateTemplateKHR(device: Device, createInfo: DescriptorUpdateTemplateCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!DescriptorUpdateTemplate {
     var out_descriptorUpdateTemplate: DescriptorUpdateTemplate = undefined;
-    const result = vkCreateDescriptorUpdateTemplateKHR(device.handle, &createInfo, pAllocator, &out_descriptorUpdateTemplate);
+    const result = vkCreateDescriptorUpdateTemplateKHR(device, &createInfo, pAllocator, &out_descriptorUpdateTemplate);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -10215,13 +10082,8 @@ pub inline fn CreateDescriptorUpdateTemplateKHR(device: Device, createInfo: Desc
     return out_descriptorUpdateTemplate;
 }
 
-pub inline fn DestroyDescriptorUpdateTemplateKHR(device: Device, descriptorUpdateTemplate: DescriptorUpdateTemplate, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyDescriptorUpdateTemplateKHR(device.handle, descriptorUpdateTemplate.handle, pAllocator);
-}
-
-pub inline fn UpdateDescriptorSetWithTemplateKHR(device: Device, descriptorSet: DescriptorSet, descriptorUpdateTemplate: DescriptorUpdateTemplate, pData: ?*const c_void) void {
-    vkUpdateDescriptorSetWithTemplateKHR(device.handle, descriptorSet.handle, descriptorUpdateTemplate.handle, pData);
-}
+pub const DestroyDescriptorUpdateTemplateKHR = vkDestroyDescriptorUpdateTemplateKHR;
+pub const UpdateDescriptorSetWithTemplateKHR = vkUpdateDescriptorSetWithTemplateKHR;
 
 
 pub const KHR_imageless_framebuffer = 1;
@@ -10247,32 +10109,32 @@ pub const SubpassBeginInfoKHR = SubpassBeginInfo;
 pub const SubpassEndInfoKHR = SubpassEndInfo;
 
 pub extern fn vkCreateRenderPass2KHR(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const RenderPassCreateInfo2,
     pAllocator: ?*const AllocationCallbacks,
     pRenderPass: *RenderPass,
 ) callconv(CallConv) Result;
 
 pub extern fn vkCmdBeginRenderPass2KHR(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pRenderPassBegin: *const RenderPassBeginInfo,
     pSubpassBeginInfo: *const SubpassBeginInfo,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdNextSubpass2KHR(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pSubpassBeginInfo: *const SubpassBeginInfo,
     pSubpassEndInfo: *const SubpassEndInfo,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdEndRenderPass2KHR(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pSubpassEndInfo: *const SubpassEndInfo,
 ) callconv(CallConv) void;
 
 pub inline fn CreateRenderPass2KHR(device: Device, createInfo: RenderPassCreateInfo2, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!RenderPass {
     var out_renderPass: RenderPass = undefined;
-    const result = vkCreateRenderPass2KHR(device.handle, &createInfo, pAllocator, &out_renderPass);
+    const result = vkCreateRenderPass2KHR(device, &createInfo, pAllocator, &out_renderPass);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -10284,15 +10146,15 @@ pub inline fn CreateRenderPass2KHR(device: Device, createInfo: RenderPassCreateI
 }
 
 pub inline fn CmdBeginRenderPass2KHR(commandBuffer: CommandBuffer, renderPassBegin: RenderPassBeginInfo, subpassBeginInfo: SubpassBeginInfo) void {
-    vkCmdBeginRenderPass2KHR(commandBuffer.handle, &renderPassBegin, &subpassBeginInfo);
+    vkCmdBeginRenderPass2KHR(commandBuffer, &renderPassBegin, &subpassBeginInfo);
 }
 
 pub inline fn CmdNextSubpass2KHR(commandBuffer: CommandBuffer, subpassBeginInfo: SubpassBeginInfo, subpassEndInfo: SubpassEndInfo) void {
-    vkCmdNextSubpass2KHR(commandBuffer.handle, &subpassBeginInfo, &subpassEndInfo);
+    vkCmdNextSubpass2KHR(commandBuffer, &subpassBeginInfo, &subpassEndInfo);
 }
 
 pub inline fn CmdEndRenderPass2KHR(commandBuffer: CommandBuffer, subpassEndInfo: SubpassEndInfo) void {
-    vkCmdEndRenderPass2KHR(commandBuffer.handle, &subpassEndInfo);
+    vkCmdEndRenderPass2KHR(commandBuffer, &subpassEndInfo);
 }
 
 
@@ -10307,12 +10169,12 @@ pub const SharedPresentSurfaceCapabilitiesKHR = extern struct {
 };
 
 pub extern fn vkGetSwapchainStatusKHR(
-    device: Device.IntType,
-    swapchain: SwapchainKHR.IntType,
+    device: Device,
+    swapchain: SwapchainKHR,
 ) callconv(CallConv) Result;
 
 pub inline fn GetSwapchainStatusKHR(device: Device, swapchain: SwapchainKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_DEVICE_LOST,VK_OUT_OF_DATE_KHR,VK_SURFACE_LOST_KHR,VK_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT,VK_UNDOCUMENTED_ERROR}!Result {
-    const result = vkGetSwapchainStatusKHR(device.handle, swapchain.handle);
+    const result = vkGetSwapchainStatusKHR(device, swapchain);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -10339,14 +10201,14 @@ pub const PhysicalDeviceExternalFenceInfoKHR = PhysicalDeviceExternalFenceInfo;
 pub const ExternalFencePropertiesKHR = ExternalFenceProperties;
 
 pub extern fn vkGetPhysicalDeviceExternalFencePropertiesKHR(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pExternalFenceInfo: *const PhysicalDeviceExternalFenceInfo,
     pExternalFenceProperties: *ExternalFenceProperties,
 ) callconv(CallConv) void;
 
 pub inline fn GetPhysicalDeviceExternalFencePropertiesKHR(physicalDevice: PhysicalDevice, externalFenceInfo: PhysicalDeviceExternalFenceInfo) ExternalFenceProperties {
     var out_externalFenceProperties: ExternalFenceProperties = undefined;
-    vkGetPhysicalDeviceExternalFencePropertiesKHR(physicalDevice.handle, &externalFenceInfo, &out_externalFenceProperties);
+    vkGetPhysicalDeviceExternalFencePropertiesKHR(physicalDevice, &externalFenceInfo, &out_externalFenceProperties);
     return out_externalFenceProperties;
 }
 
@@ -10381,18 +10243,18 @@ pub const FenceGetFdInfoKHR = extern struct {
 };
 
 pub extern fn vkImportFenceFdKHR(
-    device: Device.IntType,
+    device: Device,
     pImportFenceFdInfo: *const ImportFenceFdInfoKHR,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetFenceFdKHR(
-    device: Device.IntType,
+    device: Device,
     pGetFdInfo: *const FenceGetFdInfoKHR,
     pFd: *c_int,
 ) callconv(CallConv) Result;
 
 pub inline fn ImportFenceFdKHR(device: Device, importFenceFdInfo: ImportFenceFdInfoKHR) error{VK_OUT_OF_HOST_MEMORY,VK_INVALID_EXTERNAL_HANDLE,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkImportFenceFdKHR(device.handle, &importFenceFdInfo);
+    const result = vkImportFenceFdKHR(device, &importFenceFdInfo);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -10404,7 +10266,7 @@ pub inline fn ImportFenceFdKHR(device: Device, importFenceFdInfo: ImportFenceFdI
 
 pub inline fn GetFenceFdKHR(device: Device, getFdInfo: FenceGetFdInfoKHR) error{VK_TOO_MANY_OBJECTS,VK_OUT_OF_HOST_MEMORY,VK_UNDOCUMENTED_ERROR}!c_int {
     var out_fd: c_int = undefined;
-    const result = vkGetFenceFdKHR(device.handle, &getFdInfo, &out_fd);
+    const result = vkGetFenceFdKHR(device, &getFdInfo, &out_fd);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_TOO_MANY_OBJECTS => error.VK_TOO_MANY_OBJECTS,
@@ -10593,7 +10455,7 @@ pub const PerformanceQuerySubmitInfoKHR = extern struct {
 };
 
 pub extern fn vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     queueFamilyIndex: u32,
     pCounterCount: *u32,
     pCounters: ?[*]PerformanceCounterKHR,
@@ -10601,17 +10463,17 @@ pub extern fn vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pPerformanceQueryCreateInfo: *const QueryPoolPerformanceCreateInfoKHR,
     pNumPasses: *u32,
 ) callconv(CallConv) void;
 
 pub extern fn vkAcquireProfilingLockKHR(
-    device: Device.IntType,
+    device: Device,
     pInfo: *const AcquireProfilingLockInfoKHR,
 ) callconv(CallConv) Result;
 
-pub extern fn vkReleaseProfilingLockKHR(device: Device.IntType) callconv(CallConv) void;
+pub extern fn vkReleaseProfilingLockKHR(device: Device) callconv(CallConv) void;
 
 pub const EnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHRResult = struct {
     result: Result,
@@ -10622,7 +10484,7 @@ pub inline fn EnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(phys
     var returnValues: EnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHRResult = undefined;
     var counterCount: u32 = @intCast(u32, counters.len);
     assert(counterDescriptions.len >= counters.len);
-    const result = vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(physicalDevice.handle, queueFamilyIndex, &counterCount, counters.ptr, counterDescriptions.ptr);
+    const result = vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(physicalDevice, queueFamilyIndex, &counterCount, counters.ptr, counterDescriptions.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -10638,7 +10500,7 @@ pub inline fn EnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(phys
 }
 pub inline fn EnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersCountKHR(physicalDevice: PhysicalDevice, queueFamilyIndex: u32) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_INITIALIZATION_FAILED,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_counterCount: u32 = undefined;
-    const result = vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(physicalDevice.handle, queueFamilyIndex, &out_counterCount, null, null);
+    const result = vkEnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersKHR(physicalDevice, queueFamilyIndex, &out_counterCount, null, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -10652,12 +10514,12 @@ pub inline fn EnumeratePhysicalDeviceQueueFamilyPerformanceQueryCountersCountKHR
 
 pub inline fn GetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR(physicalDevice: PhysicalDevice, performanceQueryCreateInfo: QueryPoolPerformanceCreateInfoKHR) u32 {
     var out_numPasses: u32 = undefined;
-    vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR(physicalDevice.handle, &performanceQueryCreateInfo, &out_numPasses);
+    vkGetPhysicalDeviceQueueFamilyPerformanceQueryPassesKHR(physicalDevice, &performanceQueryCreateInfo, &out_numPasses);
     return out_numPasses;
 }
 
 pub inline fn AcquireProfilingLockKHR(device: Device, info: AcquireProfilingLockInfoKHR) error{VK_TIMEOUT,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkAcquireProfilingLockKHR(device.handle, &info);
+    const result = vkAcquireProfilingLockKHR(device, &info);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .TIMEOUT => error.VK_TIMEOUT,
@@ -10666,9 +10528,7 @@ pub inline fn AcquireProfilingLockKHR(device: Device, info: AcquireProfilingLock
     }
 }
 
-pub inline fn ReleaseProfilingLockKHR(device: Device) void {
-    vkReleaseProfilingLockKHR(device.handle);
-}
+pub const ReleaseProfilingLockKHR = vkReleaseProfilingLockKHR;
 
 
 pub const KHR_maintenance2 = 1;
@@ -10708,13 +10568,13 @@ pub const SurfaceFormat2KHR = extern struct {
 };
 
 pub extern fn vkGetPhysicalDeviceSurfaceCapabilities2KHR(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pSurfaceInfo: *const PhysicalDeviceSurfaceInfo2KHR,
     pSurfaceCapabilities: *SurfaceCapabilities2KHR,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetPhysicalDeviceSurfaceFormats2KHR(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pSurfaceInfo: *const PhysicalDeviceSurfaceInfo2KHR,
     pSurfaceFormatCount: *u32,
     pSurfaceFormats: ?[*]SurfaceFormat2KHR,
@@ -10722,7 +10582,7 @@ pub extern fn vkGetPhysicalDeviceSurfaceFormats2KHR(
 
 pub inline fn GetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice: PhysicalDevice, surfaceInfo: PhysicalDeviceSurfaceInfo2KHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_SURFACE_LOST_KHR,VK_UNDOCUMENTED_ERROR}!SurfaceCapabilities2KHR {
     var out_surfaceCapabilities: SurfaceCapabilities2KHR = undefined;
-    const result = vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice.handle, &surfaceInfo, &out_surfaceCapabilities);
+    const result = vkGetPhysicalDeviceSurfaceCapabilities2KHR(physicalDevice, &surfaceInfo, &out_surfaceCapabilities);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -10741,7 +10601,7 @@ pub const GetPhysicalDeviceSurfaceFormats2KHRResult = struct {
 pub inline fn GetPhysicalDeviceSurfaceFormats2KHR(physicalDevice: PhysicalDevice, surfaceInfo: PhysicalDeviceSurfaceInfo2KHR, surfaceFormats: []SurfaceFormat2KHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_SURFACE_LOST_KHR,VK_UNDOCUMENTED_ERROR}!GetPhysicalDeviceSurfaceFormats2KHRResult {
     var returnValues: GetPhysicalDeviceSurfaceFormats2KHRResult = undefined;
     var surfaceFormatCount: u32 = @intCast(u32, surfaceFormats.len);
-    const result = vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice.handle, &surfaceInfo, &surfaceFormatCount, surfaceFormats.ptr);
+    const result = vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, &surfaceInfo, &surfaceFormatCount, surfaceFormats.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -10756,7 +10616,7 @@ pub inline fn GetPhysicalDeviceSurfaceFormats2KHR(physicalDevice: PhysicalDevice
 }
 pub inline fn GetPhysicalDeviceSurfaceFormats2CountKHR(physicalDevice: PhysicalDevice, surfaceInfo: PhysicalDeviceSurfaceInfo2KHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_SURFACE_LOST_KHR,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_surfaceFormatCount: u32 = undefined;
-    const result = vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice.handle, &surfaceInfo, &out_surfaceFormatCount, null);
+    const result = vkGetPhysicalDeviceSurfaceFormats2KHR(physicalDevice, &surfaceInfo, &out_surfaceFormatCount, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -10813,26 +10673,26 @@ pub const DisplayPlaneCapabilities2KHR = extern struct {
 };
 
 pub extern fn vkGetPhysicalDeviceDisplayProperties2KHR(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pPropertyCount: *u32,
     pProperties: ?[*]DisplayProperties2KHR,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetPhysicalDeviceDisplayPlaneProperties2KHR(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pPropertyCount: *u32,
     pProperties: ?[*]DisplayPlaneProperties2KHR,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetDisplayModeProperties2KHR(
-    physicalDevice: PhysicalDevice.IntType,
-    display: DisplayKHR.IntType,
+    physicalDevice: PhysicalDevice,
+    display: DisplayKHR,
     pPropertyCount: *u32,
     pProperties: ?[*]DisplayModeProperties2KHR,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetDisplayPlaneCapabilities2KHR(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pDisplayPlaneInfo: *const DisplayPlaneInfo2KHR,
     pCapabilities: *DisplayPlaneCapabilities2KHR,
 ) callconv(CallConv) Result;
@@ -10844,7 +10704,7 @@ pub const GetPhysicalDeviceDisplayProperties2KHRResult = struct {
 pub inline fn GetPhysicalDeviceDisplayProperties2KHR(physicalDevice: PhysicalDevice, properties: []DisplayProperties2KHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!GetPhysicalDeviceDisplayProperties2KHRResult {
     var returnValues: GetPhysicalDeviceDisplayProperties2KHRResult = undefined;
     var propertyCount: u32 = @intCast(u32, properties.len);
-    const result = vkGetPhysicalDeviceDisplayProperties2KHR(physicalDevice.handle, &propertyCount, properties.ptr);
+    const result = vkGetPhysicalDeviceDisplayProperties2KHR(physicalDevice, &propertyCount, properties.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -10858,7 +10718,7 @@ pub inline fn GetPhysicalDeviceDisplayProperties2KHR(physicalDevice: PhysicalDev
 }
 pub inline fn GetPhysicalDeviceDisplayProperties2CountKHR(physicalDevice: PhysicalDevice) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_propertyCount: u32 = undefined;
-    const result = vkGetPhysicalDeviceDisplayProperties2KHR(physicalDevice.handle, &out_propertyCount, null);
+    const result = vkGetPhysicalDeviceDisplayProperties2KHR(physicalDevice, &out_propertyCount, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -10876,7 +10736,7 @@ pub const GetPhysicalDeviceDisplayPlaneProperties2KHRResult = struct {
 pub inline fn GetPhysicalDeviceDisplayPlaneProperties2KHR(physicalDevice: PhysicalDevice, properties: []DisplayPlaneProperties2KHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!GetPhysicalDeviceDisplayPlaneProperties2KHRResult {
     var returnValues: GetPhysicalDeviceDisplayPlaneProperties2KHRResult = undefined;
     var propertyCount: u32 = @intCast(u32, properties.len);
-    const result = vkGetPhysicalDeviceDisplayPlaneProperties2KHR(physicalDevice.handle, &propertyCount, properties.ptr);
+    const result = vkGetPhysicalDeviceDisplayPlaneProperties2KHR(physicalDevice, &propertyCount, properties.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -10890,7 +10750,7 @@ pub inline fn GetPhysicalDeviceDisplayPlaneProperties2KHR(physicalDevice: Physic
 }
 pub inline fn GetPhysicalDeviceDisplayPlaneProperties2CountKHR(physicalDevice: PhysicalDevice) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_propertyCount: u32 = undefined;
-    const result = vkGetPhysicalDeviceDisplayPlaneProperties2KHR(physicalDevice.handle, &out_propertyCount, null);
+    const result = vkGetPhysicalDeviceDisplayPlaneProperties2KHR(physicalDevice, &out_propertyCount, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -10908,7 +10768,7 @@ pub const GetDisplayModeProperties2KHRResult = struct {
 pub inline fn GetDisplayModeProperties2KHR(physicalDevice: PhysicalDevice, display: DisplayKHR, properties: []DisplayModeProperties2KHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!GetDisplayModeProperties2KHRResult {
     var returnValues: GetDisplayModeProperties2KHRResult = undefined;
     var propertyCount: u32 = @intCast(u32, properties.len);
-    const result = vkGetDisplayModeProperties2KHR(physicalDevice.handle, display.handle, &propertyCount, properties.ptr);
+    const result = vkGetDisplayModeProperties2KHR(physicalDevice, display, &propertyCount, properties.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -10922,7 +10782,7 @@ pub inline fn GetDisplayModeProperties2KHR(physicalDevice: PhysicalDevice, displ
 }
 pub inline fn GetDisplayModeProperties2CountKHR(physicalDevice: PhysicalDevice, display: DisplayKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_propertyCount: u32 = undefined;
-    const result = vkGetDisplayModeProperties2KHR(physicalDevice.handle, display.handle, &out_propertyCount, null);
+    const result = vkGetDisplayModeProperties2KHR(physicalDevice, display, &out_propertyCount, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -10935,7 +10795,7 @@ pub inline fn GetDisplayModeProperties2CountKHR(physicalDevice: PhysicalDevice, 
 
 pub inline fn GetDisplayPlaneCapabilities2KHR(physicalDevice: PhysicalDevice, displayPlaneInfo: DisplayPlaneInfo2KHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!DisplayPlaneCapabilities2KHR {
     var out_capabilities: DisplayPlaneCapabilities2KHR = undefined;
-    const result = vkGetDisplayPlaneCapabilities2KHR(physicalDevice.handle, &displayPlaneInfo, &out_capabilities);
+    const result = vkGetDisplayPlaneCapabilities2KHR(physicalDevice, &displayPlaneInfo, &out_capabilities);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -10975,19 +10835,19 @@ pub const ImageSparseMemoryRequirementsInfo2KHR = ImageSparseMemoryRequirementsI
 pub const SparseImageMemoryRequirements2KHR = SparseImageMemoryRequirements2;
 
 pub extern fn vkGetImageMemoryRequirements2KHR(
-    device: Device.IntType,
+    device: Device,
     pInfo: *const ImageMemoryRequirementsInfo2,
     pMemoryRequirements: *MemoryRequirements2,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetBufferMemoryRequirements2KHR(
-    device: Device.IntType,
+    device: Device,
     pInfo: *const BufferMemoryRequirementsInfo2,
     pMemoryRequirements: *MemoryRequirements2,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetImageSparseMemoryRequirements2KHR(
-    device: Device.IntType,
+    device: Device,
     pInfo: *const ImageSparseMemoryRequirementsInfo2,
     pSparseMemoryRequirementCount: *u32,
     pSparseMemoryRequirements: ?[*]SparseImageMemoryRequirements2,
@@ -10995,26 +10855,26 @@ pub extern fn vkGetImageSparseMemoryRequirements2KHR(
 
 pub inline fn GetImageMemoryRequirements2KHR(device: Device, info: ImageMemoryRequirementsInfo2) MemoryRequirements2 {
     var out_memoryRequirements: MemoryRequirements2 = undefined;
-    vkGetImageMemoryRequirements2KHR(device.handle, &info, &out_memoryRequirements);
+    vkGetImageMemoryRequirements2KHR(device, &info, &out_memoryRequirements);
     return out_memoryRequirements;
 }
 
 pub inline fn GetBufferMemoryRequirements2KHR(device: Device, info: BufferMemoryRequirementsInfo2) MemoryRequirements2 {
     var out_memoryRequirements: MemoryRequirements2 = undefined;
-    vkGetBufferMemoryRequirements2KHR(device.handle, &info, &out_memoryRequirements);
+    vkGetBufferMemoryRequirements2KHR(device, &info, &out_memoryRequirements);
     return out_memoryRequirements;
 }
 
 pub inline fn GetImageSparseMemoryRequirements2KHR(device: Device, info: ImageSparseMemoryRequirementsInfo2, sparseMemoryRequirements: []SparseImageMemoryRequirements2) []SparseImageMemoryRequirements2 {
     var out_sparseMemoryRequirements: []SparseImageMemoryRequirements2 = undefined;
     var sparseMemoryRequirementCount: u32 = @intCast(u32, sparseMemoryRequirements.len);
-    vkGetImageSparseMemoryRequirements2KHR(device.handle, &info, &sparseMemoryRequirementCount, sparseMemoryRequirements.ptr);
+    vkGetImageSparseMemoryRequirements2KHR(device, &info, &sparseMemoryRequirementCount, sparseMemoryRequirements.ptr);
     out_sparseMemoryRequirements = sparseMemoryRequirements[0..sparseMemoryRequirementCount];
     return out_sparseMemoryRequirements;
 }
 pub inline fn GetImageSparseMemoryRequirements2CountKHR(device: Device, info: ImageSparseMemoryRequirementsInfo2) u32 {
     var out_sparseMemoryRequirementCount: u32 = undefined;
-    vkGetImageSparseMemoryRequirements2KHR(device.handle, &info, &out_sparseMemoryRequirementCount, null);
+    vkGetImageSparseMemoryRequirements2KHR(device, &info, &out_sparseMemoryRequirementCount, null);
     return out_sparseMemoryRequirementCount;
 }
 
@@ -11044,21 +10904,21 @@ pub const PhysicalDeviceSamplerYcbcrConversionFeaturesKHR = PhysicalDeviceSample
 pub const SamplerYcbcrConversionImageFormatPropertiesKHR = SamplerYcbcrConversionImageFormatProperties;
 
 pub extern fn vkCreateSamplerYcbcrConversionKHR(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const SamplerYcbcrConversionCreateInfo,
     pAllocator: ?*const AllocationCallbacks,
     pYcbcrConversion: *SamplerYcbcrConversion,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroySamplerYcbcrConversionKHR(
-    device: Device.IntType,
-    ycbcrConversion: SamplerYcbcrConversion.IntType,
+    device: Device,
+    ycbcrConversion: SamplerYcbcrConversion,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub inline fn CreateSamplerYcbcrConversionKHR(device: Device, createInfo: SamplerYcbcrConversionCreateInfo, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!SamplerYcbcrConversion {
     var out_ycbcrConversion: SamplerYcbcrConversion = undefined;
-    const result = vkCreateSamplerYcbcrConversionKHR(device.handle, &createInfo, pAllocator, &out_ycbcrConversion);
+    const result = vkCreateSamplerYcbcrConversionKHR(device, &createInfo, pAllocator, &out_ycbcrConversion);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -11069,9 +10929,7 @@ pub inline fn CreateSamplerYcbcrConversionKHR(device: Device, createInfo: Sample
     return out_ycbcrConversion;
 }
 
-pub inline fn DestroySamplerYcbcrConversionKHR(device: Device, ycbcrConversion: SamplerYcbcrConversion, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroySamplerYcbcrConversionKHR(device.handle, ycbcrConversion.handle, pAllocator);
-}
+pub const DestroySamplerYcbcrConversionKHR = vkDestroySamplerYcbcrConversionKHR;
 
 
 pub const KHR_bind_memory2 = 1;
@@ -11082,19 +10940,19 @@ pub const BindBufferMemoryInfoKHR = BindBufferMemoryInfo;
 pub const BindImageMemoryInfoKHR = BindImageMemoryInfo;
 
 pub extern fn vkBindBufferMemory2KHR(
-    device: Device.IntType,
+    device: Device,
     bindInfoCount: u32,
     pBindInfos: [*]const BindBufferMemoryInfo,
 ) callconv(CallConv) Result;
 
 pub extern fn vkBindImageMemory2KHR(
-    device: Device.IntType,
+    device: Device,
     bindInfoCount: u32,
     pBindInfos: [*]const BindImageMemoryInfo,
 ) callconv(CallConv) Result;
 
 pub inline fn BindBufferMemory2KHR(device: Device, bindInfos: []const BindBufferMemoryInfo) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_INVALID_OPAQUE_CAPTURE_ADDRESS,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkBindBufferMemory2KHR(device.handle, @intCast(u32, bindInfos.len), bindInfos.ptr);
+    const result = vkBindBufferMemory2KHR(device, @intCast(u32, bindInfos.len), bindInfos.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -11106,7 +10964,7 @@ pub inline fn BindBufferMemory2KHR(device: Device, bindInfos: []const BindBuffer
 }
 
 pub inline fn BindImageMemory2KHR(device: Device, bindInfos: []const BindImageMemoryInfo) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkBindImageMemory2KHR(device.handle, @intCast(u32, bindInfos.len), bindInfos.ptr);
+    const result = vkBindImageMemory2KHR(device, @intCast(u32, bindInfos.len), bindInfos.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -11125,14 +10983,14 @@ pub const PhysicalDeviceMaintenance3PropertiesKHR = PhysicalDeviceMaintenance3Pr
 pub const DescriptorSetLayoutSupportKHR = DescriptorSetLayoutSupport;
 
 pub extern fn vkGetDescriptorSetLayoutSupportKHR(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const DescriptorSetLayoutCreateInfo,
     pSupport: *DescriptorSetLayoutSupport,
 ) callconv(CallConv) void;
 
 pub inline fn GetDescriptorSetLayoutSupportKHR(device: Device, createInfo: DescriptorSetLayoutCreateInfo) DescriptorSetLayoutSupport {
     var out_support: DescriptorSetLayoutSupport = undefined;
-    vkGetDescriptorSetLayoutSupportKHR(device.handle, &createInfo, &out_support);
+    vkGetDescriptorSetLayoutSupportKHR(device, &createInfo, &out_support);
     return out_support;
 }
 
@@ -11142,32 +11000,27 @@ pub const KHR_DRAW_INDIRECT_COUNT_SPEC_VERSION = 1;
 pub const KHR_DRAW_INDIRECT_COUNT_EXTENSION_NAME = "VK_KHR_draw_indirect_count";
 
 pub extern fn vkCmdDrawIndirectCountKHR(
-    commandBuffer: CommandBuffer.IntType,
-    buffer: Buffer.IntType,
+    commandBuffer: CommandBuffer,
+    buffer: Buffer,
     offset: DeviceSize,
-    countBuffer: Buffer.IntType,
+    countBuffer: Buffer,
     countBufferOffset: DeviceSize,
     maxDrawCount: u32,
     stride: u32,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdDrawIndexedIndirectCountKHR(
-    commandBuffer: CommandBuffer.IntType,
-    buffer: Buffer.IntType,
+    commandBuffer: CommandBuffer,
+    buffer: Buffer,
     offset: DeviceSize,
-    countBuffer: Buffer.IntType,
+    countBuffer: Buffer,
     countBufferOffset: DeviceSize,
     maxDrawCount: u32,
     stride: u32,
 ) callconv(CallConv) void;
 
-pub inline fn CmdDrawIndirectCountKHR(commandBuffer: CommandBuffer, buffer: Buffer, offset: DeviceSize, countBuffer: Buffer, countBufferOffset: DeviceSize, maxDrawCount: u32, stride: u32) void {
-    vkCmdDrawIndirectCountKHR(commandBuffer.handle, buffer.handle, offset, countBuffer.handle, countBufferOffset, maxDrawCount, stride);
-}
-
-pub inline fn CmdDrawIndexedIndirectCountKHR(commandBuffer: CommandBuffer, buffer: Buffer, offset: DeviceSize, countBuffer: Buffer, countBufferOffset: DeviceSize, maxDrawCount: u32, stride: u32) void {
-    vkCmdDrawIndexedIndirectCountKHR(commandBuffer.handle, buffer.handle, offset, countBuffer.handle, countBufferOffset, maxDrawCount, stride);
-}
+pub const CmdDrawIndirectCountKHR = vkCmdDrawIndirectCountKHR;
+pub const CmdDrawIndexedIndirectCountKHR = vkCmdDrawIndexedIndirectCountKHR;
 
 
 pub const KHR_shader_subgroup_extended_types = 1;
@@ -11255,25 +11108,25 @@ pub const SemaphoreWaitInfoKHR = SemaphoreWaitInfo;
 pub const SemaphoreSignalInfoKHR = SemaphoreSignalInfo;
 
 pub extern fn vkGetSemaphoreCounterValueKHR(
-    device: Device.IntType,
-    semaphore: Semaphore.IntType,
+    device: Device,
+    semaphore: Semaphore,
     pValue: *u64,
 ) callconv(CallConv) Result;
 
 pub extern fn vkWaitSemaphoresKHR(
-    device: Device.IntType,
+    device: Device,
     pWaitInfo: *const SemaphoreWaitInfo,
     timeout: u64,
 ) callconv(CallConv) Result;
 
 pub extern fn vkSignalSemaphoreKHR(
-    device: Device.IntType,
+    device: Device,
     pSignalInfo: *const SemaphoreSignalInfo,
 ) callconv(CallConv) Result;
 
 pub inline fn GetSemaphoreCounterValueKHR(device: Device, semaphore: Semaphore) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_DEVICE_LOST,VK_UNDOCUMENTED_ERROR}!u64 {
     var out_value: u64 = undefined;
-    const result = vkGetSemaphoreCounterValueKHR(device.handle, semaphore.handle, &out_value);
+    const result = vkGetSemaphoreCounterValueKHR(device, semaphore, &out_value);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -11286,7 +11139,7 @@ pub inline fn GetSemaphoreCounterValueKHR(device: Device, semaphore: Semaphore) 
 }
 
 pub inline fn WaitSemaphoresKHR(device: Device, waitInfo: SemaphoreWaitInfo, timeout: u64) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_DEVICE_LOST,VK_UNDOCUMENTED_ERROR}!Result {
-    const result = vkWaitSemaphoresKHR(device.handle, &waitInfo, timeout);
+    const result = vkWaitSemaphoresKHR(device, &waitInfo, timeout);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -11299,7 +11152,7 @@ pub inline fn WaitSemaphoresKHR(device: Device, waitInfo: SemaphoreWaitInfo, tim
 }
 
 pub inline fn SignalSemaphoreKHR(device: Device, signalInfo: SemaphoreSignalInfo) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkSignalSemaphoreKHR(device.handle, &signalInfo);
+    const result = vkSignalSemaphoreKHR(device, &signalInfo);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -11360,32 +11213,32 @@ pub const MemoryOpaqueCaptureAddressAllocateInfoKHR = MemoryOpaqueCaptureAddress
 pub const DeviceMemoryOpaqueCaptureAddressInfoKHR = DeviceMemoryOpaqueCaptureAddressInfo;
 
 pub extern fn vkGetBufferDeviceAddressKHR(
-    device: Device.IntType,
+    device: Device,
     pInfo: *const BufferDeviceAddressInfo,
 ) callconv(CallConv) DeviceAddress;
 
 pub extern fn vkGetBufferOpaqueCaptureAddressKHR(
-    device: Device.IntType,
+    device: Device,
     pInfo: *const BufferDeviceAddressInfo,
 ) callconv(CallConv) u64;
 
 pub extern fn vkGetDeviceMemoryOpaqueCaptureAddressKHR(
-    device: Device.IntType,
+    device: Device,
     pInfo: *const DeviceMemoryOpaqueCaptureAddressInfo,
 ) callconv(CallConv) u64;
 
 pub inline fn GetBufferDeviceAddressKHR(device: Device, info: BufferDeviceAddressInfo) DeviceAddress {
-    const result = vkGetBufferDeviceAddressKHR(device.handle, &info);
+    const result = vkGetBufferDeviceAddressKHR(device, &info);
     return result;
 }
 
 pub inline fn GetBufferOpaqueCaptureAddressKHR(device: Device, info: BufferDeviceAddressInfo) u64 {
-    const result = vkGetBufferOpaqueCaptureAddressKHR(device.handle, &info);
+    const result = vkGetBufferOpaqueCaptureAddressKHR(device, &info);
     return result;
 }
 
 pub inline fn GetDeviceMemoryOpaqueCaptureAddressKHR(device: Device, info: DeviceMemoryOpaqueCaptureAddressInfo) u64 {
-    const result = vkGetDeviceMemoryOpaqueCaptureAddressKHR(device.handle, &info);
+    const result = vkGetDeviceMemoryOpaqueCaptureAddressKHR(device, &info);
     return result;
 }
 
@@ -11457,21 +11310,21 @@ pub const PipelineExecutableInternalRepresentationKHR = extern struct {
 };
 
 pub extern fn vkGetPipelineExecutablePropertiesKHR(
-    device: Device.IntType,
+    device: Device,
     pPipelineInfo: *const PipelineInfoKHR,
     pExecutableCount: *u32,
     pProperties: ?[*]PipelineExecutablePropertiesKHR,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetPipelineExecutableStatisticsKHR(
-    device: Device.IntType,
+    device: Device,
     pExecutableInfo: *const PipelineExecutableInfoKHR,
     pStatisticCount: *u32,
     pStatistics: ?[*]PipelineExecutableStatisticKHR,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetPipelineExecutableInternalRepresentationsKHR(
-    device: Device.IntType,
+    device: Device,
     pExecutableInfo: *const PipelineExecutableInfoKHR,
     pInternalRepresentationCount: *u32,
     pInternalRepresentations: ?[*]PipelineExecutableInternalRepresentationKHR,
@@ -11484,7 +11337,7 @@ pub const GetPipelineExecutablePropertiesKHRResult = struct {
 pub inline fn GetPipelineExecutablePropertiesKHR(device: Device, pipelineInfo: PipelineInfoKHR, properties: []PipelineExecutablePropertiesKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!GetPipelineExecutablePropertiesKHRResult {
     var returnValues: GetPipelineExecutablePropertiesKHRResult = undefined;
     var executableCount: u32 = @intCast(u32, properties.len);
-    const result = vkGetPipelineExecutablePropertiesKHR(device.handle, &pipelineInfo, &executableCount, properties.ptr);
+    const result = vkGetPipelineExecutablePropertiesKHR(device, &pipelineInfo, &executableCount, properties.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -11498,7 +11351,7 @@ pub inline fn GetPipelineExecutablePropertiesKHR(device: Device, pipelineInfo: P
 }
 pub inline fn GetPipelineExecutablePropertiesCountKHR(device: Device, pipelineInfo: PipelineInfoKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_executableCount: u32 = undefined;
-    const result = vkGetPipelineExecutablePropertiesKHR(device.handle, &pipelineInfo, &out_executableCount, null);
+    const result = vkGetPipelineExecutablePropertiesKHR(device, &pipelineInfo, &out_executableCount, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -11516,7 +11369,7 @@ pub const GetPipelineExecutableStatisticsKHRResult = struct {
 pub inline fn GetPipelineExecutableStatisticsKHR(device: Device, executableInfo: PipelineExecutableInfoKHR, statistics: []PipelineExecutableStatisticKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!GetPipelineExecutableStatisticsKHRResult {
     var returnValues: GetPipelineExecutableStatisticsKHRResult = undefined;
     var statisticCount: u32 = @intCast(u32, statistics.len);
-    const result = vkGetPipelineExecutableStatisticsKHR(device.handle, &executableInfo, &statisticCount, statistics.ptr);
+    const result = vkGetPipelineExecutableStatisticsKHR(device, &executableInfo, &statisticCount, statistics.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -11530,7 +11383,7 @@ pub inline fn GetPipelineExecutableStatisticsKHR(device: Device, executableInfo:
 }
 pub inline fn GetPipelineExecutableStatisticsCountKHR(device: Device, executableInfo: PipelineExecutableInfoKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_statisticCount: u32 = undefined;
-    const result = vkGetPipelineExecutableStatisticsKHR(device.handle, &executableInfo, &out_statisticCount, null);
+    const result = vkGetPipelineExecutableStatisticsKHR(device, &executableInfo, &out_statisticCount, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -11548,7 +11401,7 @@ pub const GetPipelineExecutableInternalRepresentationsKHRResult = struct {
 pub inline fn GetPipelineExecutableInternalRepresentationsKHR(device: Device, executableInfo: PipelineExecutableInfoKHR, internalRepresentations: []PipelineExecutableInternalRepresentationKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!GetPipelineExecutableInternalRepresentationsKHRResult {
     var returnValues: GetPipelineExecutableInternalRepresentationsKHRResult = undefined;
     var internalRepresentationCount: u32 = @intCast(u32, internalRepresentations.len);
-    const result = vkGetPipelineExecutableInternalRepresentationsKHR(device.handle, &executableInfo, &internalRepresentationCount, internalRepresentations.ptr);
+    const result = vkGetPipelineExecutableInternalRepresentationsKHR(device, &executableInfo, &internalRepresentationCount, internalRepresentations.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -11562,7 +11415,7 @@ pub inline fn GetPipelineExecutableInternalRepresentationsKHR(device: Device, ex
 }
 pub inline fn GetPipelineExecutableInternalRepresentationsCountKHR(device: Device, executableInfo: PipelineExecutableInfoKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_internalRepresentationCount: u32 = undefined;
-    const result = vkGetPipelineExecutableInternalRepresentationsKHR(device.handle, &executableInfo, &out_internalRepresentationCount, null);
+    const result = vkGetPipelineExecutableInternalRepresentationsKHR(device, &executableInfo, &out_internalRepresentationCount, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -11575,7 +11428,7 @@ pub inline fn GetPipelineExecutableInternalRepresentationsCountKHR(device: Devic
 
 
 pub const EXT_debug_report = 1;
-pub const DebugReportCallbackEXT = Handle("DebugReportCallbackEXT", u64);
+pub const DebugReportCallbackEXT = extern enum(u64) { Null = 0, _ };
 
 pub const EXT_DEBUG_REPORT_SPEC_VERSION = 9;
 pub const EXT_DEBUG_REPORT_EXTENSION_NAME = "VK_EXT_debug_report";
@@ -11684,20 +11537,20 @@ pub const DebugReportCallbackCreateInfoEXT = extern struct {
 };
 
 pub extern fn vkCreateDebugReportCallbackEXT(
-    instance: Instance.IntType,
+    instance: Instance,
     pCreateInfo: *const DebugReportCallbackCreateInfoEXT,
     pAllocator: ?*const AllocationCallbacks,
     pCallback: *DebugReportCallbackEXT,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyDebugReportCallbackEXT(
-    instance: Instance.IntType,
-    callback: DebugReportCallbackEXT.IntType,
+    instance: Instance,
+    callback: DebugReportCallbackEXT,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkDebugReportMessageEXT(
-    instance: Instance.IntType,
+    instance: Instance,
     flags: DebugReportFlagsEXT.IntType,
     objectType: DebugReportObjectTypeEXT,
     object: u64,
@@ -11709,7 +11562,7 @@ pub extern fn vkDebugReportMessageEXT(
 
 pub inline fn CreateDebugReportCallbackEXT(instance: Instance, createInfo: DebugReportCallbackCreateInfoEXT, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_UNDOCUMENTED_ERROR}!DebugReportCallbackEXT {
     var out_callback: DebugReportCallbackEXT = undefined;
-    const result = vkCreateDebugReportCallbackEXT(instance.handle, &createInfo, pAllocator, &out_callback);
+    const result = vkCreateDebugReportCallbackEXT(instance, &createInfo, pAllocator, &out_callback);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -11719,12 +11572,10 @@ pub inline fn CreateDebugReportCallbackEXT(instance: Instance, createInfo: Debug
     return out_callback;
 }
 
-pub inline fn DestroyDebugReportCallbackEXT(instance: Instance, callback: DebugReportCallbackEXT, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyDebugReportCallbackEXT(instance.handle, callback.handle, pAllocator);
-}
+pub const DestroyDebugReportCallbackEXT = vkDestroyDebugReportCallbackEXT;
 
 pub inline fn DebugReportMessageEXT(instance: Instance, flags: DebugReportFlagsEXT, objectType: DebugReportObjectTypeEXT, object: u64, location: usize, messageCode: i32, pLayerPrefix: CString, pMessage: CString) void {
-    vkDebugReportMessageEXT(instance.handle, flags.toInt(), objectType, object, location, messageCode, pLayerPrefix, pMessage);
+    vkDebugReportMessageEXT(instance, flags.toInt(), objectType, object, location, messageCode, pLayerPrefix, pMessage);
 }
 
 
@@ -11800,29 +11651,29 @@ pub const DebugMarkerMarkerInfoEXT = extern struct {
 };
 
 pub extern fn vkDebugMarkerSetObjectTagEXT(
-    device: Device.IntType,
+    device: Device,
     pTagInfo: *const DebugMarkerObjectTagInfoEXT,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDebugMarkerSetObjectNameEXT(
-    device: Device.IntType,
+    device: Device,
     pNameInfo: *const DebugMarkerObjectNameInfoEXT,
 ) callconv(CallConv) Result;
 
 pub extern fn vkCmdDebugMarkerBeginEXT(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pMarkerInfo: *const DebugMarkerMarkerInfoEXT,
 ) callconv(CallConv) void;
 
-pub extern fn vkCmdDebugMarkerEndEXT(commandBuffer: CommandBuffer.IntType) callconv(CallConv) void;
+pub extern fn vkCmdDebugMarkerEndEXT(commandBuffer: CommandBuffer) callconv(CallConv) void;
 
 pub extern fn vkCmdDebugMarkerInsertEXT(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pMarkerInfo: *const DebugMarkerMarkerInfoEXT,
 ) callconv(CallConv) void;
 
 pub inline fn DebugMarkerSetObjectTagEXT(device: Device, tagInfo: DebugMarkerObjectTagInfoEXT) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkDebugMarkerSetObjectTagEXT(device.handle, &tagInfo);
+    const result = vkDebugMarkerSetObjectTagEXT(device, &tagInfo);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -11833,7 +11684,7 @@ pub inline fn DebugMarkerSetObjectTagEXT(device: Device, tagInfo: DebugMarkerObj
 }
 
 pub inline fn DebugMarkerSetObjectNameEXT(device: Device, nameInfo: DebugMarkerObjectNameInfoEXT) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkDebugMarkerSetObjectNameEXT(device.handle, &nameInfo);
+    const result = vkDebugMarkerSetObjectNameEXT(device, &nameInfo);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -11844,15 +11695,13 @@ pub inline fn DebugMarkerSetObjectNameEXT(device: Device, nameInfo: DebugMarkerO
 }
 
 pub inline fn CmdDebugMarkerBeginEXT(commandBuffer: CommandBuffer, markerInfo: DebugMarkerMarkerInfoEXT) void {
-    vkCmdDebugMarkerBeginEXT(commandBuffer.handle, &markerInfo);
+    vkCmdDebugMarkerBeginEXT(commandBuffer, &markerInfo);
 }
 
-pub inline fn CmdDebugMarkerEndEXT(commandBuffer: CommandBuffer) void {
-    vkCmdDebugMarkerEndEXT(commandBuffer.handle);
-}
+pub const CmdDebugMarkerEndEXT = vkCmdDebugMarkerEndEXT;
 
 pub inline fn CmdDebugMarkerInsertEXT(commandBuffer: CommandBuffer, markerInfo: DebugMarkerMarkerInfoEXT) void {
-    vkCmdDebugMarkerInsertEXT(commandBuffer.handle, &markerInfo);
+    vkCmdDebugMarkerInsertEXT(commandBuffer, &markerInfo);
 }
 
 
@@ -11880,8 +11729,8 @@ pub const DedicatedAllocationBufferCreateInfoNV = extern struct {
 pub const DedicatedAllocationMemoryAllocateInfoNV = extern struct {
     sType: StructureType = .DEDICATED_ALLOCATION_MEMORY_ALLOCATE_INFO_NV,
     pNext: ?*const c_void = null,
-    image: Image = Image{},
-    buffer: Buffer = Buffer{},
+    image: Image = Image.Null,
+    buffer: Buffer = Buffer.Null,
 };
 
 
@@ -11924,7 +11773,7 @@ pub const PipelineRasterizationStateStreamCreateInfoEXT = extern struct {
 };
 
 pub extern fn vkCmdBindTransformFeedbackBuffersEXT(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     firstBinding: u32,
     bindingCount: u32,
     pBuffers: [*]const Buffer,
@@ -11933,7 +11782,7 @@ pub extern fn vkCmdBindTransformFeedbackBuffersEXT(
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdBeginTransformFeedbackEXT(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     firstCounterBuffer: u32,
     counterBufferCount: u32,
     pCounterBuffers: [*]const Buffer,
@@ -11941,7 +11790,7 @@ pub extern fn vkCmdBeginTransformFeedbackEXT(
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdEndTransformFeedbackEXT(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     firstCounterBuffer: u32,
     counterBufferCount: u32,
     pCounterBuffers: [*]const Buffer,
@@ -11949,25 +11798,25 @@ pub extern fn vkCmdEndTransformFeedbackEXT(
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdBeginQueryIndexedEXT(
-    commandBuffer: CommandBuffer.IntType,
-    queryPool: QueryPool.IntType,
+    commandBuffer: CommandBuffer,
+    queryPool: QueryPool,
     query: u32,
     flags: QueryControlFlags.IntType,
     index: u32,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdEndQueryIndexedEXT(
-    commandBuffer: CommandBuffer.IntType,
-    queryPool: QueryPool.IntType,
+    commandBuffer: CommandBuffer,
+    queryPool: QueryPool,
     query: u32,
     index: u32,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdDrawIndirectByteCountEXT(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     instanceCount: u32,
     firstInstance: u32,
-    counterBuffer: Buffer.IntType,
+    counterBuffer: Buffer,
     counterBufferOffset: DeviceSize,
     counterOffset: u32,
     vertexStride: u32,
@@ -11976,30 +11825,25 @@ pub extern fn vkCmdDrawIndirectByteCountEXT(
 pub inline fn CmdBindTransformFeedbackBuffersEXT(commandBuffer: CommandBuffer, firstBinding: u32, buffers: []const Buffer, offsets: []const DeviceSize, sizes: []const DeviceSize) void {
     assert(offsets.len >= buffers.len);
     assert(sizes.len >= buffers.len);
-    vkCmdBindTransformFeedbackBuffersEXT(commandBuffer.handle, firstBinding, @intCast(u32, buffers.len), buffers.ptr, offsets.ptr, sizes.ptr);
+    vkCmdBindTransformFeedbackBuffersEXT(commandBuffer, firstBinding, @intCast(u32, buffers.len), buffers.ptr, offsets.ptr, sizes.ptr);
 }
 
 pub inline fn CmdBeginTransformFeedbackEXT(commandBuffer: CommandBuffer, firstCounterBuffer: u32, counterBuffers: []const Buffer, counterBufferOffsets: []const DeviceSize) void {
     assert(counterBufferOffsets.len >= counterBuffers.len);
-    vkCmdBeginTransformFeedbackEXT(commandBuffer.handle, firstCounterBuffer, @intCast(u32, counterBuffers.len), counterBuffers.ptr, counterBufferOffsets.ptr);
+    vkCmdBeginTransformFeedbackEXT(commandBuffer, firstCounterBuffer, @intCast(u32, counterBuffers.len), counterBuffers.ptr, counterBufferOffsets.ptr);
 }
 
 pub inline fn CmdEndTransformFeedbackEXT(commandBuffer: CommandBuffer, firstCounterBuffer: u32, counterBuffers: []const Buffer, counterBufferOffsets: []const DeviceSize) void {
     assert(counterBufferOffsets.len >= counterBuffers.len);
-    vkCmdEndTransformFeedbackEXT(commandBuffer.handle, firstCounterBuffer, @intCast(u32, counterBuffers.len), counterBuffers.ptr, counterBufferOffsets.ptr);
+    vkCmdEndTransformFeedbackEXT(commandBuffer, firstCounterBuffer, @intCast(u32, counterBuffers.len), counterBuffers.ptr, counterBufferOffsets.ptr);
 }
 
 pub inline fn CmdBeginQueryIndexedEXT(commandBuffer: CommandBuffer, queryPool: QueryPool, query: u32, flags: QueryControlFlags, index: u32) void {
-    vkCmdBeginQueryIndexedEXT(commandBuffer.handle, queryPool.handle, query, flags.toInt(), index);
+    vkCmdBeginQueryIndexedEXT(commandBuffer, queryPool, query, flags.toInt(), index);
 }
 
-pub inline fn CmdEndQueryIndexedEXT(commandBuffer: CommandBuffer, queryPool: QueryPool, query: u32, index: u32) void {
-    vkCmdEndQueryIndexedEXT(commandBuffer.handle, queryPool.handle, query, index);
-}
-
-pub inline fn CmdDrawIndirectByteCountEXT(commandBuffer: CommandBuffer, instanceCount: u32, firstInstance: u32, counterBuffer: Buffer, counterBufferOffset: DeviceSize, counterOffset: u32, vertexStride: u32) void {
-    vkCmdDrawIndirectByteCountEXT(commandBuffer.handle, instanceCount, firstInstance, counterBuffer.handle, counterBufferOffset, counterOffset, vertexStride);
-}
+pub const CmdEndQueryIndexedEXT = vkCmdEndQueryIndexedEXT;
+pub const CmdDrawIndirectByteCountEXT = vkCmdDrawIndirectByteCountEXT;
 
 
 pub const NVX_image_view_handle = 1;
@@ -12011,16 +11855,16 @@ pub const ImageViewHandleInfoNVX = extern struct {
     pNext: ?*const c_void = null,
     imageView: ImageView,
     descriptorType: DescriptorType,
-    sampler: Sampler = Sampler{},
+    sampler: Sampler = Sampler.Null,
 };
 
 pub extern fn vkGetImageViewHandleNVX(
-    device: Device.IntType,
+    device: Device,
     pInfo: *const ImageViewHandleInfoNVX,
 ) callconv(CallConv) u32;
 
 pub inline fn GetImageViewHandleNVX(device: Device, info: ImageViewHandleInfoNVX) u32 {
-    const result = vkGetImageViewHandleNVX(device.handle, &info);
+    const result = vkGetImageViewHandleNVX(device, &info);
     return result;
 }
 
@@ -12030,32 +11874,27 @@ pub const AMD_DRAW_INDIRECT_COUNT_SPEC_VERSION = 2;
 pub const AMD_DRAW_INDIRECT_COUNT_EXTENSION_NAME = "VK_AMD_draw_indirect_count";
 
 pub extern fn vkCmdDrawIndirectCountAMD(
-    commandBuffer: CommandBuffer.IntType,
-    buffer: Buffer.IntType,
+    commandBuffer: CommandBuffer,
+    buffer: Buffer,
     offset: DeviceSize,
-    countBuffer: Buffer.IntType,
+    countBuffer: Buffer,
     countBufferOffset: DeviceSize,
     maxDrawCount: u32,
     stride: u32,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdDrawIndexedIndirectCountAMD(
-    commandBuffer: CommandBuffer.IntType,
-    buffer: Buffer.IntType,
+    commandBuffer: CommandBuffer,
+    buffer: Buffer,
     offset: DeviceSize,
-    countBuffer: Buffer.IntType,
+    countBuffer: Buffer,
     countBufferOffset: DeviceSize,
     maxDrawCount: u32,
     stride: u32,
 ) callconv(CallConv) void;
 
-pub inline fn CmdDrawIndirectCountAMD(commandBuffer: CommandBuffer, buffer: Buffer, offset: DeviceSize, countBuffer: Buffer, countBufferOffset: DeviceSize, maxDrawCount: u32, stride: u32) void {
-    vkCmdDrawIndirectCountAMD(commandBuffer.handle, buffer.handle, offset, countBuffer.handle, countBufferOffset, maxDrawCount, stride);
-}
-
-pub inline fn CmdDrawIndexedIndirectCountAMD(commandBuffer: CommandBuffer, buffer: Buffer, offset: DeviceSize, countBuffer: Buffer, countBufferOffset: DeviceSize, maxDrawCount: u32, stride: u32) void {
-    vkCmdDrawIndexedIndirectCountAMD(commandBuffer.handle, buffer.handle, offset, countBuffer.handle, countBufferOffset, maxDrawCount, stride);
-}
+pub const CmdDrawIndirectCountAMD = vkCmdDrawIndirectCountAMD;
+pub const CmdDrawIndexedIndirectCountAMD = vkCmdDrawIndexedIndirectCountAMD;
 
 
 pub const AMD_negative_viewport_height = 1;
@@ -12114,8 +11953,8 @@ pub const ShaderStatisticsInfoAMD = extern struct {
 };
 
 pub extern fn vkGetShaderInfoAMD(
-    device: Device.IntType,
-    pipeline: Pipeline.IntType,
+    device: Device,
+    pipeline: Pipeline,
     shaderStage: ShaderStageFlags.IntType,
     infoType: ShaderInfoTypeAMD,
     pInfoSize: *usize,
@@ -12129,7 +11968,7 @@ pub const GetShaderInfoAMDResult = struct {
 pub inline fn GetShaderInfoAMD(device: Device, pipeline: Pipeline, shaderStage: ShaderStageFlags, infoType: ShaderInfoTypeAMD, info: []u8) error{VK_FEATURE_NOT_PRESENT,VK_OUT_OF_HOST_MEMORY,VK_UNDOCUMENTED_ERROR}!GetShaderInfoAMDResult {
     var returnValues: GetShaderInfoAMDResult = undefined;
     var infoSize: usize = @intCast(usize, info.len);
-    const result = vkGetShaderInfoAMD(device.handle, pipeline.handle, shaderStage.toInt(), infoType, &infoSize, info.ptr);
+    const result = vkGetShaderInfoAMD(device, pipeline, shaderStage.toInt(), infoType, &infoSize, info.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_FEATURE_NOT_PRESENT => error.VK_FEATURE_NOT_PRESENT,
@@ -12143,7 +11982,7 @@ pub inline fn GetShaderInfoAMD(device: Device, pipeline: Pipeline, shaderStage: 
 }
 pub inline fn GetShaderInfoCountAMD(device: Device, pipeline: Pipeline, shaderStage: ShaderStageFlags, infoType: ShaderInfoTypeAMD) error{VK_FEATURE_NOT_PRESENT,VK_OUT_OF_HOST_MEMORY,VK_UNDOCUMENTED_ERROR}!usize {
     var out_infoSize: usize = undefined;
-    const result = vkGetShaderInfoAMD(device.handle, pipeline.handle, shaderStage.toInt(), infoType, &out_infoSize, null);
+    const result = vkGetShaderInfoAMD(device, pipeline, shaderStage.toInt(), infoType, &out_infoSize, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_FEATURE_NOT_PRESENT => error.VK_FEATURE_NOT_PRESENT,
@@ -12262,7 +12101,7 @@ pub const ExternalImageFormatPropertiesNV = extern struct {
 };
 
 pub extern fn vkGetPhysicalDeviceExternalImageFormatPropertiesNV(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     format: Format,
     inType: ImageType,
     tiling: ImageTiling,
@@ -12274,7 +12113,7 @@ pub extern fn vkGetPhysicalDeviceExternalImageFormatPropertiesNV(
 
 pub inline fn GetPhysicalDeviceExternalImageFormatPropertiesNV(physicalDevice: PhysicalDevice, format: Format, inType: ImageType, tiling: ImageTiling, usage: ImageUsageFlags, flags: ImageCreateFlags, externalHandleType: ExternalMemoryHandleTypeFlagsNV) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_FORMAT_NOT_SUPPORTED,VK_UNDOCUMENTED_ERROR}!ExternalImageFormatPropertiesNV {
     var out_externalImageFormatProperties: ExternalImageFormatPropertiesNV = undefined;
-    const result = vkGetPhysicalDeviceExternalImageFormatPropertiesNV(physicalDevice.handle, format, inType, tiling, usage.toInt(), flags.toInt(), externalHandleType.toInt(), &out_externalImageFormatProperties);
+    const result = vkGetPhysicalDeviceExternalImageFormatPropertiesNV(physicalDevice, format, inType, tiling, usage.toInt(), flags.toInt(), externalHandleType.toInt(), &out_externalImageFormatProperties);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -12423,24 +12262,22 @@ pub const CommandBufferInheritanceConditionalRenderingInfoEXT = extern struct {
 };
 
 pub extern fn vkCmdBeginConditionalRenderingEXT(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pConditionalRenderingBegin: *const ConditionalRenderingBeginInfoEXT,
 ) callconv(CallConv) void;
 
-pub extern fn vkCmdEndConditionalRenderingEXT(commandBuffer: CommandBuffer.IntType) callconv(CallConv) void;
+pub extern fn vkCmdEndConditionalRenderingEXT(commandBuffer: CommandBuffer) callconv(CallConv) void;
 
 pub inline fn CmdBeginConditionalRenderingEXT(commandBuffer: CommandBuffer, conditionalRenderingBegin: ConditionalRenderingBeginInfoEXT) void {
-    vkCmdBeginConditionalRenderingEXT(commandBuffer.handle, &conditionalRenderingBegin);
+    vkCmdBeginConditionalRenderingEXT(commandBuffer, &conditionalRenderingBegin);
 }
 
-pub inline fn CmdEndConditionalRenderingEXT(commandBuffer: CommandBuffer) void {
-    vkCmdEndConditionalRenderingEXT(commandBuffer.handle);
-}
+pub const CmdEndConditionalRenderingEXT = vkCmdEndConditionalRenderingEXT;
 
 
 pub const NVX_device_generated_commands = 1;
-pub const ObjectTableNVX = Handle("ObjectTableNVX", u64);
-pub const IndirectCommandsLayoutNVX = Handle("IndirectCommandsLayoutNVX", u64);
+pub const ObjectTableNVX = extern enum(u64) { Null = 0, _ };
+pub const IndirectCommandsLayoutNVX = extern enum(u64) { Null = 0, _ };
 
 pub const NVX_DEVICE_GENERATED_COMMANDS_SPEC_VERSION = 3;
 pub const NVX_DEVICE_GENERATED_COMMANDS_EXTENSION_NAME = "VK_NVX_device_generated_commands";
@@ -12586,10 +12423,10 @@ pub const CmdProcessCommandsInfoNVX = extern struct {
     indirectCommandsTokenCount: u32,
     pIndirectCommandsTokens: [*]const IndirectCommandsTokenNVX,
     maxSequencesCount: u32,
-    targetCommandBuffer: CommandBuffer = CommandBuffer{},
-    sequencesCountBuffer: Buffer = Buffer{},
+    targetCommandBuffer: CommandBuffer = CommandBuffer.Null,
+    sequencesCountBuffer: Buffer = Buffer.Null,
     sequencesCountOffset: DeviceSize = 0,
-    sequencesIndexBuffer: Buffer = Buffer{},
+    sequencesIndexBuffer: Buffer = Buffer.Null,
     sequencesIndexOffset: DeviceSize = 0,
 };
 
@@ -12654,74 +12491,74 @@ pub const ObjectTablePushConstantEntryNVX = extern struct {
 };
 
 pub extern fn vkCmdProcessCommandsNVX(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pProcessCommandsInfo: *const CmdProcessCommandsInfoNVX,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdReserveSpaceForCommandsNVX(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pReserveSpaceInfo: *const CmdReserveSpaceForCommandsInfoNVX,
 ) callconv(CallConv) void;
 
 pub extern fn vkCreateIndirectCommandsLayoutNVX(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const IndirectCommandsLayoutCreateInfoNVX,
     pAllocator: ?*const AllocationCallbacks,
     pIndirectCommandsLayout: *IndirectCommandsLayoutNVX,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyIndirectCommandsLayoutNVX(
-    device: Device.IntType,
-    indirectCommandsLayout: IndirectCommandsLayoutNVX.IntType,
+    device: Device,
+    indirectCommandsLayout: IndirectCommandsLayoutNVX,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkCreateObjectTableNVX(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const ObjectTableCreateInfoNVX,
     pAllocator: ?*const AllocationCallbacks,
     pObjectTable: *ObjectTableNVX,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyObjectTableNVX(
-    device: Device.IntType,
-    objectTable: ObjectTableNVX.IntType,
+    device: Device,
+    objectTable: ObjectTableNVX,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkRegisterObjectsNVX(
-    device: Device.IntType,
-    objectTable: ObjectTableNVX.IntType,
+    device: Device,
+    objectTable: ObjectTableNVX,
     objectCount: u32,
     ppObjectTableEntries: [*]const*const ObjectTableEntryNVX,
     pObjectIndices: [*]const u32,
 ) callconv(CallConv) Result;
 
 pub extern fn vkUnregisterObjectsNVX(
-    device: Device.IntType,
-    objectTable: ObjectTableNVX.IntType,
+    device: Device,
+    objectTable: ObjectTableNVX,
     objectCount: u32,
     pObjectEntryTypes: [*]const ObjectEntryTypeNVX,
     pObjectIndices: [*]const u32,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetPhysicalDeviceGeneratedCommandsPropertiesNVX(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pFeatures: *DeviceGeneratedCommandsFeaturesNVX,
     pLimits: *DeviceGeneratedCommandsLimitsNVX,
 ) callconv(CallConv) void;
 
 pub inline fn CmdProcessCommandsNVX(commandBuffer: CommandBuffer, processCommandsInfo: CmdProcessCommandsInfoNVX) void {
-    vkCmdProcessCommandsNVX(commandBuffer.handle, &processCommandsInfo);
+    vkCmdProcessCommandsNVX(commandBuffer, &processCommandsInfo);
 }
 
 pub inline fn CmdReserveSpaceForCommandsNVX(commandBuffer: CommandBuffer, reserveSpaceInfo: CmdReserveSpaceForCommandsInfoNVX) void {
-    vkCmdReserveSpaceForCommandsNVX(commandBuffer.handle, &reserveSpaceInfo);
+    vkCmdReserveSpaceForCommandsNVX(commandBuffer, &reserveSpaceInfo);
 }
 
 pub inline fn CreateIndirectCommandsLayoutNVX(device: Device, createInfo: IndirectCommandsLayoutCreateInfoNVX, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!IndirectCommandsLayoutNVX {
     var out_indirectCommandsLayout: IndirectCommandsLayoutNVX = undefined;
-    const result = vkCreateIndirectCommandsLayoutNVX(device.handle, &createInfo, pAllocator, &out_indirectCommandsLayout);
+    const result = vkCreateIndirectCommandsLayoutNVX(device, &createInfo, pAllocator, &out_indirectCommandsLayout);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -12732,13 +12569,11 @@ pub inline fn CreateIndirectCommandsLayoutNVX(device: Device, createInfo: Indire
     return out_indirectCommandsLayout;
 }
 
-pub inline fn DestroyIndirectCommandsLayoutNVX(device: Device, indirectCommandsLayout: IndirectCommandsLayoutNVX, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyIndirectCommandsLayoutNVX(device.handle, indirectCommandsLayout.handle, pAllocator);
-}
+pub const DestroyIndirectCommandsLayoutNVX = vkDestroyIndirectCommandsLayoutNVX;
 
 pub inline fn CreateObjectTableNVX(device: Device, createInfo: ObjectTableCreateInfoNVX, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!ObjectTableNVX {
     var out_objectTable: ObjectTableNVX = undefined;
-    const result = vkCreateObjectTableNVX(device.handle, &createInfo, pAllocator, &out_objectTable);
+    const result = vkCreateObjectTableNVX(device, &createInfo, pAllocator, &out_objectTable);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -12749,13 +12584,11 @@ pub inline fn CreateObjectTableNVX(device: Device, createInfo: ObjectTableCreate
     return out_objectTable;
 }
 
-pub inline fn DestroyObjectTableNVX(device: Device, objectTable: ObjectTableNVX, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyObjectTableNVX(device.handle, objectTable.handle, pAllocator);
-}
+pub const DestroyObjectTableNVX = vkDestroyObjectTableNVX;
 
 pub inline fn RegisterObjectsNVX(device: Device, objectTable: ObjectTableNVX, pObjectTableEntries: []const*const ObjectTableEntryNVX, objectIndices: []const u32) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
     assert(objectIndices.len >= pObjectTableEntries.len);
-    const result = vkRegisterObjectsNVX(device.handle, objectTable.handle, @intCast(u32, pObjectTableEntries.len), pObjectTableEntries.ptr, objectIndices.ptr);
+    const result = vkRegisterObjectsNVX(device, objectTable, @intCast(u32, pObjectTableEntries.len), pObjectTableEntries.ptr, objectIndices.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -12767,7 +12600,7 @@ pub inline fn RegisterObjectsNVX(device: Device, objectTable: ObjectTableNVX, pO
 
 pub inline fn UnregisterObjectsNVX(device: Device, objectTable: ObjectTableNVX, objectEntryTypes: []const ObjectEntryTypeNVX, objectIndices: []const u32) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
     assert(objectIndices.len >= objectEntryTypes.len);
-    const result = vkUnregisterObjectsNVX(device.handle, objectTable.handle, @intCast(u32, objectEntryTypes.len), objectEntryTypes.ptr, objectIndices.ptr);
+    const result = vkUnregisterObjectsNVX(device, objectTable, @intCast(u32, objectEntryTypes.len), objectEntryTypes.ptr, objectIndices.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -12783,7 +12616,7 @@ pub const GetPhysicalDeviceGeneratedCommandsPropertiesNVXResult = struct {
 };
 pub inline fn GetPhysicalDeviceGeneratedCommandsPropertiesNVX(physicalDevice: PhysicalDevice) GetPhysicalDeviceGeneratedCommandsPropertiesNVXResult {
     var returnValues: GetPhysicalDeviceGeneratedCommandsPropertiesNVXResult = undefined;
-    vkGetPhysicalDeviceGeneratedCommandsPropertiesNVX(physicalDevice.handle, &returnValues.features, &returnValues.limits);
+    vkGetPhysicalDeviceGeneratedCommandsPropertiesNVX(physicalDevice, &returnValues.features, &returnValues.limits);
     return returnValues;
 }
 
@@ -12806,14 +12639,14 @@ pub const PipelineViewportWScalingStateCreateInfoNV = extern struct {
 };
 
 pub extern fn vkCmdSetViewportWScalingNV(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     firstViewport: u32,
     viewportCount: u32,
     pViewportWScalings: [*]const ViewportWScalingNV,
 ) callconv(CallConv) void;
 
 pub inline fn CmdSetViewportWScalingNV(commandBuffer: CommandBuffer, firstViewport: u32, viewportWScalings: []const ViewportWScalingNV) void {
-    vkCmdSetViewportWScalingNV(commandBuffer.handle, firstViewport, @intCast(u32, viewportWScalings.len), viewportWScalings.ptr);
+    vkCmdSetViewportWScalingNV(commandBuffer, firstViewport, @intCast(u32, viewportWScalings.len), viewportWScalings.ptr);
 }
 
 
@@ -12822,12 +12655,12 @@ pub const EXT_DIRECT_MODE_DISPLAY_SPEC_VERSION = 1;
 pub const EXT_DIRECT_MODE_DISPLAY_EXTENSION_NAME = "VK_EXT_direct_mode_display";
 
 pub extern fn vkReleaseDisplayEXT(
-    physicalDevice: PhysicalDevice.IntType,
-    display: DisplayKHR.IntType,
+    physicalDevice: PhysicalDevice,
+    display: DisplayKHR,
 ) callconv(CallConv) Result;
 
 pub inline fn ReleaseDisplayEXT(physicalDevice: PhysicalDevice, display: DisplayKHR) error{VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkReleaseDisplayEXT(physicalDevice.handle, display.handle);
+    const result = vkReleaseDisplayEXT(physicalDevice, display);
     if (@bitCast(c_int, result) < 0) {
         return error.VK_UNDOCUMENTED_ERROR;
     }
@@ -12892,14 +12725,14 @@ pub const SurfaceCapabilities2EXT = extern struct {
 };
 
 pub extern fn vkGetPhysicalDeviceSurfaceCapabilities2EXT(
-    physicalDevice: PhysicalDevice.IntType,
-    surface: SurfaceKHR.IntType,
+    physicalDevice: PhysicalDevice,
+    surface: SurfaceKHR,
     pSurfaceCapabilities: *SurfaceCapabilities2EXT,
 ) callconv(CallConv) Result;
 
 pub inline fn GetPhysicalDeviceSurfaceCapabilities2EXT(physicalDevice: PhysicalDevice, surface: SurfaceKHR) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_SURFACE_LOST_KHR,VK_UNDOCUMENTED_ERROR}!SurfaceCapabilities2EXT {
     var out_surfaceCapabilities: SurfaceCapabilities2EXT = undefined;
-    const result = vkGetPhysicalDeviceSurfaceCapabilities2EXT(physicalDevice.handle, surface.handle, &out_surfaceCapabilities);
+    const result = vkGetPhysicalDeviceSurfaceCapabilities2EXT(physicalDevice, surface, &out_surfaceCapabilities);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -12958,35 +12791,35 @@ pub const SwapchainCounterCreateInfoEXT = extern struct {
 };
 
 pub extern fn vkDisplayPowerControlEXT(
-    device: Device.IntType,
-    display: DisplayKHR.IntType,
+    device: Device,
+    display: DisplayKHR,
     pDisplayPowerInfo: *const DisplayPowerInfoEXT,
 ) callconv(CallConv) Result;
 
 pub extern fn vkRegisterDeviceEventEXT(
-    device: Device.IntType,
+    device: Device,
     pDeviceEventInfo: *const DeviceEventInfoEXT,
     pAllocator: ?*const AllocationCallbacks,
     pFence: *Fence,
 ) callconv(CallConv) Result;
 
 pub extern fn vkRegisterDisplayEventEXT(
-    device: Device.IntType,
-    display: DisplayKHR.IntType,
+    device: Device,
+    display: DisplayKHR,
     pDisplayEventInfo: *const DisplayEventInfoEXT,
     pAllocator: ?*const AllocationCallbacks,
     pFence: *Fence,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetSwapchainCounterEXT(
-    device: Device.IntType,
-    swapchain: SwapchainKHR.IntType,
+    device: Device,
+    swapchain: SwapchainKHR,
     counter: SurfaceCounterFlagsEXT.IntType,
     pCounterValue: *u64,
 ) callconv(CallConv) Result;
 
 pub inline fn DisplayPowerControlEXT(device: Device, display: DisplayKHR, displayPowerInfo: DisplayPowerInfoEXT) error{VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkDisplayPowerControlEXT(device.handle, display.handle, &displayPowerInfo);
+    const result = vkDisplayPowerControlEXT(device, display, &displayPowerInfo);
     if (@bitCast(c_int, result) < 0) {
         return error.VK_UNDOCUMENTED_ERROR;
     }
@@ -12994,7 +12827,7 @@ pub inline fn DisplayPowerControlEXT(device: Device, display: DisplayKHR, displa
 
 pub inline fn RegisterDeviceEventEXT(device: Device, deviceEventInfo: DeviceEventInfoEXT, pAllocator: ?*const AllocationCallbacks) error{VK_UNDOCUMENTED_ERROR}!Fence {
     var out_fence: Fence = undefined;
-    const result = vkRegisterDeviceEventEXT(device.handle, &deviceEventInfo, pAllocator, &out_fence);
+    const result = vkRegisterDeviceEventEXT(device, &deviceEventInfo, pAllocator, &out_fence);
     if (@bitCast(c_int, result) < 0) {
         return error.VK_UNDOCUMENTED_ERROR;
     }
@@ -13003,7 +12836,7 @@ pub inline fn RegisterDeviceEventEXT(device: Device, deviceEventInfo: DeviceEven
 
 pub inline fn RegisterDisplayEventEXT(device: Device, display: DisplayKHR, displayEventInfo: DisplayEventInfoEXT, pAllocator: ?*const AllocationCallbacks) error{VK_UNDOCUMENTED_ERROR}!Fence {
     var out_fence: Fence = undefined;
-    const result = vkRegisterDisplayEventEXT(device.handle, display.handle, &displayEventInfo, pAllocator, &out_fence);
+    const result = vkRegisterDisplayEventEXT(device, display, &displayEventInfo, pAllocator, &out_fence);
     if (@bitCast(c_int, result) < 0) {
         return error.VK_UNDOCUMENTED_ERROR;
     }
@@ -13012,7 +12845,7 @@ pub inline fn RegisterDisplayEventEXT(device: Device, display: DisplayKHR, displ
 
 pub inline fn GetSwapchainCounterEXT(device: Device, swapchain: SwapchainKHR, counter: SurfaceCounterFlagsEXT) error{VK_DEVICE_LOST,VK_OUT_OF_DATE_KHR,VK_UNDOCUMENTED_ERROR}!u64 {
     var out_counterValue: u64 = undefined;
-    const result = vkGetSwapchainCounterEXT(device.handle, swapchain.handle, counter.toInt(), &out_counterValue);
+    const result = vkGetSwapchainCounterEXT(device, swapchain, counter.toInt(), &out_counterValue);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_DEVICE_LOST => error.VK_DEVICE_LOST,
@@ -13053,21 +12886,21 @@ pub const PresentTimesInfoGOOGLE = extern struct {
 };
 
 pub extern fn vkGetRefreshCycleDurationGOOGLE(
-    device: Device.IntType,
-    swapchain: SwapchainKHR.IntType,
+    device: Device,
+    swapchain: SwapchainKHR,
     pDisplayTimingProperties: *RefreshCycleDurationGOOGLE,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetPastPresentationTimingGOOGLE(
-    device: Device.IntType,
-    swapchain: SwapchainKHR.IntType,
+    device: Device,
+    swapchain: SwapchainKHR,
     pPresentationTimingCount: *u32,
     pPresentationTimings: ?[*]PastPresentationTimingGOOGLE,
 ) callconv(CallConv) Result;
 
 pub inline fn GetRefreshCycleDurationGOOGLE(device: Device, swapchain: SwapchainKHR) error{VK_DEVICE_LOST,VK_SURFACE_LOST_KHR,VK_UNDOCUMENTED_ERROR}!RefreshCycleDurationGOOGLE {
     var out_displayTimingProperties: RefreshCycleDurationGOOGLE = undefined;
-    const result = vkGetRefreshCycleDurationGOOGLE(device.handle, swapchain.handle, &out_displayTimingProperties);
+    const result = vkGetRefreshCycleDurationGOOGLE(device, swapchain, &out_displayTimingProperties);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_DEVICE_LOST => error.VK_DEVICE_LOST,
@@ -13085,7 +12918,7 @@ pub const GetPastPresentationTimingGOOGLEResult = struct {
 pub inline fn GetPastPresentationTimingGOOGLE(device: Device, swapchain: SwapchainKHR, presentationTimings: []PastPresentationTimingGOOGLE) error{VK_DEVICE_LOST,VK_OUT_OF_DATE_KHR,VK_SURFACE_LOST_KHR,VK_UNDOCUMENTED_ERROR}!GetPastPresentationTimingGOOGLEResult {
     var returnValues: GetPastPresentationTimingGOOGLEResult = undefined;
     var presentationTimingCount: u32 = @intCast(u32, presentationTimings.len);
-    const result = vkGetPastPresentationTimingGOOGLE(device.handle, swapchain.handle, &presentationTimingCount, presentationTimings.ptr);
+    const result = vkGetPastPresentationTimingGOOGLE(device, swapchain, &presentationTimingCount, presentationTimings.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_DEVICE_LOST => error.VK_DEVICE_LOST,
@@ -13100,7 +12933,7 @@ pub inline fn GetPastPresentationTimingGOOGLE(device: Device, swapchain: Swapcha
 }
 pub inline fn GetPastPresentationTimingCountGOOGLE(device: Device, swapchain: SwapchainKHR) error{VK_DEVICE_LOST,VK_OUT_OF_DATE_KHR,VK_SURFACE_LOST_KHR,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_presentationTimingCount: u32 = undefined;
-    const result = vkGetPastPresentationTimingGOOGLE(device.handle, swapchain.handle, &out_presentationTimingCount, null);
+    const result = vkGetPastPresentationTimingGOOGLE(device, swapchain, &out_presentationTimingCount, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_DEVICE_LOST => error.VK_DEVICE_LOST,
@@ -13207,14 +13040,14 @@ pub const PipelineDiscardRectangleStateCreateInfoEXT = extern struct {
 };
 
 pub extern fn vkCmdSetDiscardRectangleEXT(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     firstDiscardRectangle: u32,
     discardRectangleCount: u32,
     pDiscardRectangles: [*]const Rect2D,
 ) callconv(CallConv) void;
 
 pub inline fn CmdSetDiscardRectangleEXT(commandBuffer: CommandBuffer, firstDiscardRectangle: u32, discardRectangles: []const Rect2D) void {
-    vkCmdSetDiscardRectangleEXT(commandBuffer.handle, firstDiscardRectangle, @intCast(u32, discardRectangles.len), discardRectangles.ptr);
+    vkCmdSetDiscardRectangleEXT(commandBuffer, firstDiscardRectangle, @intCast(u32, discardRectangles.len), discardRectangles.ptr);
 }
 
 
@@ -13308,7 +13141,7 @@ pub const HdrMetadataEXT = extern struct {
 };
 
 pub extern fn vkSetHdrMetadataEXT(
-    device: Device.IntType,
+    device: Device,
     swapchainCount: u32,
     pSwapchains: [*]const SwapchainKHR,
     pMetadata: [*]const HdrMetadataEXT,
@@ -13316,7 +13149,7 @@ pub extern fn vkSetHdrMetadataEXT(
 
 pub inline fn SetHdrMetadataEXT(device: Device, swapchains: []const SwapchainKHR, metadata: []const HdrMetadataEXT) void {
     assert(metadata.len >= swapchains.len);
-    vkSetHdrMetadataEXT(device.handle, @intCast(u32, swapchains.len), swapchains.ptr, metadata.ptr);
+    vkSetHdrMetadataEXT(device, @intCast(u32, swapchains.len), swapchains.ptr, metadata.ptr);
 }
 
 
@@ -13332,7 +13165,7 @@ pub const QUEUE_FAMILY_FOREIGN_EXT = (~@as(u32, 0)-2);
 
 
 pub const EXT_debug_utils = 1;
-pub const DebugUtilsMessengerEXT = Handle("DebugUtilsMessengerEXT", u64);
+pub const DebugUtilsMessengerEXT = extern enum(u64) { Null = 0, _ };
 
 pub const EXT_DEBUG_UTILS_SPEC_VERSION = 1;
 pub const EXT_DEBUG_UTILS_EXTENSION_NAME = "VK_EXT_debug_utils";
@@ -13479,61 +13312,61 @@ pub const DebugUtilsMessengerCreateInfoEXT = extern struct {
 };
 
 pub extern fn vkSetDebugUtilsObjectNameEXT(
-    device: Device.IntType,
+    device: Device,
     pNameInfo: *const DebugUtilsObjectNameInfoEXT,
 ) callconv(CallConv) Result;
 
 pub extern fn vkSetDebugUtilsObjectTagEXT(
-    device: Device.IntType,
+    device: Device,
     pTagInfo: *const DebugUtilsObjectTagInfoEXT,
 ) callconv(CallConv) Result;
 
 pub extern fn vkQueueBeginDebugUtilsLabelEXT(
-    queue: Queue.IntType,
+    queue: Queue,
     pLabelInfo: *const DebugUtilsLabelEXT,
 ) callconv(CallConv) void;
 
-pub extern fn vkQueueEndDebugUtilsLabelEXT(queue: Queue.IntType) callconv(CallConv) void;
+pub extern fn vkQueueEndDebugUtilsLabelEXT(queue: Queue) callconv(CallConv) void;
 
 pub extern fn vkQueueInsertDebugUtilsLabelEXT(
-    queue: Queue.IntType,
+    queue: Queue,
     pLabelInfo: *const DebugUtilsLabelEXT,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdBeginDebugUtilsLabelEXT(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pLabelInfo: *const DebugUtilsLabelEXT,
 ) callconv(CallConv) void;
 
-pub extern fn vkCmdEndDebugUtilsLabelEXT(commandBuffer: CommandBuffer.IntType) callconv(CallConv) void;
+pub extern fn vkCmdEndDebugUtilsLabelEXT(commandBuffer: CommandBuffer) callconv(CallConv) void;
 
 pub extern fn vkCmdInsertDebugUtilsLabelEXT(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pLabelInfo: *const DebugUtilsLabelEXT,
 ) callconv(CallConv) void;
 
 pub extern fn vkCreateDebugUtilsMessengerEXT(
-    instance: Instance.IntType,
+    instance: Instance,
     pCreateInfo: *const DebugUtilsMessengerCreateInfoEXT,
     pAllocator: ?*const AllocationCallbacks,
     pMessenger: *DebugUtilsMessengerEXT,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyDebugUtilsMessengerEXT(
-    instance: Instance.IntType,
-    messenger: DebugUtilsMessengerEXT.IntType,
+    instance: Instance,
+    messenger: DebugUtilsMessengerEXT,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkSubmitDebugUtilsMessageEXT(
-    instance: Instance.IntType,
+    instance: Instance,
     messageSeverity: DebugUtilsMessageSeverityFlagsEXT.IntType,
     messageTypes: DebugUtilsMessageTypeFlagsEXT.IntType,
     pCallbackData: *const DebugUtilsMessengerCallbackDataEXT,
 ) callconv(CallConv) void;
 
 pub inline fn SetDebugUtilsObjectNameEXT(device: Device, nameInfo: DebugUtilsObjectNameInfoEXT) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkSetDebugUtilsObjectNameEXT(device.handle, &nameInfo);
+    const result = vkSetDebugUtilsObjectNameEXT(device, &nameInfo);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -13544,7 +13377,7 @@ pub inline fn SetDebugUtilsObjectNameEXT(device: Device, nameInfo: DebugUtilsObj
 }
 
 pub inline fn SetDebugUtilsObjectTagEXT(device: Device, tagInfo: DebugUtilsObjectTagInfoEXT) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkSetDebugUtilsObjectTagEXT(device.handle, &tagInfo);
+    const result = vkSetDebugUtilsObjectTagEXT(device, &tagInfo);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -13555,32 +13388,28 @@ pub inline fn SetDebugUtilsObjectTagEXT(device: Device, tagInfo: DebugUtilsObjec
 }
 
 pub inline fn QueueBeginDebugUtilsLabelEXT(queue: Queue, labelInfo: DebugUtilsLabelEXT) void {
-    vkQueueBeginDebugUtilsLabelEXT(queue.handle, &labelInfo);
+    vkQueueBeginDebugUtilsLabelEXT(queue, &labelInfo);
 }
 
-pub inline fn QueueEndDebugUtilsLabelEXT(queue: Queue) void {
-    vkQueueEndDebugUtilsLabelEXT(queue.handle);
-}
+pub const QueueEndDebugUtilsLabelEXT = vkQueueEndDebugUtilsLabelEXT;
 
 pub inline fn QueueInsertDebugUtilsLabelEXT(queue: Queue, labelInfo: DebugUtilsLabelEXT) void {
-    vkQueueInsertDebugUtilsLabelEXT(queue.handle, &labelInfo);
+    vkQueueInsertDebugUtilsLabelEXT(queue, &labelInfo);
 }
 
 pub inline fn CmdBeginDebugUtilsLabelEXT(commandBuffer: CommandBuffer, labelInfo: DebugUtilsLabelEXT) void {
-    vkCmdBeginDebugUtilsLabelEXT(commandBuffer.handle, &labelInfo);
+    vkCmdBeginDebugUtilsLabelEXT(commandBuffer, &labelInfo);
 }
 
-pub inline fn CmdEndDebugUtilsLabelEXT(commandBuffer: CommandBuffer) void {
-    vkCmdEndDebugUtilsLabelEXT(commandBuffer.handle);
-}
+pub const CmdEndDebugUtilsLabelEXT = vkCmdEndDebugUtilsLabelEXT;
 
 pub inline fn CmdInsertDebugUtilsLabelEXT(commandBuffer: CommandBuffer, labelInfo: DebugUtilsLabelEXT) void {
-    vkCmdInsertDebugUtilsLabelEXT(commandBuffer.handle, &labelInfo);
+    vkCmdInsertDebugUtilsLabelEXT(commandBuffer, &labelInfo);
 }
 
 pub inline fn CreateDebugUtilsMessengerEXT(instance: Instance, createInfo: DebugUtilsMessengerCreateInfoEXT, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_UNDOCUMENTED_ERROR}!DebugUtilsMessengerEXT {
     var out_messenger: DebugUtilsMessengerEXT = undefined;
-    const result = vkCreateDebugUtilsMessengerEXT(instance.handle, &createInfo, pAllocator, &out_messenger);
+    const result = vkCreateDebugUtilsMessengerEXT(instance, &createInfo, pAllocator, &out_messenger);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -13590,12 +13419,10 @@ pub inline fn CreateDebugUtilsMessengerEXT(instance: Instance, createInfo: Debug
     return out_messenger;
 }
 
-pub inline fn DestroyDebugUtilsMessengerEXT(instance: Instance, messenger: DebugUtilsMessengerEXT, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyDebugUtilsMessengerEXT(instance.handle, messenger.handle, pAllocator);
-}
+pub const DestroyDebugUtilsMessengerEXT = vkDestroyDebugUtilsMessengerEXT;
 
 pub inline fn SubmitDebugUtilsMessageEXT(instance: Instance, messageSeverity: DebugUtilsMessageSeverityFlagsEXT, messageTypes: DebugUtilsMessageTypeFlagsEXT, callbackData: DebugUtilsMessengerCallbackDataEXT) void {
-    vkSubmitDebugUtilsMessageEXT(instance.handle, messageSeverity.toInt(), messageTypes.toInt(), &callbackData);
+    vkSubmitDebugUtilsMessageEXT(instance, messageSeverity.toInt(), messageTypes.toInt(), &callbackData);
 }
 
 
@@ -13725,23 +13552,23 @@ pub const MultisamplePropertiesEXT = extern struct {
 };
 
 pub extern fn vkCmdSetSampleLocationsEXT(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pSampleLocationsInfo: *const SampleLocationsInfoEXT,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetPhysicalDeviceMultisamplePropertiesEXT(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     samples: SampleCountFlags.IntType,
     pMultisampleProperties: *MultisamplePropertiesEXT,
 ) callconv(CallConv) void;
 
 pub inline fn CmdSetSampleLocationsEXT(commandBuffer: CommandBuffer, sampleLocationsInfo: SampleLocationsInfoEXT) void {
-    vkCmdSetSampleLocationsEXT(commandBuffer.handle, &sampleLocationsInfo);
+    vkCmdSetSampleLocationsEXT(commandBuffer, &sampleLocationsInfo);
 }
 
 pub inline fn GetPhysicalDeviceMultisamplePropertiesEXT(physicalDevice: PhysicalDevice, samples: SampleCountFlags) MultisamplePropertiesEXT {
     var out_multisampleProperties: MultisamplePropertiesEXT = undefined;
-    vkGetPhysicalDeviceMultisamplePropertiesEXT(physicalDevice.handle, samples.toInt(), &out_multisampleProperties);
+    vkGetPhysicalDeviceMultisamplePropertiesEXT(physicalDevice, samples.toInt(), &out_multisampleProperties);
     return out_multisampleProperties;
 }
 
@@ -13905,14 +13732,14 @@ pub const ImageDrmFormatModifierPropertiesEXT = extern struct {
 };
 
 pub extern fn vkGetImageDrmFormatModifierPropertiesEXT(
-    device: Device.IntType,
-    image: Image.IntType,
+    device: Device,
+    image: Image,
     pProperties: *ImageDrmFormatModifierPropertiesEXT,
 ) callconv(CallConv) Result;
 
 pub inline fn GetImageDrmFormatModifierPropertiesEXT(device: Device, image: Image) error{VK_UNDOCUMENTED_ERROR}!ImageDrmFormatModifierPropertiesEXT {
     var out_properties: ImageDrmFormatModifierPropertiesEXT = undefined;
-    const result = vkGetImageDrmFormatModifierPropertiesEXT(device.handle, image.handle, &out_properties);
+    const result = vkGetImageDrmFormatModifierPropertiesEXT(device, image, &out_properties);
     if (@bitCast(c_int, result) < 0) {
         return error.VK_UNDOCUMENTED_ERROR;
     }
@@ -13921,7 +13748,7 @@ pub inline fn GetImageDrmFormatModifierPropertiesEXT(device: Device, image: Imag
 
 
 pub const EXT_validation_cache = 1;
-pub const ValidationCacheEXT = Handle("ValidationCacheEXT", u64);
+pub const ValidationCacheEXT = extern enum(u64) { Null = 0, _ };
 
 pub const EXT_VALIDATION_CACHE_SPEC_VERSION = 1;
 pub const EXT_VALIDATION_CACHE_EXTENSION_NAME = "VK_EXT_validation_cache";
@@ -13951,35 +13778,35 @@ pub const ShaderModuleValidationCacheCreateInfoEXT = extern struct {
 };
 
 pub extern fn vkCreateValidationCacheEXT(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const ValidationCacheCreateInfoEXT,
     pAllocator: ?*const AllocationCallbacks,
     pValidationCache: *ValidationCacheEXT,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyValidationCacheEXT(
-    device: Device.IntType,
-    validationCache: ValidationCacheEXT.IntType,
+    device: Device,
+    validationCache: ValidationCacheEXT,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkMergeValidationCachesEXT(
-    device: Device.IntType,
-    dstCache: ValidationCacheEXT.IntType,
+    device: Device,
+    dstCache: ValidationCacheEXT,
     srcCacheCount: u32,
     pSrcCaches: [*]const ValidationCacheEXT,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetValidationCacheDataEXT(
-    device: Device.IntType,
-    validationCache: ValidationCacheEXT.IntType,
+    device: Device,
+    validationCache: ValidationCacheEXT,
     pDataSize: *usize,
     pData: ?*c_void,
 ) callconv(CallConv) Result;
 
 pub inline fn CreateValidationCacheEXT(device: Device, createInfo: ValidationCacheCreateInfoEXT, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_UNDOCUMENTED_ERROR}!ValidationCacheEXT {
     var out_validationCache: ValidationCacheEXT = undefined;
-    const result = vkCreateValidationCacheEXT(device.handle, &createInfo, pAllocator, &out_validationCache);
+    const result = vkCreateValidationCacheEXT(device, &createInfo, pAllocator, &out_validationCache);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -13989,12 +13816,10 @@ pub inline fn CreateValidationCacheEXT(device: Device, createInfo: ValidationCac
     return out_validationCache;
 }
 
-pub inline fn DestroyValidationCacheEXT(device: Device, validationCache: ValidationCacheEXT, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyValidationCacheEXT(device.handle, validationCache.handle, pAllocator);
-}
+pub const DestroyValidationCacheEXT = vkDestroyValidationCacheEXT;
 
 pub inline fn MergeValidationCachesEXT(device: Device, dstCache: ValidationCacheEXT, srcCaches: []const ValidationCacheEXT) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkMergeValidationCachesEXT(device.handle, dstCache.handle, @intCast(u32, srcCaches.len), srcCaches.ptr);
+    const result = vkMergeValidationCachesEXT(device, dstCache, @intCast(u32, srcCaches.len), srcCaches.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -14011,7 +13836,7 @@ pub const GetValidationCacheDataEXTResult = struct {
 pub inline fn GetValidationCacheDataEXT(device: Device, validationCache: ValidationCacheEXT, data: []u8) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!GetValidationCacheDataEXTResult {
     var returnValues: GetValidationCacheDataEXTResult = undefined;
     var dataSize: usize = @intCast(usize, data.len);
-    const result = vkGetValidationCacheDataEXT(device.handle, validationCache.handle, &dataSize, data.ptr);
+    const result = vkGetValidationCacheDataEXT(device, validationCache, &dataSize, data.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -14025,7 +13850,7 @@ pub inline fn GetValidationCacheDataEXT(device: Device, validationCache: Validat
 }
 pub inline fn GetValidationCacheDataCountEXT(device: Device, validationCache: ValidationCacheEXT) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!usize {
     var out_dataSize: usize = undefined;
-    const result = vkGetValidationCacheDataEXT(device.handle, validationCache.handle, &out_dataSize, null);
+    const result = vkGetValidationCacheDataEXT(device, validationCache, &out_dataSize, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -14133,40 +13958,38 @@ pub const PipelineViewportCoarseSampleOrderStateCreateInfoNV = extern struct {
 };
 
 pub extern fn vkCmdBindShadingRateImageNV(
-    commandBuffer: CommandBuffer.IntType,
-    imageView: ImageView.IntType,
+    commandBuffer: CommandBuffer,
+    imageView: ImageView,
     imageLayout: ImageLayout,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdSetViewportShadingRatePaletteNV(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     firstViewport: u32,
     viewportCount: u32,
     pShadingRatePalettes: [*]const ShadingRatePaletteNV,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdSetCoarseSampleOrderNV(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     sampleOrderType: CoarseSampleOrderTypeNV,
     customSampleOrderCount: u32,
     pCustomSampleOrders: [*]const CoarseSampleOrderCustomNV,
 ) callconv(CallConv) void;
 
-pub inline fn CmdBindShadingRateImageNV(commandBuffer: CommandBuffer, imageView: ImageView, imageLayout: ImageLayout) void {
-    vkCmdBindShadingRateImageNV(commandBuffer.handle, imageView.handle, imageLayout);
-}
+pub const CmdBindShadingRateImageNV = vkCmdBindShadingRateImageNV;
 
 pub inline fn CmdSetViewportShadingRatePaletteNV(commandBuffer: CommandBuffer, firstViewport: u32, shadingRatePalettes: []const ShadingRatePaletteNV) void {
-    vkCmdSetViewportShadingRatePaletteNV(commandBuffer.handle, firstViewport, @intCast(u32, shadingRatePalettes.len), shadingRatePalettes.ptr);
+    vkCmdSetViewportShadingRatePaletteNV(commandBuffer, firstViewport, @intCast(u32, shadingRatePalettes.len), shadingRatePalettes.ptr);
 }
 
 pub inline fn CmdSetCoarseSampleOrderNV(commandBuffer: CommandBuffer, sampleOrderType: CoarseSampleOrderTypeNV, customSampleOrders: []const CoarseSampleOrderCustomNV) void {
-    vkCmdSetCoarseSampleOrderNV(commandBuffer.handle, sampleOrderType, @intCast(u32, customSampleOrders.len), customSampleOrders.ptr);
+    vkCmdSetCoarseSampleOrderNV(commandBuffer, sampleOrderType, @intCast(u32, customSampleOrders.len), customSampleOrders.ptr);
 }
 
 
 pub const NV_ray_tracing = 1;
-pub const AccelerationStructureNV = Handle("AccelerationStructureNV", u64);
+pub const AccelerationStructureNV = extern enum(u64) { Null = 0, _ };
 
 pub const NV_RAY_TRACING_SPEC_VERSION = 3;
 pub const NV_RAY_TRACING_EXTENSION_NAME = "VK_NV_ray_tracing";
@@ -14335,30 +14158,30 @@ pub const RayTracingPipelineCreateInfoNV = extern struct {
     pGroups: [*]const RayTracingShaderGroupCreateInfoNV,
     maxRecursionDepth: u32,
     layout: PipelineLayout,
-    basePipelineHandle: Pipeline = Pipeline{},
+    basePipelineHandle: Pipeline = Pipeline.Null,
     basePipelineIndex: i32,
 };
 
 pub const GeometryTrianglesNV = extern struct {
     sType: StructureType = .GEOMETRY_TRIANGLES_NV,
     pNext: ?*const c_void = null,
-    vertexData: Buffer = Buffer{},
+    vertexData: Buffer = Buffer.Null,
     vertexOffset: DeviceSize,
     vertexCount: u32,
     vertexStride: DeviceSize,
     vertexFormat: Format,
-    indexData: Buffer = Buffer{},
+    indexData: Buffer = Buffer.Null,
     indexOffset: DeviceSize,
     indexCount: u32,
     indexType: IndexType,
-    transformData: Buffer = Buffer{},
+    transformData: Buffer = Buffer.Null,
     transformOffset: DeviceSize,
 };
 
 pub const GeometryAABBNV = extern struct {
     sType: StructureType = .GEOMETRY_AABB_NV,
     pNext: ?*const c_void = null,
-    aabbData: Buffer = Buffer{},
+    aabbData: Buffer = Buffer.Null,
     numAABBs: u32,
     stride: u32,
     offset: DeviceSize,
@@ -14432,60 +14255,60 @@ pub const PhysicalDeviceRayTracingPropertiesNV = extern struct {
 };
 
 pub extern fn vkCreateAccelerationStructureNV(
-    device: Device.IntType,
+    device: Device,
     pCreateInfo: *const AccelerationStructureCreateInfoNV,
     pAllocator: ?*const AllocationCallbacks,
     pAccelerationStructure: *AccelerationStructureNV,
 ) callconv(CallConv) Result;
 
 pub extern fn vkDestroyAccelerationStructureNV(
-    device: Device.IntType,
-    accelerationStructure: AccelerationStructureNV.IntType,
+    device: Device,
+    accelerationStructure: AccelerationStructureNV,
     pAllocator: ?*const AllocationCallbacks,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetAccelerationStructureMemoryRequirementsNV(
-    device: Device.IntType,
+    device: Device,
     pInfo: *const AccelerationStructureMemoryRequirementsInfoNV,
     pMemoryRequirements: *MemoryRequirements2KHR,
 ) callconv(CallConv) void;
 
 pub extern fn vkBindAccelerationStructureMemoryNV(
-    device: Device.IntType,
+    device: Device,
     bindInfoCount: u32,
     pBindInfos: [*]const BindAccelerationStructureMemoryInfoNV,
 ) callconv(CallConv) Result;
 
 pub extern fn vkCmdBuildAccelerationStructureNV(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pInfo: *const AccelerationStructureInfoNV,
-    instanceData: Buffer.IntType,
+    instanceData: Buffer,
     instanceOffset: DeviceSize,
     update: Bool32,
-    dst: AccelerationStructureNV.IntType,
-    src: AccelerationStructureNV.IntType,
-    scratch: Buffer.IntType,
+    dst: AccelerationStructureNV,
+    src: AccelerationStructureNV,
+    scratch: Buffer,
     scratchOffset: DeviceSize,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdCopyAccelerationStructureNV(
-    commandBuffer: CommandBuffer.IntType,
-    dst: AccelerationStructureNV.IntType,
-    src: AccelerationStructureNV.IntType,
+    commandBuffer: CommandBuffer,
+    dst: AccelerationStructureNV,
+    src: AccelerationStructureNV,
     mode: CopyAccelerationStructureModeNV,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdTraceRaysNV(
-    commandBuffer: CommandBuffer.IntType,
-    raygenShaderBindingTableBuffer: Buffer.IntType,
+    commandBuffer: CommandBuffer,
+    raygenShaderBindingTableBuffer: Buffer,
     raygenShaderBindingOffset: DeviceSize,
-    missShaderBindingTableBuffer: Buffer.IntType,
+    missShaderBindingTableBuffer: Buffer,
     missShaderBindingOffset: DeviceSize,
     missShaderBindingStride: DeviceSize,
-    hitShaderBindingTableBuffer: Buffer.IntType,
+    hitShaderBindingTableBuffer: Buffer,
     hitShaderBindingOffset: DeviceSize,
     hitShaderBindingStride: DeviceSize,
-    callableShaderBindingTableBuffer: Buffer.IntType,
+    callableShaderBindingTableBuffer: Buffer,
     callableShaderBindingOffset: DeviceSize,
     callableShaderBindingStride: DeviceSize,
     width: u32,
@@ -14494,8 +14317,8 @@ pub extern fn vkCmdTraceRaysNV(
 ) callconv(CallConv) void;
 
 pub extern fn vkCreateRayTracingPipelinesNV(
-    device: Device.IntType,
-    pipelineCache: PipelineCache.IntType,
+    device: Device,
+    pipelineCache: PipelineCache,
     createInfoCount: u32,
     pCreateInfos: [*]const RayTracingPipelineCreateInfoNV,
     pAllocator: ?*const AllocationCallbacks,
@@ -14503,8 +14326,8 @@ pub extern fn vkCreateRayTracingPipelinesNV(
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetRayTracingShaderGroupHandlesNV(
-    device: Device.IntType,
-    pipeline: Pipeline.IntType,
+    device: Device,
+    pipeline: Pipeline,
     firstGroup: u32,
     groupCount: u32,
     dataSize: usize,
@@ -14512,30 +14335,30 @@ pub extern fn vkGetRayTracingShaderGroupHandlesNV(
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetAccelerationStructureHandleNV(
-    device: Device.IntType,
-    accelerationStructure: AccelerationStructureNV.IntType,
+    device: Device,
+    accelerationStructure: AccelerationStructureNV,
     dataSize: usize,
     pData: ?*c_void,
 ) callconv(CallConv) Result;
 
 pub extern fn vkCmdWriteAccelerationStructuresPropertiesNV(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     accelerationStructureCount: u32,
     pAccelerationStructures: [*]const AccelerationStructureNV,
     queryType: QueryType,
-    queryPool: QueryPool.IntType,
+    queryPool: QueryPool,
     firstQuery: u32,
 ) callconv(CallConv) void;
 
 pub extern fn vkCompileDeferredNV(
-    device: Device.IntType,
-    pipeline: Pipeline.IntType,
+    device: Device,
+    pipeline: Pipeline,
     shader: u32,
 ) callconv(CallConv) Result;
 
 pub inline fn CreateAccelerationStructureNV(device: Device, createInfo: AccelerationStructureCreateInfoNV, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_UNDOCUMENTED_ERROR}!AccelerationStructureNV {
     var out_accelerationStructure: AccelerationStructureNV = undefined;
-    const result = vkCreateAccelerationStructureNV(device.handle, &createInfo, pAllocator, &out_accelerationStructure);
+    const result = vkCreateAccelerationStructureNV(device, &createInfo, pAllocator, &out_accelerationStructure);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -14545,18 +14368,16 @@ pub inline fn CreateAccelerationStructureNV(device: Device, createInfo: Accelera
     return out_accelerationStructure;
 }
 
-pub inline fn DestroyAccelerationStructureNV(device: Device, accelerationStructure: AccelerationStructureNV, pAllocator: ?*const AllocationCallbacks) void {
-    vkDestroyAccelerationStructureNV(device.handle, accelerationStructure.handle, pAllocator);
-}
+pub const DestroyAccelerationStructureNV = vkDestroyAccelerationStructureNV;
 
 pub inline fn GetAccelerationStructureMemoryRequirementsNV(device: Device, info: AccelerationStructureMemoryRequirementsInfoNV) MemoryRequirements2KHR {
     var out_memoryRequirements: MemoryRequirements2KHR = undefined;
-    vkGetAccelerationStructureMemoryRequirementsNV(device.handle, &info, &out_memoryRequirements);
+    vkGetAccelerationStructureMemoryRequirementsNV(device, &info, &out_memoryRequirements);
     return out_memoryRequirements;
 }
 
 pub inline fn BindAccelerationStructureMemoryNV(device: Device, bindInfos: []const BindAccelerationStructureMemoryInfoNV) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkBindAccelerationStructureMemoryNV(device.handle, @intCast(u32, bindInfos.len), bindInfos.ptr);
+    const result = vkBindAccelerationStructureMemoryNV(device, @intCast(u32, bindInfos.len), bindInfos.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -14567,20 +14388,15 @@ pub inline fn BindAccelerationStructureMemoryNV(device: Device, bindInfos: []con
 }
 
 pub inline fn CmdBuildAccelerationStructureNV(commandBuffer: CommandBuffer, info: AccelerationStructureInfoNV, instanceData: Buffer, instanceOffset: DeviceSize, update: Bool32, dst: AccelerationStructureNV, src: AccelerationStructureNV, scratch: Buffer, scratchOffset: DeviceSize) void {
-    vkCmdBuildAccelerationStructureNV(commandBuffer.handle, &info, instanceData.handle, instanceOffset, update, dst.handle, src.handle, scratch.handle, scratchOffset);
+    vkCmdBuildAccelerationStructureNV(commandBuffer, &info, instanceData, instanceOffset, update, dst, src, scratch, scratchOffset);
 }
 
-pub inline fn CmdCopyAccelerationStructureNV(commandBuffer: CommandBuffer, dst: AccelerationStructureNV, src: AccelerationStructureNV, mode: CopyAccelerationStructureModeNV) void {
-    vkCmdCopyAccelerationStructureNV(commandBuffer.handle, dst.handle, src.handle, mode);
-}
-
-pub inline fn CmdTraceRaysNV(commandBuffer: CommandBuffer, raygenShaderBindingTableBuffer: Buffer, raygenShaderBindingOffset: DeviceSize, missShaderBindingTableBuffer: Buffer, missShaderBindingOffset: DeviceSize, missShaderBindingStride: DeviceSize, hitShaderBindingTableBuffer: Buffer, hitShaderBindingOffset: DeviceSize, hitShaderBindingStride: DeviceSize, callableShaderBindingTableBuffer: Buffer, callableShaderBindingOffset: DeviceSize, callableShaderBindingStride: DeviceSize, width: u32, height: u32, depth: u32) void {
-    vkCmdTraceRaysNV(commandBuffer.handle, raygenShaderBindingTableBuffer.handle, raygenShaderBindingOffset, missShaderBindingTableBuffer.handle, missShaderBindingOffset, missShaderBindingStride, hitShaderBindingTableBuffer.handle, hitShaderBindingOffset, hitShaderBindingStride, callableShaderBindingTableBuffer.handle, callableShaderBindingOffset, callableShaderBindingStride, width, height, depth);
-}
+pub const CmdCopyAccelerationStructureNV = vkCmdCopyAccelerationStructureNV;
+pub const CmdTraceRaysNV = vkCmdTraceRaysNV;
 
 pub inline fn CreateRayTracingPipelinesNV(device: Device, pipelineCache: PipelineCache, createInfos: []const RayTracingPipelineCreateInfoNV, pAllocator: ?*const AllocationCallbacks, pipelines: []Pipeline) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_INVALID_SHADER_NV,VK_UNDOCUMENTED_ERROR}!void {
     assert(pipelines.len >= createInfos.len);
-    const result = vkCreateRayTracingPipelinesNV(device.handle, pipelineCache.handle, @intCast(u32, createInfos.len), createInfos.ptr, pAllocator, pipelines.ptr);
+    const result = vkCreateRayTracingPipelinesNV(device, pipelineCache, @intCast(u32, createInfos.len), createInfos.ptr, pAllocator, pipelines.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -14592,7 +14408,7 @@ pub inline fn CreateRayTracingPipelinesNV(device: Device, pipelineCache: Pipelin
 }
 
 pub inline fn GetRayTracingShaderGroupHandlesNV(device: Device, pipeline: Pipeline, firstGroup: u32, groupCount: u32, data: []u8) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkGetRayTracingShaderGroupHandlesNV(device.handle, pipeline.handle, firstGroup, groupCount, @intCast(usize, data.len), data.ptr);
+    const result = vkGetRayTracingShaderGroupHandlesNV(device, pipeline, firstGroup, groupCount, @intCast(usize, data.len), data.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -14603,7 +14419,7 @@ pub inline fn GetRayTracingShaderGroupHandlesNV(device: Device, pipeline: Pipeli
 }
 
 pub inline fn GetAccelerationStructureHandleNV(device: Device, accelerationStructure: AccelerationStructureNV, data: []u8) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkGetAccelerationStructureHandleNV(device.handle, accelerationStructure.handle, @intCast(usize, data.len), data.ptr);
+    const result = vkGetAccelerationStructureHandleNV(device, accelerationStructure, @intCast(usize, data.len), data.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -14614,11 +14430,11 @@ pub inline fn GetAccelerationStructureHandleNV(device: Device, accelerationStruc
 }
 
 pub inline fn CmdWriteAccelerationStructuresPropertiesNV(commandBuffer: CommandBuffer, accelerationStructures: []const AccelerationStructureNV, queryType: QueryType, queryPool: QueryPool, firstQuery: u32) void {
-    vkCmdWriteAccelerationStructuresPropertiesNV(commandBuffer.handle, @intCast(u32, accelerationStructures.len), accelerationStructures.ptr, queryType, queryPool.handle, firstQuery);
+    vkCmdWriteAccelerationStructuresPropertiesNV(commandBuffer, @intCast(u32, accelerationStructures.len), accelerationStructures.ptr, queryType, queryPool, firstQuery);
 }
 
 pub inline fn CompileDeferredNV(device: Device, pipeline: Pipeline, shader: u32) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkCompileDeferredNV(device.handle, pipeline.handle, shader);
+    const result = vkCompileDeferredNV(device, pipeline, shader);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -14707,7 +14523,7 @@ pub const PhysicalDeviceExternalMemoryHostPropertiesEXT = extern struct {
 };
 
 pub extern fn vkGetMemoryHostPointerPropertiesEXT(
-    device: Device.IntType,
+    device: Device,
     handleType: ExternalMemoryHandleTypeFlags.IntType,
     pHostPointer: ?*const c_void,
     pMemoryHostPointerProperties: *MemoryHostPointerPropertiesEXT,
@@ -14715,7 +14531,7 @@ pub extern fn vkGetMemoryHostPointerPropertiesEXT(
 
 pub inline fn GetMemoryHostPointerPropertiesEXT(device: Device, handleType: ExternalMemoryHandleTypeFlags, pHostPointer: ?*const c_void) error{VK_INVALID_EXTERNAL_HANDLE,VK_UNDOCUMENTED_ERROR}!MemoryHostPointerPropertiesEXT {
     var out_memoryHostPointerProperties: MemoryHostPointerPropertiesEXT = undefined;
-    const result = vkGetMemoryHostPointerPropertiesEXT(device.handle, handleType.toInt(), pHostPointer, &out_memoryHostPointerProperties);
+    const result = vkGetMemoryHostPointerPropertiesEXT(device, handleType.toInt(), pHostPointer, &out_memoryHostPointerProperties);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_INVALID_EXTERNAL_HANDLE => error.VK_INVALID_EXTERNAL_HANDLE,
@@ -14731,15 +14547,15 @@ pub const AMD_BUFFER_MARKER_SPEC_VERSION = 1;
 pub const AMD_BUFFER_MARKER_EXTENSION_NAME = "VK_AMD_buffer_marker";
 
 pub extern fn vkCmdWriteBufferMarkerAMD(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pipelineStage: PipelineStageFlags.IntType,
-    dstBuffer: Buffer.IntType,
+    dstBuffer: Buffer,
     dstOffset: DeviceSize,
     marker: u32,
 ) callconv(CallConv) void;
 
 pub inline fn CmdWriteBufferMarkerAMD(commandBuffer: CommandBuffer, pipelineStage: PipelineStageFlags, dstBuffer: Buffer, dstOffset: DeviceSize, marker: u32) void {
-    vkCmdWriteBufferMarkerAMD(commandBuffer.handle, pipelineStage.toInt(), dstBuffer.handle, dstOffset, marker);
+    vkCmdWriteBufferMarkerAMD(commandBuffer, pipelineStage.toInt(), dstBuffer, dstOffset, marker);
 }
 
 
@@ -14810,13 +14626,13 @@ pub const CalibratedTimestampInfoEXT = extern struct {
 };
 
 pub extern fn vkGetPhysicalDeviceCalibrateableTimeDomainsEXT(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pTimeDomainCount: *u32,
     pTimeDomains: ?[*]TimeDomainEXT,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetCalibratedTimestampsEXT(
-    device: Device.IntType,
+    device: Device,
     timestampCount: u32,
     pTimestampInfos: [*]const CalibratedTimestampInfoEXT,
     pTimestamps: [*]u64,
@@ -14830,7 +14646,7 @@ pub const GetPhysicalDeviceCalibrateableTimeDomainsEXTResult = struct {
 pub inline fn GetPhysicalDeviceCalibrateableTimeDomainsEXT(physicalDevice: PhysicalDevice, timeDomains: []TimeDomainEXT) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!GetPhysicalDeviceCalibrateableTimeDomainsEXTResult {
     var returnValues: GetPhysicalDeviceCalibrateableTimeDomainsEXTResult = undefined;
     var timeDomainCount: u32 = @intCast(u32, timeDomains.len);
-    const result = vkGetPhysicalDeviceCalibrateableTimeDomainsEXT(physicalDevice.handle, &timeDomainCount, timeDomains.ptr);
+    const result = vkGetPhysicalDeviceCalibrateableTimeDomainsEXT(physicalDevice, &timeDomainCount, timeDomains.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -14844,7 +14660,7 @@ pub inline fn GetPhysicalDeviceCalibrateableTimeDomainsEXT(physicalDevice: Physi
 }
 pub inline fn GetPhysicalDeviceCalibrateableTimeDomainsCountEXT(physicalDevice: PhysicalDevice) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_timeDomainCount: u32 = undefined;
-    const result = vkGetPhysicalDeviceCalibrateableTimeDomainsEXT(physicalDevice.handle, &out_timeDomainCount, null);
+    const result = vkGetPhysicalDeviceCalibrateableTimeDomainsEXT(physicalDevice, &out_timeDomainCount, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -14858,7 +14674,7 @@ pub inline fn GetPhysicalDeviceCalibrateableTimeDomainsCountEXT(physicalDevice: 
 pub inline fn GetCalibratedTimestampsEXT(device: Device, timestampInfos: []const CalibratedTimestampInfoEXT, timestamps: []u64) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u64 {
     var out_maxDeviation: u64 = undefined;
     assert(timestamps.len >= timestampInfos.len);
-    const result = vkGetCalibratedTimestampsEXT(device.handle, @intCast(u32, timestampInfos.len), timestampInfos.ptr, timestamps.ptr, &out_maxDeviation);
+    const result = vkGetCalibratedTimestampsEXT(device, @intCast(u32, timestampInfos.len), timestampInfos.ptr, timestamps.ptr, &out_maxDeviation);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -15049,40 +14865,32 @@ pub const DrawMeshTasksIndirectCommandNV = extern struct {
 };
 
 pub extern fn vkCmdDrawMeshTasksNV(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     taskCount: u32,
     firstTask: u32,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdDrawMeshTasksIndirectNV(
-    commandBuffer: CommandBuffer.IntType,
-    buffer: Buffer.IntType,
+    commandBuffer: CommandBuffer,
+    buffer: Buffer,
     offset: DeviceSize,
     drawCount: u32,
     stride: u32,
 ) callconv(CallConv) void;
 
 pub extern fn vkCmdDrawMeshTasksIndirectCountNV(
-    commandBuffer: CommandBuffer.IntType,
-    buffer: Buffer.IntType,
+    commandBuffer: CommandBuffer,
+    buffer: Buffer,
     offset: DeviceSize,
-    countBuffer: Buffer.IntType,
+    countBuffer: Buffer,
     countBufferOffset: DeviceSize,
     maxDrawCount: u32,
     stride: u32,
 ) callconv(CallConv) void;
 
-pub inline fn CmdDrawMeshTasksNV(commandBuffer: CommandBuffer, taskCount: u32, firstTask: u32) void {
-    vkCmdDrawMeshTasksNV(commandBuffer.handle, taskCount, firstTask);
-}
-
-pub inline fn CmdDrawMeshTasksIndirectNV(commandBuffer: CommandBuffer, buffer: Buffer, offset: DeviceSize, drawCount: u32, stride: u32) void {
-    vkCmdDrawMeshTasksIndirectNV(commandBuffer.handle, buffer.handle, offset, drawCount, stride);
-}
-
-pub inline fn CmdDrawMeshTasksIndirectCountNV(commandBuffer: CommandBuffer, buffer: Buffer, offset: DeviceSize, countBuffer: Buffer, countBufferOffset: DeviceSize, maxDrawCount: u32, stride: u32) void {
-    vkCmdDrawMeshTasksIndirectCountNV(commandBuffer.handle, buffer.handle, offset, countBuffer.handle, countBufferOffset, maxDrawCount, stride);
-}
+pub const CmdDrawMeshTasksNV = vkCmdDrawMeshTasksNV;
+pub const CmdDrawMeshTasksIndirectNV = vkCmdDrawMeshTasksIndirectNV;
+pub const CmdDrawMeshTasksIndirectCountNV = vkCmdDrawMeshTasksIndirectCountNV;
 
 
 pub const NV_fragment_shader_barycentric = 1;
@@ -15125,14 +14933,14 @@ pub const PhysicalDeviceExclusiveScissorFeaturesNV = extern struct {
 };
 
 pub extern fn vkCmdSetExclusiveScissorNV(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     firstExclusiveScissor: u32,
     exclusiveScissorCount: u32,
     pExclusiveScissors: [*]const Rect2D,
 ) callconv(CallConv) void;
 
 pub inline fn CmdSetExclusiveScissorNV(commandBuffer: CommandBuffer, firstExclusiveScissor: u32, exclusiveScissors: []const Rect2D) void {
-    vkCmdSetExclusiveScissorNV(commandBuffer.handle, firstExclusiveScissor, @intCast(u32, exclusiveScissors.len), exclusiveScissors.ptr);
+    vkCmdSetExclusiveScissorNV(commandBuffer, firstExclusiveScissor, @intCast(u32, exclusiveScissors.len), exclusiveScissors.ptr);
 }
 
 
@@ -15154,30 +14962,28 @@ pub const CheckpointDataNV = extern struct {
 };
 
 pub extern fn vkCmdSetCheckpointNV(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pCheckpointMarker: ?*const c_void,
 ) callconv(CallConv) void;
 
 pub extern fn vkGetQueueCheckpointDataNV(
-    queue: Queue.IntType,
+    queue: Queue,
     pCheckpointDataCount: *u32,
     pCheckpointData: ?[*]CheckpointDataNV,
 ) callconv(CallConv) void;
 
-pub inline fn CmdSetCheckpointNV(commandBuffer: CommandBuffer, pCheckpointMarker: ?*const c_void) void {
-    vkCmdSetCheckpointNV(commandBuffer.handle, pCheckpointMarker);
-}
+pub const CmdSetCheckpointNV = vkCmdSetCheckpointNV;
 
 pub inline fn GetQueueCheckpointDataNV(queue: Queue, checkpointData: []CheckpointDataNV) []CheckpointDataNV {
     var out_checkpointData: []CheckpointDataNV = undefined;
     var checkpointDataCount: u32 = @intCast(u32, checkpointData.len);
-    vkGetQueueCheckpointDataNV(queue.handle, &checkpointDataCount, checkpointData.ptr);
+    vkGetQueueCheckpointDataNV(queue, &checkpointDataCount, checkpointData.ptr);
     out_checkpointData = checkpointData[0..checkpointDataCount];
     return out_checkpointData;
 }
 pub inline fn GetQueueCheckpointDataCountNV(queue: Queue) u32 {
     var out_checkpointDataCount: u32 = undefined;
-    vkGetQueueCheckpointDataNV(queue.handle, &out_checkpointDataCount, null);
+    vkGetQueueCheckpointDataNV(queue, &out_checkpointDataCount, null);
     return out_checkpointDataCount;
 }
 
@@ -15194,7 +15000,7 @@ pub const PhysicalDeviceShaderIntegerFunctions2FeaturesINTEL = extern struct {
 
 
 pub const INTEL_performance_query = 1;
-pub const PerformanceConfigurationINTEL = Handle("PerformanceConfigurationINTEL", u64);
+pub const PerformanceConfigurationINTEL = extern enum(u64) { Null = 0, _ };
 
 pub const INTEL_PERFORMANCE_QUERY_SPEC_VERSION = 1;
 pub const INTEL_PERFORMANCE_QUERY_EXTENSION_NAME = "VK_INTEL_performance_query";
@@ -15282,51 +15088,51 @@ pub const PerformanceConfigurationAcquireInfoINTEL = extern struct {
 };
 
 pub extern fn vkInitializePerformanceApiINTEL(
-    device: Device.IntType,
+    device: Device,
     pInitializeInfo: *const InitializePerformanceApiInfoINTEL,
 ) callconv(CallConv) Result;
 
-pub extern fn vkUninitializePerformanceApiINTEL(device: Device.IntType) callconv(CallConv) void;
+pub extern fn vkUninitializePerformanceApiINTEL(device: Device) callconv(CallConv) void;
 
 pub extern fn vkCmdSetPerformanceMarkerINTEL(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pMarkerInfo: *const PerformanceMarkerInfoINTEL,
 ) callconv(CallConv) Result;
 
 pub extern fn vkCmdSetPerformanceStreamMarkerINTEL(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pMarkerInfo: *const PerformanceStreamMarkerInfoINTEL,
 ) callconv(CallConv) Result;
 
 pub extern fn vkCmdSetPerformanceOverrideINTEL(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     pOverrideInfo: *const PerformanceOverrideInfoINTEL,
 ) callconv(CallConv) Result;
 
 pub extern fn vkAcquirePerformanceConfigurationINTEL(
-    device: Device.IntType,
+    device: Device,
     pAcquireInfo: *const PerformanceConfigurationAcquireInfoINTEL,
     pConfiguration: *PerformanceConfigurationINTEL,
 ) callconv(CallConv) Result;
 
 pub extern fn vkReleasePerformanceConfigurationINTEL(
-    device: Device.IntType,
-    configuration: PerformanceConfigurationINTEL.IntType,
+    device: Device,
+    configuration: PerformanceConfigurationINTEL,
 ) callconv(CallConv) Result;
 
 pub extern fn vkQueueSetPerformanceConfigurationINTEL(
-    queue: Queue.IntType,
-    configuration: PerformanceConfigurationINTEL.IntType,
+    queue: Queue,
+    configuration: PerformanceConfigurationINTEL,
 ) callconv(CallConv) Result;
 
 pub extern fn vkGetPerformanceParameterINTEL(
-    device: Device.IntType,
+    device: Device,
     parameter: PerformanceParameterTypeINTEL,
     pValue: *PerformanceValueINTEL,
 ) callconv(CallConv) Result;
 
 pub inline fn InitializePerformanceApiINTEL(device: Device, initializeInfo: InitializePerformanceApiInfoINTEL) error{VK_TOO_MANY_OBJECTS,VK_OUT_OF_HOST_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkInitializePerformanceApiINTEL(device.handle, &initializeInfo);
+    const result = vkInitializePerformanceApiINTEL(device, &initializeInfo);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_TOO_MANY_OBJECTS => error.VK_TOO_MANY_OBJECTS,
@@ -15336,12 +15142,10 @@ pub inline fn InitializePerformanceApiINTEL(device: Device, initializeInfo: Init
     }
 }
 
-pub inline fn UninitializePerformanceApiINTEL(device: Device) void {
-    vkUninitializePerformanceApiINTEL(device.handle);
-}
+pub const UninitializePerformanceApiINTEL = vkUninitializePerformanceApiINTEL;
 
 pub inline fn CmdSetPerformanceMarkerINTEL(commandBuffer: CommandBuffer, markerInfo: PerformanceMarkerInfoINTEL) error{VK_TOO_MANY_OBJECTS,VK_OUT_OF_HOST_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkCmdSetPerformanceMarkerINTEL(commandBuffer.handle, &markerInfo);
+    const result = vkCmdSetPerformanceMarkerINTEL(commandBuffer, &markerInfo);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_TOO_MANY_OBJECTS => error.VK_TOO_MANY_OBJECTS,
@@ -15352,7 +15156,7 @@ pub inline fn CmdSetPerformanceMarkerINTEL(commandBuffer: CommandBuffer, markerI
 }
 
 pub inline fn CmdSetPerformanceStreamMarkerINTEL(commandBuffer: CommandBuffer, markerInfo: PerformanceStreamMarkerInfoINTEL) error{VK_TOO_MANY_OBJECTS,VK_OUT_OF_HOST_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkCmdSetPerformanceStreamMarkerINTEL(commandBuffer.handle, &markerInfo);
+    const result = vkCmdSetPerformanceStreamMarkerINTEL(commandBuffer, &markerInfo);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_TOO_MANY_OBJECTS => error.VK_TOO_MANY_OBJECTS,
@@ -15363,7 +15167,7 @@ pub inline fn CmdSetPerformanceStreamMarkerINTEL(commandBuffer: CommandBuffer, m
 }
 
 pub inline fn CmdSetPerformanceOverrideINTEL(commandBuffer: CommandBuffer, overrideInfo: PerformanceOverrideInfoINTEL) error{VK_TOO_MANY_OBJECTS,VK_OUT_OF_HOST_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkCmdSetPerformanceOverrideINTEL(commandBuffer.handle, &overrideInfo);
+    const result = vkCmdSetPerformanceOverrideINTEL(commandBuffer, &overrideInfo);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_TOO_MANY_OBJECTS => error.VK_TOO_MANY_OBJECTS,
@@ -15375,7 +15179,7 @@ pub inline fn CmdSetPerformanceOverrideINTEL(commandBuffer: CommandBuffer, overr
 
 pub inline fn AcquirePerformanceConfigurationINTEL(device: Device, acquireInfo: PerformanceConfigurationAcquireInfoINTEL) error{VK_TOO_MANY_OBJECTS,VK_OUT_OF_HOST_MEMORY,VK_UNDOCUMENTED_ERROR}!PerformanceConfigurationINTEL {
     var out_configuration: PerformanceConfigurationINTEL = undefined;
-    const result = vkAcquirePerformanceConfigurationINTEL(device.handle, &acquireInfo, &out_configuration);
+    const result = vkAcquirePerformanceConfigurationINTEL(device, &acquireInfo, &out_configuration);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_TOO_MANY_OBJECTS => error.VK_TOO_MANY_OBJECTS,
@@ -15387,7 +15191,7 @@ pub inline fn AcquirePerformanceConfigurationINTEL(device: Device, acquireInfo: 
 }
 
 pub inline fn ReleasePerformanceConfigurationINTEL(device: Device, configuration: PerformanceConfigurationINTEL) error{VK_TOO_MANY_OBJECTS,VK_OUT_OF_HOST_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkReleasePerformanceConfigurationINTEL(device.handle, configuration.handle);
+    const result = vkReleasePerformanceConfigurationINTEL(device, configuration);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_TOO_MANY_OBJECTS => error.VK_TOO_MANY_OBJECTS,
@@ -15398,7 +15202,7 @@ pub inline fn ReleasePerformanceConfigurationINTEL(device: Device, configuration
 }
 
 pub inline fn QueueSetPerformanceConfigurationINTEL(queue: Queue, configuration: PerformanceConfigurationINTEL) error{VK_TOO_MANY_OBJECTS,VK_OUT_OF_HOST_MEMORY,VK_UNDOCUMENTED_ERROR}!void {
-    const result = vkQueueSetPerformanceConfigurationINTEL(queue.handle, configuration.handle);
+    const result = vkQueueSetPerformanceConfigurationINTEL(queue, configuration);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_TOO_MANY_OBJECTS => error.VK_TOO_MANY_OBJECTS,
@@ -15410,7 +15214,7 @@ pub inline fn QueueSetPerformanceConfigurationINTEL(queue: Queue, configuration:
 
 pub inline fn GetPerformanceParameterINTEL(device: Device, parameter: PerformanceParameterTypeINTEL) error{VK_TOO_MANY_OBJECTS,VK_OUT_OF_HOST_MEMORY,VK_UNDOCUMENTED_ERROR}!PerformanceValueINTEL {
     var out_value: PerformanceValueINTEL = undefined;
-    const result = vkGetPerformanceParameterINTEL(device.handle, parameter, &out_value);
+    const result = vkGetPerformanceParameterINTEL(device, parameter, &out_value);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_TOO_MANY_OBJECTS => error.VK_TOO_MANY_OBJECTS,
@@ -15453,14 +15257,12 @@ pub const SwapchainDisplayNativeHdrCreateInfoAMD = extern struct {
 };
 
 pub extern fn vkSetLocalDimmingAMD(
-    device: Device.IntType,
-    swapChain: SwapchainKHR.IntType,
+    device: Device,
+    swapChain: SwapchainKHR,
     localDimmingEnable: Bool32,
 ) callconv(CallConv) void;
 
-pub inline fn SetLocalDimmingAMD(device: Device, swapChain: SwapchainKHR, localDimmingEnable: Bool32) void {
-    vkSetLocalDimmingAMD(device.handle, swapChain.handle, localDimmingEnable);
-}
+pub const SetLocalDimmingAMD = vkSetLocalDimmingAMD;
 
 
 pub const EXT_fragment_density_map = 1;
@@ -15656,12 +15458,12 @@ pub const BufferDeviceAddressCreateInfoEXT = extern struct {
 };
 
 pub extern fn vkGetBufferDeviceAddressEXT(
-    device: Device.IntType,
+    device: Device,
     pInfo: *const BufferDeviceAddressInfo,
 ) callconv(CallConv) DeviceAddress;
 
 pub inline fn GetBufferDeviceAddressEXT(device: Device, info: BufferDeviceAddressInfo) DeviceAddress {
-    const result = vkGetBufferDeviceAddressEXT(device.handle, &info);
+    const result = vkGetBufferDeviceAddressEXT(device, &info);
     return result;
 }
 
@@ -15718,7 +15520,7 @@ pub const PhysicalDeviceToolPropertiesEXT = extern struct {
 };
 
 pub extern fn vkGetPhysicalDeviceToolPropertiesEXT(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pToolCount: *u32,
     pToolProperties: ?[*]PhysicalDeviceToolPropertiesEXT,
 ) callconv(CallConv) Result;
@@ -15730,7 +15532,7 @@ pub const GetPhysicalDeviceToolPropertiesEXTResult = struct {
 pub inline fn GetPhysicalDeviceToolPropertiesEXT(physicalDevice: PhysicalDevice, toolProperties: []PhysicalDeviceToolPropertiesEXT) error{VK_UNDOCUMENTED_ERROR}!GetPhysicalDeviceToolPropertiesEXTResult {
     var returnValues: GetPhysicalDeviceToolPropertiesEXTResult = undefined;
     var toolCount: u32 = @intCast(u32, toolProperties.len);
-    const result = vkGetPhysicalDeviceToolPropertiesEXT(physicalDevice.handle, &toolCount, toolProperties.ptr);
+    const result = vkGetPhysicalDeviceToolPropertiesEXT(physicalDevice, &toolCount, toolProperties.ptr);
     if (@bitCast(c_int, result) < 0) {
         return error.VK_UNDOCUMENTED_ERROR;
     }
@@ -15740,7 +15542,7 @@ pub inline fn GetPhysicalDeviceToolPropertiesEXT(physicalDevice: PhysicalDevice,
 }
 pub inline fn GetPhysicalDeviceToolPropertiesCountEXT(physicalDevice: PhysicalDevice) error{VK_UNDOCUMENTED_ERROR}!u32 {
     var out_toolCount: u32 = undefined;
-    const result = vkGetPhysicalDeviceToolPropertiesEXT(physicalDevice.handle, &out_toolCount, null);
+    const result = vkGetPhysicalDeviceToolPropertiesEXT(physicalDevice, &out_toolCount, null);
     if (@bitCast(c_int, result) < 0) {
         return error.VK_UNDOCUMENTED_ERROR;
     }
@@ -15841,7 +15643,7 @@ pub const PhysicalDeviceCooperativeMatrixPropertiesNV = extern struct {
 };
 
 pub extern fn vkGetPhysicalDeviceCooperativeMatrixPropertiesNV(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pPropertyCount: *u32,
     pProperties: ?[*]CooperativeMatrixPropertiesNV,
 ) callconv(CallConv) Result;
@@ -15853,7 +15655,7 @@ pub const GetPhysicalDeviceCooperativeMatrixPropertiesNVResult = struct {
 pub inline fn GetPhysicalDeviceCooperativeMatrixPropertiesNV(physicalDevice: PhysicalDevice, properties: []CooperativeMatrixPropertiesNV) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!GetPhysicalDeviceCooperativeMatrixPropertiesNVResult {
     var returnValues: GetPhysicalDeviceCooperativeMatrixPropertiesNVResult = undefined;
     var propertyCount: u32 = @intCast(u32, properties.len);
-    const result = vkGetPhysicalDeviceCooperativeMatrixPropertiesNV(physicalDevice.handle, &propertyCount, properties.ptr);
+    const result = vkGetPhysicalDeviceCooperativeMatrixPropertiesNV(physicalDevice, &propertyCount, properties.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -15867,7 +15669,7 @@ pub inline fn GetPhysicalDeviceCooperativeMatrixPropertiesNV(physicalDevice: Phy
 }
 pub inline fn GetPhysicalDeviceCooperativeMatrixPropertiesCountNV(physicalDevice: PhysicalDevice) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_propertyCount: u32 = undefined;
-    const result = vkGetPhysicalDeviceCooperativeMatrixPropertiesNV(physicalDevice.handle, &out_propertyCount, null);
+    const result = vkGetPhysicalDeviceCooperativeMatrixPropertiesNV(physicalDevice, &out_propertyCount, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -15917,7 +15719,7 @@ pub const FramebufferMixedSamplesCombinationNV = extern struct {
 };
 
 pub extern fn vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV(
-    physicalDevice: PhysicalDevice.IntType,
+    physicalDevice: PhysicalDevice,
     pCombinationCount: *u32,
     pCombinations: ?[*]FramebufferMixedSamplesCombinationNV,
 ) callconv(CallConv) Result;
@@ -15929,7 +15731,7 @@ pub const GetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNVResult 
 pub inline fn GetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV(physicalDevice: PhysicalDevice, combinations: []FramebufferMixedSamplesCombinationNV) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!GetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNVResult {
     var returnValues: GetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNVResult = undefined;
     var combinationCount: u32 = @intCast(u32, combinations.len);
-    const result = vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV(physicalDevice.handle, &combinationCount, combinations.ptr);
+    const result = vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV(physicalDevice, &combinationCount, combinations.ptr);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -15943,7 +15745,7 @@ pub inline fn GetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV(ph
 }
 pub inline fn GetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsCountNV(physicalDevice: PhysicalDevice) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!u32 {
     var out_combinationCount: u32 = undefined;
-    const result = vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV(physicalDevice.handle, &out_combinationCount, null);
+    const result = vkGetPhysicalDeviceSupportedFramebufferMixedSamplesCombinationsNV(physicalDevice, &out_combinationCount, null);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -15995,7 +15797,7 @@ pub const HeadlessSurfaceCreateInfoEXT = extern struct {
 };
 
 pub extern fn vkCreateHeadlessSurfaceEXT(
-    instance: Instance.IntType,
+    instance: Instance,
     pCreateInfo: *const HeadlessSurfaceCreateInfoEXT,
     pAllocator: ?*const AllocationCallbacks,
     pSurface: *SurfaceKHR,
@@ -16003,7 +15805,7 @@ pub extern fn vkCreateHeadlessSurfaceEXT(
 
 pub inline fn CreateHeadlessSurfaceEXT(instance: Instance, createInfo: HeadlessSurfaceCreateInfoEXT, pAllocator: ?*const AllocationCallbacks) error{VK_OUT_OF_HOST_MEMORY,VK_OUT_OF_DEVICE_MEMORY,VK_UNDOCUMENTED_ERROR}!SurfaceKHR {
     var out_surface: SurfaceKHR = undefined;
-    const result = vkCreateHeadlessSurfaceEXT(instance.handle, &createInfo, pAllocator, &out_surface);
+    const result = vkCreateHeadlessSurfaceEXT(instance, &createInfo, pAllocator, &out_surface);
     if (@bitCast(c_int, result) < 0) {
         return switch (result) {
             .ERROR_OUT_OF_HOST_MEMORY => error.VK_OUT_OF_HOST_MEMORY,
@@ -16054,14 +15856,12 @@ pub const PipelineRasterizationLineStateCreateInfoEXT = extern struct {
 };
 
 pub extern fn vkCmdSetLineStippleEXT(
-    commandBuffer: CommandBuffer.IntType,
+    commandBuffer: CommandBuffer,
     lineStippleFactor: u32,
     lineStipplePattern: u16,
 ) callconv(CallConv) void;
 
-pub inline fn CmdSetLineStippleEXT(commandBuffer: CommandBuffer, lineStippleFactor: u32, lineStipplePattern: u16) void {
-    vkCmdSetLineStippleEXT(commandBuffer.handle, lineStippleFactor, lineStipplePattern);
-}
+pub const CmdSetLineStippleEXT = vkCmdSetLineStippleEXT;
 
 
 pub const EXT_host_query_reset = 1;
@@ -16071,15 +15871,13 @@ pub const EXT_HOST_QUERY_RESET_EXTENSION_NAME = "VK_EXT_host_query_reset";
 pub const PhysicalDeviceHostQueryResetFeaturesEXT = PhysicalDeviceHostQueryResetFeatures;
 
 pub extern fn vkResetQueryPoolEXT(
-    device: Device.IntType,
-    queryPool: QueryPool.IntType,
+    device: Device,
+    queryPool: QueryPool,
     firstQuery: u32,
     queryCount: u32,
 ) callconv(CallConv) void;
 
-pub inline fn ResetQueryPoolEXT(device: Device, queryPool: QueryPool, firstQuery: u32, queryCount: u32) void {
-    vkResetQueryPoolEXT(device.handle, queryPool.handle, firstQuery, queryCount);
-}
+pub const ResetQueryPoolEXT = vkResetQueryPoolEXT;
 
 
 pub const EXT_index_type_uint8 = 1;
