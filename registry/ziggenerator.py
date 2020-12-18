@@ -84,7 +84,7 @@ def flagNameToZigName(name, enumTypeExpanded, expandedSuffix):
     # TODO don't convert the vendor tag
     name = mainName.replace('_', ' ').title().replace(' ', '')
     name = name[0].lower() + name[1:] + vendor
-    if name == 'type' or name == 'error':
+    if name == 'type' or name == 'error' or name == 'opaque':
         name += 'Bit';
     return name
 
@@ -133,7 +133,7 @@ class ZigIndirect:
         """ After linking, pointer to the ZigParam with the length of this pointer """
 
 class ZigParam:
-    def __init__(self, name, valueType, indirections, defaultValue, isOptional):
+    def __init__(self, name, valueType, indirections, hasDefault, defaultValue, isOptional):
         self.name = name
         """ The name of this parameter or member """
         
@@ -143,8 +143,11 @@ class ZigParam:
         self.indirections = indirections
         """ The []ZigIndirect buffers and pointers, from outermost to innermost """
         
+        self.hasDefault = hasDefault
+        """ Whether the member has a default.  If defaultValue is None, generate the default. """
+
         self.defaultValue = defaultValue
-        """ If the member should be initialized to a default value, the default value literal """
+        """ If the member should be initialized to a known default value, the default value literal """
         
         self.isOptional = isOptional
 
@@ -187,7 +190,7 @@ class ZigParam:
     def getValueParam(self):
         """ Get a parameter that has one less indirection """
         name = self.bufferName()
-        return ZigParam(name, self.valueType, self.indirections[1:], None, self.isOptional)
+        return ZigParam(name, self.valueType, self.indirections[1:], False, None, self.isOptional)
         
     def bufferName(self):
         name = self.name
@@ -202,12 +205,12 @@ class ZigParam:
         if valueType.cValueType == 'void':
             # translate to []u8
             valueType = ZigValueType(valueType.cValueType, 'u8', valueType.metaType, valueType.isOptional)
-        value = ZigParam(name, valueType, self.indirections[1:], None, self.isOptional)
+        value = ZigParam(name, valueType, self.indirections[1:], False, None, self.isOptional)
         value.indirections.insert(0, ZigIndirect(ZigIndirect.TYPE_SLICE, ind0.cLength, False, ind0.isConst))
         return value
         
     def getCopy(self):
-        return ZigParam(self.name, self.valueType, self.indirections, self.defaultValue, self.isOptional)
+        return ZigParam(self.name, self.valueType, self.indirections, self.hasDefault, self.defaultValue, self.isOptional)
         
         
     def link(params):
@@ -219,11 +222,11 @@ class ZigParam:
                         param.indirections[0].lenParam = other
                         other.buffers.append(param)
                         break
-    
-    def typeDecl(self, workaround3325, isRawApi):
+
+    def typeDeclPartial(self, workaround3325, isRawApi, indirections):
         parenDepth = 0
         decl = ''
-        for indirect in self.indirections:
+        for indirect in indirections:
             if indirect.type == ZigIndirect.TYPE_BUFFER:
                 zigLen = indirect.cLength
                 if zigLen.startswith('VK_'): zigLen = zigLen[3:]
@@ -282,13 +285,54 @@ class ZigParam:
             decl += ')'
             
         return decl
+
+    def typeDecl(self, workaround3325, isRawApi):
+        return self.typeDeclPartial(workaround3325, isRawApi, self.indirections)
     
+    def generateDefault(self, indirects, workaround3325):
+        if (len(indirects) == 0):
+            if (self.valueType.metaType == ZigValueType.TYPE_POINTER):
+                if (self.valueType.isOptional):
+                    return "null"
+                else:
+                    return "undefined"
+            elif (self.valueType.metaType == ZigValueType.TYPE_FLAGS):
+                return ".{}"
+            elif (self.valueType.metaType == ZigValueType.TYPE_HANDLE):
+                return ".Null"
+            else:
+                assert(self.valueType.metaType == ZigValueType.TYPE_OTHER)
+                return "0"
+        first = indirects[0]
+        if (first.type == ZigIndirect.TYPE_BUFFER):
+            zigLen = first.cLength
+            if zigLen.startswith('VK_'): zigLen = zigLen[3:]
+            return "[1]%s{ %s } ** %s" % (
+                self.typeDeclPartial(workaround3325, False, indirects[1:]),
+                self.generateDefault(indirects[1:], workaround3325),
+                zigLen)
+        elif (first.type == ZigIndirect.TYPE_POINTER):
+            if (first.isOptional):
+                return "null"
+            else:
+                return "undefined"
+        elif (first.type == ZigIndirect.TYPE_SLICE):
+            return "@as(*[0]%s, undefined)" % (self.typeDeclPartial(workaround3325, False, indirects[1:]))
+        else:
+            assert(False)
+
+    def getDefault(self, workaround3325):
+        assert(self.hasDefault)
+        if (self.defaultValue is not None):
+            return self.defaultValue
+        return self.generateDefault(self.indirections, workaround3325)
+
     def structDecl(self, workaround3325):
         decl = self.name + ': ' + self.typeDecl(workaround3325, False)
         if self.isDirectFlags():
             decl += ' align(4)'
-        if self.defaultValue:
-            decl += ' = ' + self.defaultValue
+        if self.hasDefault:
+            decl += ' = ' + self.getDefault(workaround3325)
         return decl
     
     def paramDecl(self, workaround3325, isRawApi):
@@ -768,18 +812,13 @@ pub const CallConv = if (builtin.os.tag == .windows)
         else:
             metaType = ZigValueType.TYPE_OTHER
 
+        hasDefault = False
         defaultValue = None
         if isParamOptional:
-            if isPointer:
-                defaultValue = 'null'
-            elif metaType == ZigValueType.TYPE_HANDLE:
-                defaultValue = declValueType + '.Null'
-            elif metaType == ZigValueType.TYPE_FLAGS:
-                defaultValue = declValueType + '{}'
-            else:
-                defaultValue = '0'
+            hasDefault = True
         elif name == 'pNext' and cValueType == 'void':
             defaultValue = 'null'
+            hasDefault = True
         elif allParams and len(lengths) >= 1:
             parentElem = None
             for m in allParams:
@@ -790,15 +829,18 @@ pub const CallConv = if (builtin.os.tag == .windows)
             # determine if the parent is optional
             if parentElem and parentElem.get('optional') == 'true':
                 defaultValue = 'undefined'
+                hasDefault = True
         else:
             valuesStr = param.get('values')
             if valuesStr:
                 values = valuesStr.split(',')
                 if len(values) == 1 and values[0].startswith('VK_STRUCTURE_TYPE_'):
                     defaultValue = values[0].replace('VK_STRUCTURE_TYPE_', '.')
+                    hasDefault = True
+        
         
         valueType = ZigValueType(cValueType, declValueType, metaType, valueTypeOptional)
-        return ZigParam(name, valueType, indirects, defaultValue, isParamOptional)
+        return ZigParam(name, valueType, indirects, hasDefault, defaultValue, isParamOptional)
 
     def genGroup(self, groupinfo, groupName, alias=None):
         """Generate groups (e.g. C "enum" type).
@@ -905,7 +947,12 @@ pub const CallConv = if (builtin.os.tag == .windows)
             else:
                 # this is an alias
                 strVal = flagNameToZigName(strVal, expandPrefix, expandSuffix)
-                aliasBody += '    pub const %s = Self{ .%s = true };\n' % (name, strVal)
+                if (strVal in declValues):
+                    # alias of flag value
+                    aliasBody += '    pub const %s = Self{ .%s = true };\n' % (name, strVal)
+                else:
+                    # alias of other constant
+                    aliasBody += '    pub const %s = %s;\n' % (name, strVal)
                 needSelf = True
 
         declBody = '';
@@ -1235,7 +1282,7 @@ pub const CallConv = if (builtin.os.tag == .windows)
                     for param in returnParams:
                         funcDecl += '    ' + param.structDecl(self.genOpts.workaround3325) + ',\n'
                     funcDecl += '};\n'
-                    locals.insert(0, ZigParam('returnValues', ZigValueType('', wrapperReturnType, False, False), [], 'undefined', False)) 
+                    locals.insert(0, ZigParam('returnValues', ZigValueType('', wrapperReturnType, False, False), [], True, 'undefined', False)) 
                     if len(successCodes) > 1:
                         cleanup.append('returnValues.result = result;')
                     returnStatement = 'return returnValues;'
